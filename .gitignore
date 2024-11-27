@@ -1,0 +1,5 @@
+backend/bin
+frontend/node_modules
+frontend/build
+clickhouse
+.DS_Store

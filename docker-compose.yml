@@ -1,0 +1,35 @@
+services:
+  clickhouse:
+    container_name: clickhouse
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - '9000:9000'
+      - '8123:8123'
+    networks:
+      - hotrod-example
+
+  otelcol:
+    container_name: otelcol
+    image: wesha/otel-clickhouse:0.4.0
+    restart: on-failure:10
+    networks:
+      - hotrod-example
+    depends_on:
+      - clickhouse
+
+  hotrod:
+    container_name: hotrod
+    image: jaegertracing/example-hotrod:latest
+    ports:
+      - '8080:8080'
+      - '8083:8083'
+    command: ['all']
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+    networks:
+      - hotrod-example
+    depends_on:
+      - otelcol
+
+networks:
+  hotrod-example:
