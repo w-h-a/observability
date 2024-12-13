@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/gorilla/mux v1.8.1
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/w-h-a/pkg v0.37.0
 )
 
