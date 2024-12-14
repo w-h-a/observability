@@ -3,6 +3,7 @@ package reader
 import "context"
 
 type Reader interface {
+	Options() ReaderOptions
 	Services(ctx context.Context, query *ServicesArgs) ([]Service, error)
 	ServiceMapDependencies(ctx context.Context, query *ServicesArgs) ([]ServiceMapDependency, error)
 	ServicesList(ctx context.Context) ([]string, error)

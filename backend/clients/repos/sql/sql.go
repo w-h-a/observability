@@ -3,7 +3,9 @@ package sql
 import (
 	"net/url"
 
+	_ "github.com/ClickHouse/clickhouse-go"
 	"github.com/jmoiron/sqlx"
+
 	"github.com/w-h-a/pkg/telemetry/log"
 	"github.com/w-h-a/trace-blame/backend/clients/repos"
 )
