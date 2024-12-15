@@ -31,5 +31,27 @@ services:
     depends_on:
       - otelcol
 
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: on-failure:10
+    ports:
+      - '4000:4000'
+    environment:
+      - NAMESPACE=hotrod
+      - NAME=backend
+      - VERSION=0.1.0-alpha.0
+      - HTTP_ADDRESS=:4000
+      - STORE=clickhouse
+      - STORE_ADDRESS=tcp://clickhouse:9000
+      - DB=default
+      - TABLE=otel_traces
+    networks:
+      - hotrod-example
+    depends_on:
+      - clickhouse
+
 networks:
   hotrod-example:
