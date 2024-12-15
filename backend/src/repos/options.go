@@ -1,26 +1,23 @@
 package repos
 
-import "context"
+import (
+	"context"
+
+	"github.com/w-h-a/trace-blame/backend/src/clients/store"
+)
 
 type RepoOption func(o *RepoOptions)
 
 type RepoOptions struct {
-	Driver   string
-	Addrs    []string
+	Client   store.Client
 	Database string
 	Table    string
 	Context  context.Context
 }
 
-func RepoWithDriver(driver string) RepoOption {
+func RepoWithClient(c store.Client) RepoOption {
 	return func(o *RepoOptions) {
-		o.Driver = driver
-	}
-}
-
-func RepoWithAddrs(addrs ...string) RepoOption {
-	return func(o *RepoOptions) {
-		o.Addrs = addrs
+		o.Client = c
 	}
 }
 

@@ -13,7 +13,7 @@ type ServicesArgs struct {
 }
 
 type Service struct {
-	ServiceName  string  `json:"serviceName" db:"serviceName"`
+	ServiceName  string  `json:"serviceName" db:"ServiceName"`
 	Percentile99 float32 `json:"p99" db:"p99"`
 	AvgDuration  float32 `json:"avgDuration" db:"avgDuration"`
 	NumCalls     int     `json:"numCalls" db:"numCalls"`
