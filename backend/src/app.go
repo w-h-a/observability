@@ -28,7 +28,10 @@ var (
 )
 
 func AppFactory(storeClient store.Client) serverv2.Server {
-	name := fmt.Sprintf("%s.%s", config.Namespace, config.Name)
+	// config
+	config.NewConfig()
+
+	name := fmt.Sprintf("%s.%s", config.Namespace(), config.Name())
 
 	// log
 	logBuffer := memoryutils.NewBuffer()
@@ -45,8 +48,8 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
 		repos.RepoWithClient(getStoreClient(storeClient)),
-		repos.RepoWithDatabase(config.DB),
-		repos.RepoWithTable(config.Table),
+		repos.RepoWithDatabase(config.DB()),
+		repos.RepoWithTable(config.Table()),
 	)
 
 	// services
@@ -54,9 +57,9 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 
 	// base server options
 	opts := []serverv2.ServerOption{
-		serverv2.ServerWithNamespace(config.Namespace),
-		serverv2.ServerWithName(config.Name),
-		serverv2.ServerWithVersion(config.Version),
+		serverv2.ServerWithNamespace(config.Namespace()),
+		serverv2.ServerWithName(config.Name()),
+		serverv2.ServerWithVersion(config.Version()),
 	}
 
 	// create http server
@@ -67,7 +70,7 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
 
 	httpOpts := []serverv2.ServerOption{
-		serverv2.ServerWithAddress(config.HttpAddress),
+		serverv2.ServerWithAddress(config.HttpAddress()),
 	}
 
 	httpOpts = append(httpOpts, opts...)
@@ -84,15 +87,15 @@ func getStoreClient(storeClient store.Client) store.Client {
 		return storeClient
 	}
 
-	storeClientBuilder, exists := defaultStoreClients[config.Store]
-	if !exists && len(config.Store) > 0 {
-		log.Fatalf("store %s not supported", config.Store)
+	storeClientBuilder, exists := defaultStoreClients[config.Store()]
+	if !exists && len(config.Store()) > 0 {
+		log.Fatalf("store %s not supported", config.Store())
 	} else if !exists {
 		return memorystore.NewClient()
 	}
 
 	return storeClientBuilder(
-		store.ClientWithDriver(config.Store),
-		store.ClientWithAddrs(config.StoreAddress),
+		store.ClientWithDriver(config.Store()),
+		store.ClientWithAddrs(config.StoreAddress()),
 	)
 }

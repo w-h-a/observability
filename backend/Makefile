@@ -8,15 +8,15 @@ style:
 
 .PHONY: unit-test
 unit-test:
-	go clean -testcache && go test -v ./...
+	go clean -testcache && go test -v ./tests/unit
 
 .PHONY: integration-test
 integration-test:
-	go clean -testcache && INTEGRATION=1 go test -v ./...
+	go clean -testcache && go test -v ./tests/integration
 
 .PHONY: e2e-test
 e2e-test:
-	go clean -testcache && E2E=1 go test -v ./...
+	go clean -testcache && go test -v ./tests/e2e
 
 .PHONY: go-build
 go-build:

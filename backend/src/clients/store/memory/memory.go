@@ -15,6 +15,7 @@ func (c *client) Options() store.ClientOptions {
 }
 
 func (c *client) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
+	// TODO
 	return nil
 }
 
