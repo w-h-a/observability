@@ -29,7 +29,7 @@ func NewConfig() {
 			namespace:    "test",
 			name:         "test",
 			version:      "0.1.0-alpha.0",
-			httpAddress:  ":4000",
+			httpAddress:  ":0",
 			store:        "",
 			storeAddress: "",
 			db:           "",

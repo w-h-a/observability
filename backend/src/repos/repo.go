@@ -1,6 +1,13 @@
 package repos
 
-import "context"
+import (
+	"context"
+	"errors"
+)
+
+var (
+	ErrProcessingQuery = errors.New("failed to process query")
+)
 
 type Repo interface {
 	Options() RepoOptions

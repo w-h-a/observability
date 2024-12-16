@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/w-h-a/pkg/telemetry/log"
 	"github.com/w-h-a/trace-blame/backend/src/repos"
 )
 
@@ -20,7 +21,8 @@ func (r *sqlRepo) ReadServicesList(ctx context.Context, dest interface{}) error 
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
 		// TODO: log/trace?
-		return fmt.Errorf("failed to process sql query")
+		log.Errorf("store client failed to read: %v", err)
+		return repos.ErrProcessingQuery
 	}
 
 	return nil
