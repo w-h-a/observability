@@ -1,4 +1,4 @@
-package mock
+package serviceslist
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/w-h-a/trace-blame/backend/src/clients/store"
 )
 
-type MockStoreClient struct {
+type mockStoreClient struct {
 	options        store.ClientOptions
 	readImpl       func() error
 	xs             []interface{}
@@ -17,11 +17,11 @@ type MockStoreClient struct {
 	mtx            sync.RWMutex
 }
 
-func (c *MockStoreClient) Options() store.ClientOptions {
+func (c *mockStoreClient) Options() store.ClientOptions {
 	return c.options
 }
 
-func (c *MockStoreClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
+func (c *mockStoreClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
 	c.mtx.Lock()
 
 	args := map[string]interface{}{
@@ -58,25 +58,21 @@ func (c *MockStoreClient) Read(ctx context.Context, dest interface{}, str string
 	return nil
 }
 
-func (c *MockStoreClient) ReadCalledWith() []map[string]interface{} {
+func (c *mockStoreClient) ReadCalledWith() []map[string]interface{} {
 	return c.readCalledWith
 }
 
-func NewClient(opts ...store.ClientOption) store.Client {
-	options := store.NewClientOptions(opts...)
+func (c *mockStoreClient) ResetCalledWith() {
+	c.readCalledWith = []map[string]interface{}{}
+}
 
-	c := &MockStoreClient{
-		options:        options,
+func NewClient(readImpl func() error, xs ...interface{}) store.Client {
+	c := &mockStoreClient{
+		options:        store.NewClientOptions(),
+		readImpl:       readImpl,
+		xs:             xs,
 		readCalledWith: []map[string]interface{}{},
 		mtx:            sync.RWMutex{},
-	}
-
-	if readImpl, ok := GetReadImplFromContext(options.Context); ok {
-		c.readImpl = readImpl
-	}
-
-	if xs, ok := GetDataFromContext(options.Context); ok {
-		c.xs = xs
 	}
 
 	return c

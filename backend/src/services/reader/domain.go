@@ -5,23 +5,21 @@ import "time"
 // services
 
 type ServicesArgs struct {
-	StartTime string
-	EndTime   string
 	Start     *time.Time
+	StartTime string
 	End       *time.Time
+	EndTime   string
 	Period    int
 }
 
 type Service struct {
-	ServiceName  string  `json:"serviceName" db:"ServiceName"`
+	ServiceName  string  `json:"serviceName" db:"serviceName"`
 	Percentile99 float32 `json:"p99" db:"p99"`
 	AvgDuration  float32 `json:"avgDuration" db:"avgDuration"`
 	NumCalls     int     `json:"numCalls" db:"numCalls"`
 	CallRate     float32 `json:"callRate" db:"callRate"`
 	NumErrors    int     `json:"numErrors" db:"numErrors"`
 	ErrorRate    float32 `json:"errorRate" db:"errorRate"`
-	Num4XX       int     `json:"num4XX" db:"num4xx"`
-	FourXXRate   float32 `json:"fourXXRate" db:"fourXXRate"`
 }
 
 type ServiceMapDependency struct {
@@ -34,10 +32,10 @@ type ServiceMapDependency struct {
 
 type ServiceOverviewArgs struct {
 	ServiceName string
-	StartTime   string
-	EndTime     string
 	Start       *time.Time
+	StartTime   string
 	End         *time.Time
+	EndTime     string
 	Period      string
 	StepSeconds int
 }
@@ -78,10 +76,10 @@ type ServiceExternalItem struct {
 
 type TopEndpointsArgs struct {
 	ServiceName string
-	StartTime   string
-	EndTime     string
 	Start       *time.Time
+	StartTime   string
 	End         *time.Time
+	EndTime     string
 }
 
 type TopEndpoints struct {
@@ -157,10 +155,10 @@ type TagItem struct {
 
 type UsageArgs struct {
 	ServiceName string
-	StartTime   string
-	EndTime     string
 	Start       *time.Time
+	StartTime   string
 	End         *time.Time
+	EndTime     string
 	Period      string
 	StepHour    int
 }
