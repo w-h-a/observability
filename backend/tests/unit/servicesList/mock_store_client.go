@@ -25,8 +25,7 @@ func (c *mockStoreClient) Read(ctx context.Context, dest interface{}, str string
 	c.mtx.Lock()
 
 	args := map[string]interface{}{
-		"str":        str,
-		"additional": additional,
+		"str": str,
 	}
 
 	c.readCalledWith = append(c.readCalledWith, args)

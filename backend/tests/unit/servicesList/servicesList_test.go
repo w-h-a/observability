@@ -33,8 +33,7 @@ func TestServicesList(t *testing.T) {
 			then:   "then: we send back the slice of service names",
 			readCalledWith: []map[string]interface{}{
 				{
-					"str":        `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
-					"additional": []interface{}(nil),
+					"str": `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
 				},
 			},
 			payload: `["redis","postgres","customer","payments"]`,
@@ -45,8 +44,7 @@ func TestServicesList(t *testing.T) {
 			then:   "then: we send back an internal server error message",
 			readCalledWith: []map[string]interface{}{
 				{
-					"str":        `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
-					"additional": []interface{}(nil),
+					"str": `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
 				},
 			},
 			payload: `{"id":"Services.GetServicesList","code":500,"detail":"failed to retrieve services list: failed to process query","status":"Internal Server Error"}`,
