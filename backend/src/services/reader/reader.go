@@ -18,13 +18,13 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 
 	services := []*Service{}
 
-	if err := r.repo.ReadServerSpansOfServices(ctx, &services, startTimestamp, endTimestamp); err != nil {
+	if err := r.repo.ReadServerCalls(ctx, &services, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
 	errServices := []*Service{}
 
-	if err := r.repo.ReadErrServerSpansOfServices(ctx, &errServices, startTimestamp, endTimestamp); err != nil {
+	if err := r.repo.ReadServerErrors(ctx, &errServices, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 

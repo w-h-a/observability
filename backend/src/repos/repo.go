@@ -11,7 +11,7 @@ var (
 
 type Repo interface {
 	Options() RepoOptions
-	ReadServerSpansOfServices(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
-	ReadErrServerSpansOfServices(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
+	ReadServerCalls(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
+	ReadServerErrors(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
 	ReadDistinctServiceNames(ctx context.Context, dest interface{}) error
 }
