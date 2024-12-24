@@ -2,6 +2,7 @@ package reader
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/w-h-a/trace-blame/backend/src/repos"
 )
@@ -10,8 +11,40 @@ type Reader struct {
 	repo repos.Repo
 }
 
-func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]Service, error) {
-	return nil, nil
+func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service, error) {
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	services := []*Service{}
+
+	if err := r.repo.ReadServerSpansOfServices(ctx, &services, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	errServices := []*Service{}
+
+	if err := r.repo.ReadErrServerSpansOfServices(ctx, &errServices, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	serviceToErrCount := map[string]int{}
+
+	for _, errService := range errServices {
+		serviceToErrCount[errService.ServiceName] = errService.NumErrors
+	}
+
+	for _, service := range services {
+		service.CallRate = float32(service.NumCalls) / float32(query.Period)
+
+		if val, ok := serviceToErrCount[service.ServiceName]; ok {
+			service.NumErrors = val
+		}
+
+		service.ErrorRate = float32(service.NumErrors) / float32(query.Period)
+	}
+
+	return services, nil
 }
 
 func (r *Reader) ServiceMapDependencies(ctx context.Context, query *ServicesArgs) ([]ServiceMapDependency, error) {
@@ -23,7 +56,7 @@ func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
 
 	services := []string{}
 
-	if err := r.repo.ReadServicesList(ctx, &services); err != nil {
+	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
 		return nil, err
 	}
 

@@ -15,6 +15,7 @@ import (
 	sqlstore "github.com/w-h-a/trace-blame/backend/src/clients/store/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
+	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
 	"github.com/w-h-a/trace-blame/backend/src/repos"
 	sqlrepo "github.com/w-h-a/trace-blame/backend/src/repos/sql"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
@@ -65,8 +66,11 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 	// create http server
 	router := mux.NewRouter()
 
-	httpServices := httphandlers.NewServicesHandler(reader)
+	requestParser := &utils.RequestParser{}
 
+	httpServices := httphandlers.NewServicesHandler(reader, requestParser)
+
+	router.Methods(http.MethodGet).Path("/api/v1/services").HandlerFunc(httpServices.GetServices)
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
 
 	httpOpts := []serverv2.ServerOption{
