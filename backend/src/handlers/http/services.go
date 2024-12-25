@@ -32,7 +32,22 @@ func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
-// get serviceMap deps
+// get service dependencies
+func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetServicesRequest(r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServiceDependencies", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.ServiceDependencies(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServiceDependencies", "failed to retrieve service map: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
 
 // get services list
 func (s *Services) GetServicesList(w http.ResponseWriter, r *http.Request) {
