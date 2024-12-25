@@ -22,10 +22,16 @@ type Service struct {
 	ErrorRate    float32 `json:"errorRate" db:"errorRate"`
 }
 
-type ServiceMapDependency struct {
-	Parent    string `json:"parent,omitempty" db:"parent,omitempty"`
-	Child     string `json:"child,omitempty" db:"child,omitempty"`
-	CallCount int    `json:"callCount,omitempty" db:"callCount,omitempty"`
+type ServiceSpanDependency struct {
+	SpanId       string `json:"spanId,omitempty" db:"spanId,omitempty"`
+	ParentSpanId string `json:"parentSpanId,omitempty" db:"parentSpanId,omitempty"`
+	ServiceName  string `json:"serviceName,omitempty" db:"serviceName,omitempty"`
+}
+
+type ServiceDependency struct {
+	Parent    string `json:"parent,omitempty"`
+	Child     string `json:"child,omitempty"`
+	CallCount int    `json:"callCount,omitempty"`
 }
 
 // overview

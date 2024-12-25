@@ -2,6 +2,7 @@ package reader
 
 import (
 	"context"
+	"sort"
 	"strconv"
 
 	"github.com/w-h-a/trace-blame/backend/src/repos"
@@ -47,8 +48,54 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 	return services, nil
 }
 
-func (r *Reader) ServiceMapDependencies(ctx context.Context, query *ServicesArgs) ([]ServiceMapDependency, error) {
-	return nil, nil
+func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) ([]*ServiceDependency, error) {
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	serviceSpanDependencies := []*ServiceSpanDependency{}
+
+	if err := r.repo.ReadSpanDependencies(ctx, &serviceSpanDependencies, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	spanToServiceName := map[string]string{}
+
+	for _, dep := range serviceSpanDependencies {
+		spanToServiceName[dep.SpanId] = dep.ServiceName
+	}
+
+	dependencies := map[string]*ServiceDependency{}
+
+	for _, dep := range serviceSpanDependencies {
+		parentToChild := spanToServiceName[dep.ParentSpanId] + "-" + spanToServiceName[dep.SpanId]
+
+		if _, ok := dependencies[parentToChild]; !ok {
+			dependencies[parentToChild] = &ServiceDependency{
+				Parent:    spanToServiceName[dep.ParentSpanId],
+				Child:     spanToServiceName[dep.SpanId],
+				CallCount: 1,
+			}
+		} else {
+			dependencies[parentToChild].CallCount += 1
+		}
+	}
+
+	serviceDependencies := make([]*ServiceDependency, 0, len(dependencies))
+
+	for _, dep := range dependencies {
+		if len(dep.Parent) == 0 {
+			continue
+		}
+
+		serviceDependencies = append(serviceDependencies, dep)
+	}
+
+	sort.Slice(serviceDependencies, func(i, j int) bool {
+		return serviceDependencies[i].CallCount > serviceDependencies[j].CallCount
+	})
+
+	return serviceDependencies, nil
 }
 
 func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
