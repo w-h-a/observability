@@ -119,8 +119,18 @@ func (r *Reader) Operations(ctx context.Context, query *OperationsArgs) ([]strin
 	return operations, nil
 }
 
-func (r *Reader) TopEndpoints(ctx context.Context, query *TopEndpointsArgs) ([]TopEndpoints, error) {
-	return nil, nil
+func (r *Reader) Endpoints(ctx context.Context, query *EndpointsArgs) ([]*Endpoint, error) {
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	topEndpoints := []*Endpoint{}
+
+	if err := r.repo.ReadServiceSpecificEndpoints(ctx, &topEndpoints, query.ServiceName, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	return topEndpoints, nil
 }
 
 func (r *Reader) ServiceOverview(ctx context.Context, query *OverviewArgs) ([]*ServiceOverview, error) {
@@ -188,6 +198,10 @@ func (r *Reader) MessagingOverview() {
 
 }
 
+func (r *Reader) Traces(ctx context.Context, traceId string) ([]Span, error) {
+	return nil, nil
+}
+
 func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]Span, error) {
 	return nil, nil
 }
@@ -197,10 +211,6 @@ func (r *Reader) SpansAggregate(ctx context.Context, query *SpansAggregateArgs) 
 }
 
 func (r *Reader) Tags(ctx context.Context, serviceName string) ([]TagItem, error) {
-	return nil, nil
-}
-
-func (r *Reader) Traces(ctx context.Context, traceId string) ([]Span, error) {
 	return nil, nil
 }
 

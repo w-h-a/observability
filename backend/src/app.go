@@ -74,6 +74,7 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
 	router.Methods(http.MethodGet).Path("/api/v1/services/dependencies").HandlerFunc(httpServices.GetServiceDependencies)
 	router.Methods(http.MethodGet).Path("/api/v1/services/operations").HandlerFunc(httpServices.GetOperations)
+	router.Methods(http.MethodGet).Path("/api/v1/services/endpoints").HandlerFunc(httpServices.GetEndpoints)
 	router.Methods(http.MethodGet).Path("/api/v1/services/overview").HandlerFunc(httpServices.GetServiceOverview)
 
 	httpOpts := []serverv2.ServerOption{
