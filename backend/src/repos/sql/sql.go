@@ -72,6 +72,17 @@ func (r *sqlRepo) ReadServiceSpecificOperations(ctx context.Context, dest interf
 	return nil
 }
 
+func (r *sqlRepo) ReadServiceSpecificEndpoints(ctx context.Context, dest interface{}, serviceName string, startTimestamp, endTimestamps string) error {
+	query := fmt.Sprintf(`SELECT quantile(0.5)(Duration) as p50, quantile(0.95)(Duration) as p95, quantile(0.99)(Duration) as p99, count(*) as numCalls, SpanName as name FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' and ServiceName='%s' GROUP BY name`, r.options.Database, r.options.Table, startTimestamp, endTimestamps, serviceName)
+
+	if err := r.options.Client.Read(ctx, dest, query); err != nil {
+		log.Errorf("store client fail to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
 func (r *sqlRepo) ReadServiceSpecificServerCalls(ctx context.Context, dest interface{}, serviceName, interval, startTimestamp, endTimestamp string) error {
 	query := fmt.Sprintf(`SELECT toStartOfInterval(Timestamp, INTERVAL %s minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' AND ServiceName='%s' GROUP BY time ORDER BY time DESC`, interval, r.options.Database, r.options.Table, startTimestamp, endTimestamp, serviceName)
 

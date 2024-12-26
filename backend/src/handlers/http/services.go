@@ -73,6 +73,22 @@ func (s *Services) GetOperations(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
+func (s *Services) GetEndpoints(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetEndpointsRequest(r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetEndpoints", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.Endpoints(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetEndpoints", "failed to retrieve top endpoints: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
 func (s *Services) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
 	query, err := s.parser.ParseGetOverviewRequest(r)
 	if err != nil {

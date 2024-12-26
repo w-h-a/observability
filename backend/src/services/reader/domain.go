@@ -40,9 +40,7 @@ type OperationsArgs struct {
 	ServiceName string
 }
 
-// endpoints
-
-type TopEndpointsArgs struct {
+type EndpointsArgs struct {
 	ServiceName string
 	Start       *time.Time
 	StartTime   string
@@ -50,7 +48,7 @@ type TopEndpointsArgs struct {
 	EndTime     string
 }
 
-type TopEndpoints struct {
+type Endpoint struct {
 	Name         string  `json:"name" db:"name"`
 	Percentile50 float32 `json:"p50" db:"p50"`
 	Percentile95 float32 `json:"p95" db:"p95"`

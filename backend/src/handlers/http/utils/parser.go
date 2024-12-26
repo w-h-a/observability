@@ -47,6 +47,33 @@ func (p *RequestParser) ParseGetOperationsRequest(r *http.Request) (*reader.Oper
 	return operationsArgs, nil
 }
 
+func (p *RequestParser) ParseGetEndpointsRequest(r *http.Request) (*reader.EndpointsArgs, error) {
+	startTime, err := p.parseTime("start", r)
+	if err != nil {
+		return nil, err
+	}
+
+	endTime, err := p.parseTime("end", r)
+	if err != nil {
+		return nil, err
+	}
+
+	serviceName := r.URL.Query().Get("service")
+	if len(serviceName) == 0 {
+		return nil, errors.New("service param missing in query")
+	}
+
+	topOperationsArgs := &reader.EndpointsArgs{
+		ServiceName: serviceName,
+		Start:       startTime,
+		StartTime:   startTime.Format(time.RFC3339Nano),
+		End:         endTime,
+		EndTime:     endTime.Format(time.RFC3339Nano),
+	}
+
+	return topOperationsArgs, nil
+}
+
 func (p *RequestParser) ParseGetOverviewRequest(r *http.Request) (*reader.OverviewArgs, error) {
 	startTime, err := p.parseTime("start", r)
 	if err != nil {
