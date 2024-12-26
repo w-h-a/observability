@@ -34,49 +34,6 @@ type ServiceDependency struct {
 	CallCount int    `json:"callCount,omitempty"`
 }
 
-// overview
-
-type ServiceOverviewArgs struct {
-	ServiceName string
-	Start       *time.Time
-	StartTime   string
-	End         *time.Time
-	EndTime     string
-	StepSeconds int
-}
-
-type ServiceOverview struct {
-	Timestamp    int64   `json:"timestamp" db:"timestamp"`
-	Time         string  `json:"time,omitempty" db:"time,omitempty"`
-	Percentile50 float32 `json:"p50" db:"p50"`
-	Percentile95 float32 `json:"p95" db:"p95"`
-	Percentile99 float32 `json:"p99" db:"p99"`
-	NumCalls     int     `json:"numCalls" db:"numCalls"`
-	CallRate     float32 `json:"callRate" db:"callRate"`
-	NumErrors    int     `json:"numErrors" db:"numErrors"`
-	ErrorRate    float32 `json:"errorRate" db:"errorRate"`
-}
-
-type ServiceDBOverview struct {
-	Timestamp   int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
-	Time        string  `json:"time,omitempty" db:"time,omitempty"`
-	DBSystem    string  `json:"dbSystem,omitempty" db:"dbSystem,omitEmpty"`
-	AvgDuration float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
-	NumCalls    int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
-	CallRate    float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
-}
-
-type ServiceExternalItem struct {
-	Timestamp       int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
-	Time            string  `json:"time,omitempty" db:"time,omitempty"`
-	ExternalHttpUrl string  `json:"externalHttpUrl,omitempty" db:"externalHttpUrl,omitempty"`
-	AvgDuration     float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
-	NumCalls        int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
-	CallRate        float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
-	NumErrors       int     `json:"numErrors" db:"numErrors"`
-	ErrorRate       float32 `json:"errorRate" db:"errorRate"`
-}
-
 // endpoints
 
 type TopEndpointsArgs struct {
@@ -94,6 +51,50 @@ type TopEndpoints struct {
 	Percentile99 float32 `json:"p99" db:"p99"`
 	NumCalls     int     `json:"numCalls" db:"numCalls"`
 }
+
+// overview
+
+type OverviewArgs struct {
+	ServiceName string
+	Start       *time.Time
+	StartTime   string
+	End         *time.Time
+	EndTime     string
+	StepSeconds int
+}
+
+// service overview
+
+type ServiceOverview struct {
+	Timestamp    int64   `json:"timestamp" db:"timestamp"`
+	Time         string  `json:"time,omitempty" db:"time,omitempty"`
+	Percentile50 float32 `json:"p50" db:"p50"`
+	Percentile95 float32 `json:"p95" db:"p95"`
+	Percentile99 float32 `json:"p99" db:"p99"`
+	NumCalls     int     `json:"numCalls" db:"numCalls"`
+	CallRate     float32 `json:"callRate" db:"callRate"`
+	NumErrors    int     `json:"numErrors" db:"numErrors"`
+	ErrorRate    float32 `json:"errorRate" db:"errorRate"`
+}
+
+// http overview
+
+// rpc overview
+
+type RpcOverview struct {
+	Timestamp   int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
+	Time        string  `json:"time,omitempty" db:"time,omitempty"`
+	RpcSystem   string  `json:"rpcSystem,omitempty" db:"rpcSystem,omitempty"`
+	AvgDuration float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
+	NumCalls    int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
+	CallRate    float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
+	NumErrors   int     `json:"numErrors" db:"numErrors"`
+	ErrorRate   float32 `json:"errorRate" db:"errorRate"`
+}
+
+// db overview
+
+// messaging overview
 
 // spans
 
@@ -154,22 +155,4 @@ type TagQuery struct {
 type TagItem struct {
 	TagKeys  string `json:"tagKeys" db:"tagKeys"`
 	TagCount int    `json:"tagCount" db:"tagCount"`
-}
-
-// usage
-
-type UsageArgs struct {
-	ServiceName string
-	Start       *time.Time
-	StartTime   string
-	End         *time.Time
-	EndTime     string
-	Period      string
-	StepHour    int
-}
-
-type Usage struct {
-	Timestamp int64  `json:"timestamp" db:"timestamp"`
-	Time      string `json:"time,omitempty" db:"time,omitempty"`
-	Count     int64  `json:"count" db:"count"`
 }

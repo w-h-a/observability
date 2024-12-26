@@ -13,6 +13,16 @@ type Reader struct {
 	repo repos.Repo
 }
 
+func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
+	services := []string{}
+
+	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
+		return nil, err
+	}
+
+	return services, nil
+}
+
 func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service, error) {
 	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
 
@@ -99,19 +109,15 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 	return serviceDependencies, nil
 }
 
-func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
-	// TODO: log/trace?
-
-	services := []string{}
-
-	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
-		return nil, err
-	}
-
-	return services, nil
+func (r *Reader) Operations(ctx context.Context, serviceName string) ([]string, error) {
+	return nil, nil
 }
 
-func (r *Reader) ServiceOverview(ctx context.Context, query *ServiceOverviewArgs) ([]*ServiceOverview, error) {
+func (r *Reader) TopEndpoints(ctx context.Context, query *TopEndpointsArgs) ([]TopEndpoints, error) {
+	return nil, nil
+}
+
+func (r *Reader) ServiceOverview(ctx context.Context, query *OverviewArgs) ([]*ServiceOverview, error) {
 	interval := strconv.Itoa(int(query.StepSeconds / 60))
 
 	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
@@ -156,28 +162,24 @@ func (r *Reader) ServiceOverview(ctx context.Context, query *ServiceOverviewArgs
 	return serviceOverview, nil
 }
 
-func (r *Reader) ServiceDBOverview(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceDBOverview, error) {
+// https://opentelemetry.io/docs/specs/semconv/http/http-spans/
+func (r *Reader) HttpOverview() {
+
+}
+
+// https://opentelemetry.io/docs/specs/semconv/rpc/rpc-spans/
+func (r *Reader) RpcOverview(ctx context.Context, query *OverviewArgs) ([]*RpcOverview, error) {
 	return nil, nil
 }
 
-func (r *Reader) ServiceExternalAvgDuration(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceExternalItem, error) {
-	return nil, nil
+// https://opentelemetry.io/docs/specs/semconv/database/database-spans/
+func (r *Reader) DBOverview() {
+
 }
 
-func (r *Reader) ServiceExternalErrors(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceExternalItem, error) {
-	return nil, nil
-}
+// https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/
+func (r *Reader) MessagingOverview() {
 
-func (r *Reader) ServiceExternal(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceExternalItem, error) {
-	return nil, nil
-}
-
-func (r *Reader) Operations(ctx context.Context, serviceName string) ([]string, error) {
-	return nil, nil
-}
-
-func (r *Reader) TopEndpoints(ctx context.Context, query *TopEndpointsArgs) ([]TopEndpoints, error) {
-	return nil, nil
 }
 
 func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]Span, error) {
@@ -193,10 +195,6 @@ func (r *Reader) Tags(ctx context.Context, serviceName string) ([]TagItem, error
 }
 
 func (r *Reader) Traces(ctx context.Context, traceId string) ([]Span, error) {
-	return nil, nil
-}
-
-func (r *Reader) Usage(ctx context.Context, query *UsageArgs) ([]Usage, error) {
 	return nil, nil
 }
 

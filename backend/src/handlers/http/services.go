@@ -31,6 +31,16 @@ func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
+func (s *Services) GetServicesList(w http.ResponseWriter, r *http.Request) {
+	result, err := s.reader.ServicesList(context.TODO())
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServicesList", "failed to retrieve services list: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
 func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request) {
 	query, err := s.parser.ParseGetServicesRequest(r)
 	if err != nil {
@@ -41,16 +51,6 @@ func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request
 	result, err := s.reader.ServiceDependencies(context.TODO(), query)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServiceDependencies", "failed to retrieve service map: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
-func (s *Services) GetServicesList(w http.ResponseWriter, r *http.Request) {
-	result, err := s.reader.ServicesList(context.TODO())
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServicesList", "failed to retrieve services list: %v", err))
 		return
 	}
 
