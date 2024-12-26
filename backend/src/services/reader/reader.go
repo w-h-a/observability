@@ -4,6 +4,7 @@ import (
 	"context"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/w-h-a/trace-blame/backend/src/repos"
 )
@@ -110,8 +111,49 @@ func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
 	return services, nil
 }
 
-func (r *Reader) ServiceOverview(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceOverview, error) {
-	return nil, nil
+func (r *Reader) ServiceOverview(ctx context.Context, query *ServiceOverviewArgs) ([]*ServiceOverview, error) {
+	interval := strconv.Itoa(int(query.StepSeconds / 60))
+
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	serviceOverview := []*ServiceOverview{}
+
+	if err := r.repo.ReadServiceSpecificServerCalls(ctx, &serviceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	errServiceOverview := []*ServiceOverview{}
+
+	if err := r.repo.ReadServiceSpecificServerErrors(ctx, &errServiceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
+		return nil, err
+	}
+
+	timeToErrCount := map[int64]int{}
+
+	for _, errService := range errServiceOverview {
+		t, _ := time.Parse(time.RFC3339Nano, errService.Time)
+
+		timeToErrCount[int64(t.UnixNano())] = errService.NumErrors
+	}
+
+	for _, service := range serviceOverview {
+		service.CallRate = float32(service.NumCalls) / float32(query.StepSeconds)
+
+		t, _ := time.Parse(time.RFC3339Nano, service.Time)
+
+		service.Timestamp = int64(t.UnixNano())
+		service.Time = ""
+
+		if val, ok := timeToErrCount[service.Timestamp]; ok {
+			service.NumErrors = val
+		}
+
+		service.ErrorRate = float32(service.NumErrors) / float32(query.StepSeconds)
+	}
+
+	return serviceOverview, nil
 }
 
 func (r *Reader) ServiceDBOverview(ctx context.Context, query *ServiceOverviewArgs) ([]ServiceDBOverview, error) {

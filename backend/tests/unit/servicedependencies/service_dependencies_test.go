@@ -109,20 +109,21 @@ func TestServiceDependencies(t *testing.T) {
 
 			calls := mockStoreClient.ReadCalledWith()
 
-			require.Equal(t, len(calls), testCase.readCalledTimes)
+			require.Equal(t, testCase.readCalledTimes, len(calls))
 
 			for i, call := range calls {
 				require.Equal(t, testCase.readCalledWith[i], call)
 			}
 
 			require.Equal(t, testCase.payload, string(bs))
+
+			t.Cleanup(func() {
+				err = httpServer.Stop()
+				require.NoError(t, err)
+
+				mockStoreClient.ResetCalledWith()
+			})
 		})
 
-		t.Cleanup(func() {
-			err = httpServer.Stop()
-			require.NoError(t, err)
-
-			mockStoreClient.ResetCalledWith()
-		})
 	}
 }
