@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -31,6 +32,52 @@ func (p *RequestParser) ParseGetServicesRequest(r *http.Request) (*reader.Servic
 	}
 
 	return serviceArgs, nil
+}
+
+func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader.ServiceOverviewArgs, error) {
+	startTime, err := p.parseTime("start", r)
+	if err != nil {
+		return nil, err
+	}
+
+	endTime, err := p.parseTime("end", r)
+	if err != nil {
+		return nil, err
+	}
+
+	stepStr := r.URL.Query().Get("step")
+	if len(stepStr) == 0 {
+		return nil, errors.New("step param missing in query")
+	}
+
+	stepInt, err := strconv.Atoi(stepStr)
+	if err != nil {
+		return nil, err
+	}
+
+	if stepInt < 60 {
+		return nil, errors.New("step param is less than 60")
+	}
+
+	serviceName := r.URL.Query().Get("service")
+	if len(serviceName) == 0 {
+		return nil, errors.New("service param missing in query")
+	}
+
+	fmt.Printf("STEP %+v", stepInt)
+
+	fmt.Printf("SERVICE %v", serviceName)
+
+	serviceOverviewArgs := &reader.ServiceOverviewArgs{
+		ServiceName: serviceName,
+		Start:       startTime,
+		StartTime:   startTime.Format(time.RFC3339Nano),
+		End:         endTime,
+		EndTime:     endTime.Format(time.RFC3339Nano),
+		StepSeconds: stepInt,
+	}
+
+	return serviceOverviewArgs, nil
 }
 
 func (p *RequestParser) parseTime(param string, r *http.Request) (*time.Time, error) {

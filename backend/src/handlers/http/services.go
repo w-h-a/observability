@@ -15,7 +15,6 @@ type Services struct {
 	parser *utils.RequestParser
 }
 
-// get services
 func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
 	query, err := s.parser.ParseGetServicesRequest(r)
 	if err != nil {
@@ -32,7 +31,6 @@ func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
-// get service dependencies
 func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request) {
 	query, err := s.parser.ParseGetServicesRequest(r)
 	if err != nil {
@@ -49,11 +47,26 @@ func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request
 	httputils.OkResponse(w, result)
 }
 
-// get services list
 func (s *Services) GetServicesList(w http.ResponseWriter, r *http.Request) {
 	result, err := s.reader.ServicesList(context.TODO())
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServicesList", "failed to retrieve services list: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
+func (s *Services) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetServiceOverviewRequest(r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServiceOverview", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.ServiceOverview(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServiceOverview", "failed to retrieve service overview: %v", err))
 		return
 	}
 

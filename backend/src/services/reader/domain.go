@@ -42,7 +42,6 @@ type ServiceOverviewArgs struct {
 	StartTime   string
 	End         *time.Time
 	EndTime     string
-	Period      string
 	StepSeconds int
 }
 
