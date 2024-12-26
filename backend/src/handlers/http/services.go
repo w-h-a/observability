@@ -57,8 +57,24 @@ func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request
 	httputils.OkResponse(w, result)
 }
 
+func (s *Services) GetOperations(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetOperationsRequest(r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetOperations", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.Operations(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetOperations", "failed to retrieve service operations: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
 func (s *Services) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetServiceOverviewRequest(r)
+	query, err := s.parser.ParseGetOverviewRequest(r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServiceOverview", "failed to parse request: %v", err))
 		return

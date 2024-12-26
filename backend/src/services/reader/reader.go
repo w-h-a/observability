@@ -13,16 +13,6 @@ type Reader struct {
 	repo repos.Repo
 }
 
-func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
-	services := []string{}
-
-	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
-		return nil, err
-	}
-
-	return services, nil
-}
-
 func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service, error) {
 	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
 
@@ -54,6 +44,16 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 		}
 
 		service.ErrorRate = float32(service.NumErrors) / float32(query.Period)
+	}
+
+	return services, nil
+}
+
+func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
+	services := []string{}
+
+	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
+		return nil, err
 	}
 
 	return services, nil
@@ -109,8 +109,14 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 	return serviceDependencies, nil
 }
 
-func (r *Reader) Operations(ctx context.Context, serviceName string) ([]string, error) {
-	return nil, nil
+func (r *Reader) Operations(ctx context.Context, query *OperationsArgs) ([]string, error) {
+	operations := []string{}
+
+	if err := r.repo.ReadServiceSpecificOperations(ctx, &operations, query.ServiceName); err != nil {
+		return nil, err
+	}
+
+	return operations, nil
 }
 
 func (r *Reader) TopEndpoints(ctx context.Context, query *TopEndpointsArgs) ([]TopEndpoints, error) {

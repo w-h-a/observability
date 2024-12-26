@@ -34,7 +34,20 @@ func (p *RequestParser) ParseGetServicesRequest(r *http.Request) (*reader.Servic
 	return serviceArgs, nil
 }
 
-func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader.OverviewArgs, error) {
+func (p *RequestParser) ParseGetOperationsRequest(r *http.Request) (*reader.OperationsArgs, error) {
+	serviceName := r.URL.Query().Get("service")
+	if len(serviceName) == 0 {
+		return nil, errors.New("service param missing in query")
+	}
+
+	operationsArgs := &reader.OperationsArgs{
+		ServiceName: serviceName,
+	}
+
+	return operationsArgs, nil
+}
+
+func (p *RequestParser) ParseGetOverviewRequest(r *http.Request) (*reader.OverviewArgs, error) {
 	startTime, err := p.parseTime("start", r)
 	if err != nil {
 		return nil, err
@@ -63,10 +76,6 @@ func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader
 	if len(serviceName) == 0 {
 		return nil, errors.New("service param missing in query")
 	}
-
-	fmt.Printf("STEP %+v", stepInt)
-
-	fmt.Printf("SERVICE %v", serviceName)
 
 	serviceOverviewArgs := &reader.OverviewArgs{
 		ServiceName: serviceName,

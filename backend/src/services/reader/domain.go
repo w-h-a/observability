@@ -34,6 +34,12 @@ type ServiceDependency struct {
 	CallCount int    `json:"callCount,omitempty"`
 }
 
+// operations
+
+type OperationsArgs struct {
+	ServiceName string
+}
+
 // endpoints
 
 type TopEndpointsArgs struct {
