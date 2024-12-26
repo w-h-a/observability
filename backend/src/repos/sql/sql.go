@@ -61,6 +61,17 @@ func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, st
 	return nil
 }
 
+func (r *sqlRepo) ReadServiceSpecificOperations(ctx context.Context, dest interface{}, serviceName string) error {
+	query := fmt.Sprintf(`SELECT DISTINCT SpanName as spanName FROM %s.%s WHERE ServiceName='%s' AND toDate(Timestamp) > now() - INTERVAL 1 DAY`, r.options.Database, r.options.Table, serviceName)
+
+	if err := r.options.Client.Read(ctx, dest, query); err != nil {
+		log.Errorf("store client fail to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
 func (r *sqlRepo) ReadServiceSpecificServerCalls(ctx context.Context, dest interface{}, serviceName, interval, startTimestamp, endTimestamp string) error {
 	query := fmt.Sprintf(`SELECT toStartOfInterval(Timestamp, INTERVAL %s minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' AND ServiceName='%s' GROUP BY time ORDER BY time DESC`, interval, r.options.Database, r.options.Table, startTimestamp, endTimestamp, serviceName)
 
