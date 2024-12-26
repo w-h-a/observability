@@ -34,7 +34,7 @@ func (p *RequestParser) ParseGetServicesRequest(r *http.Request) (*reader.Servic
 	return serviceArgs, nil
 }
 
-func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader.ServiceOverviewArgs, error) {
+func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader.OverviewArgs, error) {
 	startTime, err := p.parseTime("start", r)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (p *RequestParser) ParseGetServiceOverviewRequest(r *http.Request) (*reader
 
 	fmt.Printf("SERVICE %v", serviceName)
 
-	serviceOverviewArgs := &reader.ServiceOverviewArgs{
+	serviceOverviewArgs := &reader.OverviewArgs{
 		ServiceName: serviceName,
 		Start:       startTime,
 		StartTime:   startTime.Format(time.RFC3339Nano),
