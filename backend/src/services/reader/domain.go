@@ -83,12 +83,25 @@ type ServiceOverview struct {
 
 // http overview
 
+type HttpOverview struct {
+	Timestamp   int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
+	Time        string  `json:"time,omitempty" db:"time,omitempty"`
+	HttpUrl     string  `json:"httpUrl,omitempty" db:"httpUrl,omitempty"`
+	HttpMethod  string  `json:"httpMethod,omitempty" db:"httpMethod,omitempty"`
+	AvgDuration float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
+	NumCalls    int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
+	CallRate    float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
+	NumErrors   int     `json:"numErrors" db:"numErrors"`
+	ErrorRate   float32 `json:"errorRate" db:"errorRate"`
+}
+
 // rpc overview
 
 type RpcOverview struct {
 	Timestamp   int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
 	Time        string  `json:"time,omitempty" db:"time,omitempty"`
-	RpcSystem   string  `json:"rpcSystem,omitempty" db:"rpcSystem,omitempty"`
+	RpcService  string  `json:"rpcService,omitempty" db:"rpcService,omitempty"`
+	RpcMethod   string  `json:"rpcMethod,omitempty" db:"rpcMethod,omitempty"`
 	AvgDuration float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
 	NumCalls    int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
 	CallRate    float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
@@ -98,7 +111,31 @@ type RpcOverview struct {
 
 // db overview
 
+type DBOverview struct {
+	Timestamp   int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
+	Time        string  `json:"time,omitempty" db:"time,omitempty"`
+	DBSystem    string  `json:"dbSystem,omitempty" db:"dbSystem,omitempty"`
+	DBOperation string  `json:"dbOperation,omitempty" db:"dbOperation,omitempty"`
+	AvgDuration float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
+	NumCalls    int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
+	CallRate    float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
+	NumErrors   int     `json:"numErrors" db:"numErrors"`
+	ErrorRate   float32 `json:"errorRate" db:"errorRate"`
+}
+
 // messaging overview
+
+type MessagingOverview struct {
+	Timestamp          int64   `json:"timestamp,omitempty" db:"timestamp,omitempty"`
+	Time               string  `json:"time,omitempty" db:"time,omitempty"`
+	MessagingSystem    string  `json:"messagingSystem,omitempty" db:"messagingSystem,omitempty"`
+	MessagingOperation string  `json:"messagingOperation,omitempty" db:"messagingOperation,omitempty"`
+	AvgDuration        float32 `json:"avgDuration,omitempty" db:"avgDuration,omitempty"`
+	NumCalls           int     `json:"numCalls,omitempty" db:"numCalls,omitempty"`
+	CallRate           float32 `json:"callRate,omitempty" db:"callRate,omitempty"`
+	NumErrors          int     `json:"numErrors" db:"numErrors"`
+	ErrorRate          float32 `json:"errorRate" db:"errorRate"`
+}
 
 // spans
 

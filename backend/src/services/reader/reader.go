@@ -179,8 +179,8 @@ func (r *Reader) ServiceOverview(ctx context.Context, query *OverviewArgs) ([]*S
 }
 
 // https://opentelemetry.io/docs/specs/semconv/http/http-spans/
-func (r *Reader) HttpOverview() {
-
+func (r *Reader) HttpOverview(ctx context.Context, query *OverviewArgs) ([]*HttpOverview, error) {
+	return nil, nil
 }
 
 // https://opentelemetry.io/docs/specs/semconv/rpc/rpc-spans/
@@ -189,28 +189,28 @@ func (r *Reader) RpcOverview(ctx context.Context, query *OverviewArgs) ([]*RpcOv
 }
 
 // https://opentelemetry.io/docs/specs/semconv/database/database-spans/
-func (r *Reader) DBOverview() {
-
+func (r *Reader) DBOverview(ctx context.Context, query *OverviewArgs) ([]*DBOverview, error) {
+	return nil, nil
 }
 
 // https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/
-func (r *Reader) MessagingOverview() {
-
-}
-
-func (r *Reader) Traces(ctx context.Context, traceId string) ([]Span, error) {
+func (r *Reader) MessagingOverview(ctx context.Context, query *OverviewArgs) ([]*MessagingOverview, error) {
 	return nil, nil
 }
 
-func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]Span, error) {
+func (r *Reader) Traces(ctx context.Context, traceId string) ([]*Span, error) {
 	return nil, nil
 }
 
-func (r *Reader) SpansAggregate(ctx context.Context, query *SpansAggregateArgs) ([]SpanAggregate, error) {
+func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*Span, error) {
 	return nil, nil
 }
 
-func (r *Reader) Tags(ctx context.Context, serviceName string) ([]TagItem, error) {
+func (r *Reader) SpansAggregate(ctx context.Context, query *SpansAggregateArgs) ([]*SpanAggregate, error) {
+	return nil, nil
+}
+
+func (r *Reader) Tags(ctx context.Context, serviceName string) ([]*TagItem, error) {
 	return nil, nil
 }
 
