@@ -6,22 +6,22 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/store"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 )
 
-type mockStoreClient struct {
-	options        store.ClientOptions
+type mockRepoClient struct {
+	options        repos.ClientOptions
 	readImpl       func() error
 	spans          []interface{}
 	readCalledWith []map[string]string
 	mtx            sync.RWMutex
 }
 
-func (c *mockStoreClient) Options() store.ClientOptions {
+func (c *mockRepoClient) Options() repos.ClientOptions {
 	return c.options
 }
 
-func (c *mockStoreClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
+func (c *mockRepoClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
 	c.mtx.Lock()
 
 	args := map[string]string{
@@ -57,17 +57,17 @@ func (c *mockStoreClient) Read(ctx context.Context, dest interface{}, str string
 	return nil
 }
 
-func (c *mockStoreClient) ReadCalledWith() []map[string]string {
+func (c *mockRepoClient) ReadCalledWith() []map[string]string {
 	return c.readCalledWith
 }
 
-func (c *mockStoreClient) ResetCalledWith() {
+func (c *mockRepoClient) ResetCalledWith() {
 	c.readCalledWith = []map[string]string{}
 }
 
-func NewClient(readImpl func() error, spanData ...interface{}) store.Client {
-	c := &mockStoreClient{
-		options:        store.NewClientOptions(),
+func NewClient(readImpl func() error, spanData ...interface{}) repos.Client {
+	c := &mockRepoClient{
+		options:        repos.NewClientOptions(),
 		readImpl:       readImpl,
 		spans:          spanData,
 		readCalledWith: []map[string]string{},

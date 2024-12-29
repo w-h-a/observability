@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/trace-blame/backend/src/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 )
 
 type Reader struct {

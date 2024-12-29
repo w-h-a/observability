@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/w-h-a/pkg/utils/httputils"
 	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/store"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 )
 
 func TestServicesList(t *testing.T) {
@@ -22,7 +22,7 @@ func TestServicesList(t *testing.T) {
 
 	testCases := []struct {
 		when           string
-		client         store.Client
+		client         repos.Client
 		then           string
 		readCalledWith []map[string]interface{}
 		payload        string
@@ -57,7 +57,7 @@ func TestServicesList(t *testing.T) {
 
 		httpServer := src.AppFactory(testCase.client)
 
-		mockStoreClient := testCase.client.(*mockStoreClient)
+		mockStoreClient := testCase.client.(*mockRepoClient)
 
 		t.Run(testCase.when, func(t *testing.T) {
 			err = httpServer.Run()
