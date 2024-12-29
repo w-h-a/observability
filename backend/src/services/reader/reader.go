@@ -52,7 +52,7 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
 	services := []string{}
 
-	if err := r.repo.ReadDistinctServiceNames(ctx, &services); err != nil {
+	if err := r.repo.ReadServiceNames(ctx, &services); err != nil {
 		return nil, err
 	}
 

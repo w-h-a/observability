@@ -38,23 +38,12 @@ func (r *sqlRepo) ReadServerErrors(ctx context.Context, dest interface{}, startT
 	return nil
 }
 
-func (r *sqlRepo) ReadDistinctServiceNames(ctx context.Context, dest interface{}) error {
+func (r *sqlRepo) ReadServiceNames(ctx context.Context, dest interface{}) error {
 	query := fmt.Sprintf(`SELECT DISTINCT ServiceName as serviceName FROM %s.%s WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`, r.options.Database, r.options.Table)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
 		// TODO: log/trace?
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
-	}
-
-	return nil
-}
-
-func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error {
-	query := fmt.Sprintf(`SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s'`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
-
-	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
@@ -99,6 +88,17 @@ func (r *sqlRepo) ReadServiceSpecificServerErrors(ctx context.Context, dest inte
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
+func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error {
+	query := fmt.Sprintf(`SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s'`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
+
+	if err := r.options.Client.Read(ctx, dest, query); err != nil {
+		log.Errorf("repo client fail to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
