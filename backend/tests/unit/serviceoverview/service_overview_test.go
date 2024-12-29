@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/w-h-a/pkg/utils/httputils"
 	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/store"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
@@ -49,7 +49,7 @@ func TestServiceOverview(t *testing.T) {
 		when            string
 		endpoint        string
 		query           string
-		client          store.Client
+		client          repos.Client
 		then            string
 		readCalledTimes int
 		readCalledWith  []map[string]string
@@ -117,7 +117,7 @@ func TestServiceOverview(t *testing.T) {
 
 		httpServer := src.AppFactory(testCase.client)
 
-		mockStoreClient := testCase.client.(*mockStoreClient)
+		mockStoreClient := testCase.client.(*mockRepoClient)
 
 		t.Run(testCase.when, func(t *testing.T) {
 			err = httpServer.Run()

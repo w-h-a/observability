@@ -3,14 +3,14 @@ package memory
 import (
 	"context"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/store"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 )
 
 type client struct {
-	options store.ClientOptions
+	options repos.ClientOptions
 }
 
-func (c *client) Options() store.ClientOptions {
+func (c *client) Options() repos.ClientOptions {
 	return c.options
 }
 
@@ -19,8 +19,8 @@ func (c *client) Read(ctx context.Context, dest interface{}, str string, additio
 	return nil
 }
 
-func NewClient(opts ...store.ClientOption) store.Client {
-	options := store.NewClientOptions(opts...)
+func NewClient(opts ...repos.ClientOption) repos.Client {
+	options := repos.NewClientOptions(opts...)
 
 	return &client{options}
 }

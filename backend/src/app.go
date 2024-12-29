@@ -10,25 +10,23 @@ import (
 	"github.com/w-h-a/pkg/telemetry/log"
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/memoryutils"
-	"github.com/w-h-a/trace-blame/backend/src/clients/store"
-	memorystore "github.com/w-h-a/trace-blame/backend/src/clients/store/memory"
-	sqlstore "github.com/w-h-a/trace-blame/backend/src/clients/store/sql"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	memoryrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/memory"
+	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
 	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
-	"github.com/w-h-a/trace-blame/backend/src/repos"
-	sqlrepo "github.com/w-h-a/trace-blame/backend/src/repos/sql"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 var (
-	defaultStoreClients = map[string]func(...store.ClientOption) store.Client{
-		"clickhouse": sqlstore.NewClient,
-		"memory":     memorystore.NewClient,
+	defaultRepoClients = map[string]func(...repos.ClientOption) repos.Client{
+		"clickhouse": sqlrepo.NewClient,
+		"memory":     memoryrepo.NewClient,
 	}
 )
 
-func AppFactory(storeClient store.Client) serverv2.Server {
+func AppFactory(repoClient repos.Client) serverv2.Server {
 	// config
 	config.NewConfig()
 
@@ -48,7 +46,7 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
-		repos.RepoWithClient(getStoreClient(storeClient)),
+		repos.RepoWithClient(getRepoClient(repoClient)),
 		repos.RepoWithDatabase(config.DB()),
 		repos.RepoWithTable(config.Table()),
 	)
@@ -90,20 +88,20 @@ func AppFactory(storeClient store.Client) serverv2.Server {
 	return httpServer
 }
 
-func getStoreClient(storeClient store.Client) store.Client {
-	if storeClient != nil {
-		return storeClient
+func getRepoClient(repoClient repos.Client) repos.Client {
+	if repoClient != nil {
+		return repoClient
 	}
 
-	storeClientBuilder, exists := defaultStoreClients[config.Store()]
+	repoClientBuilder, exists := defaultRepoClients[config.Store()]
 	if !exists && len(config.Store()) > 0 {
 		log.Fatalf("store %s not supported", config.Store())
 	} else if !exists {
-		return memorystore.NewClient()
+		return memoryrepo.NewClient()
 	}
 
-	return storeClientBuilder(
-		store.ClientWithDriver(config.Store()),
-		store.ClientWithAddrs(config.StoreAddress()),
+	return repoClientBuilder(
+		repos.ClientWithDriver(config.Store()),
+		repos.ClientWithAddrs(config.StoreAddress()),
 	)
 }
