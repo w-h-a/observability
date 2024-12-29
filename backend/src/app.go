@@ -11,7 +11,6 @@ import (
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/memoryutils"
 	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
-	memoryrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/memory"
 	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
@@ -19,17 +18,8 @@ import (
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
-var (
-	defaultRepoClients = map[string]func(...repos.ClientOption) repos.Client{
-		"clickhouse": sqlrepo.NewClient,
-		"memory":     memoryrepo.NewClient,
-	}
-)
-
-func AppFactory(repoClient repos.Client) serverv2.Server {
-	// config
-	config.NewConfig()
-
+func ServerFactory(repoClient repos.Client) serverv2.Server {
+	// name
 	name := fmt.Sprintf("%s.%s", config.Namespace(), config.Name())
 
 	// log
@@ -46,7 +36,7 @@ func AppFactory(repoClient repos.Client) serverv2.Server {
 
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
-		repos.RepoWithClient(getRepoClient(repoClient)),
+		repos.RepoWithClient(repoClient),
 		repos.RepoWithDatabase(config.DB()),
 		repos.RepoWithTable(config.Table()),
 	)
@@ -86,22 +76,4 @@ func AppFactory(repoClient repos.Client) serverv2.Server {
 	httpServer.Handle(router)
 
 	return httpServer
-}
-
-func getRepoClient(repoClient repos.Client) repos.Client {
-	if repoClient != nil {
-		return repoClient
-	}
-
-	repoClientBuilder, exists := defaultRepoClients[config.Store()]
-	if !exists && len(config.Store()) > 0 {
-		log.Fatalf("store %s not supported", config.Store())
-	} else if !exists {
-		return memoryrepo.NewClient()
-	}
-
-	return repoClientBuilder(
-		repos.ClientWithDriver(config.Store()),
-		repos.ClientWithAddrs(config.StoreAddress()),
-	)
 }

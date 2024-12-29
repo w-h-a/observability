@@ -6,10 +6,23 @@ import (
 
 	"github.com/w-h-a/pkg/telemetry/log"
 	"github.com/w-h-a/trace-blame/backend/src"
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
+	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 
 func main() {
-	httpServer := src.AppFactory(nil)
+	// config
+	config.NewConfig()
+
+	// clients
+	repoClient := sqlrepo.NewClient(
+		repos.ClientWithDriver(config.Store()),
+		repos.ClientWithAddrs(config.StoreAddress()),
+	)
+
+	// server
+	httpServer := src.ServerFactory(repoClient)
 
 	// wait group and error chan
 	wg := &sync.WaitGroup{}
