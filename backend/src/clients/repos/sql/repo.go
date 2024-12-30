@@ -20,7 +20,7 @@ func (r *sqlRepo) ReadServerCalls(ctx context.Context, dest interface{}, startTi
 	query := fmt.Sprintf(`SELECT ServiceName as serviceName, quantile(0.99)(Duration) as p99, avg(Duration) as avgDuration, count(*) as numCalls FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' GROUP BY serviceName ORDER BY p99 DESC`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
+		log.Errorf("repo client failed to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
@@ -31,7 +31,7 @@ func (r *sqlRepo) ReadServerErrors(ctx context.Context, dest interface{}, startT
 	query := fmt.Sprintf(`SELECT ServiceName as serviceName, count(*) as numErrors FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' AND StatusCode='Error' GROUP BY serviceName`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
+		log.Errorf("repo client failed to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
@@ -54,7 +54,7 @@ func (r *sqlRepo) ReadServiceSpecificOperations(ctx context.Context, dest interf
 	query := fmt.Sprintf(`SELECT DISTINCT SpanName as spanName FROM %s.%s WHERE ServiceName='%s' AND toDate(Timestamp) > now() - INTERVAL 1 DAY`, r.options.Database, r.options.Table, serviceName)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
+		log.Errorf("repo client failed to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
@@ -65,7 +65,7 @@ func (r *sqlRepo) ReadServiceSpecificEndpoints(ctx context.Context, dest interfa
 	query := fmt.Sprintf(`SELECT quantile(0.5)(Duration) as p50, quantile(0.95)(Duration) as p95, quantile(0.99)(Duration) as p99, count(*) as numCalls, SpanName as name FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s' AND SpanKind='Server' and ServiceName='%s' GROUP BY name`, r.options.Database, r.options.Table, startTimestamp, endTimestamps, serviceName)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
+		log.Errorf("repo client failed to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 
@@ -98,7 +98,18 @@ func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, st
 	query := fmt.Sprintf(`SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s'`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
-		log.Errorf("repo client fail to read: %v", err)
+		log.Errorf("repo client failed to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
+func (r *sqlRepo) ReadTraceSpecificSpans(ctx context.Context, dest interface{}, traceId string) error {
+	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE traceId='%s'`, r.options.Database, r.options.Table, traceId)
+
+	if err := r.options.Client.Read(ctx, dest, query); err != nil {
+		log.Errorf("repo client failed to read: %v", err)
 		return repos.ErrProcessingQuery
 	}
 

@@ -49,7 +49,7 @@ func TestServiceOverview(t *testing.T) {
 	testCases := []unit.TestCase{
 		{
 			When:            "when: we get a request to retrieve a service overview and the client makes a successful call to the db but there are no error spans",
-			Endpoint:        "/api/v1/services/overview",
+			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=60",
 			Client:          successClient1,
 			Then:            "then: we send back a slice with the overview for the service without errors",
@@ -66,7 +66,7 @@ func TestServiceOverview(t *testing.T) {
 		},
 		{
 			When:            "when: we get a request to retrieve a service overview and the client makes a successful call to the db and there are error spans",
-			Endpoint:        "/api/v1/services/overview",
+			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=60",
 			Client:          successClient2,
 			Then:            "then: we send back a slice with the overview for the service with errors",
@@ -83,23 +83,23 @@ func TestServiceOverview(t *testing.T) {
 		},
 		{
 			When:            "when: we get a request to retrieve a service overview but no service name was queried",
-			Endpoint:        "/api/v1/services/overview",
+			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&&step=60",
 			Client:          successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]string{},
-			Payload:         `{"id":"Services.GetServiceOverview","code":400,"detail":"failed to parse request: service param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Service.GetServiceOverview","code":400,"detail":"failed to parse request: service param missing in query","status":"Bad Request"}`,
 		},
 		{
 			When:            "when: we get a request to retrieve a service overview but a step of less than 60 was queried",
-			Endpoint:        "/api/v1/services/overview",
+			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=10",
 			Client:          successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]string{},
-			Payload:         `{"id":"Services.GetServiceOverview","code":400,"detail":"failed to parse request: step param is less than 60","status":"Bad Request"}`,
+			Payload:         `{"id":"Service.GetServiceOverview","code":400,"detail":"failed to parse request: step param is less than 60","status":"Bad Request"}`,
 		},
 	}
 
