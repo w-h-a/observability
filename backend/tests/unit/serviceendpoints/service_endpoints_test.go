@@ -39,9 +39,10 @@ func TestServiceEndpoints(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a slice of the endpoints for the service",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT quantile(0.5)(Duration) as p50, quantile(0.95)(Duration) as p95, quantile(0.99)(Duration) as p99, count(*) as numCalls, SpanName as name FROM . WHERE Timestamp>='1735254100000000000' AND Timestamp<='1735254931000000000' AND SpanKind='Server' and ServiceName='frontend' GROUP BY name`,
+					"str":        `SELECT quantile(0.5)(Duration) as p50, quantile(0.95)(Duration) as p95, quantile(0.99)(Duration) as p99, count(*) as numCalls, SpanName as name FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' and ServiceName=? GROUP BY name`,
+					"additional": []interface{}{"1735254100000000000", "1735254931000000000", "frontend"},
 				},
 			},
 			Payload: `[{"name":"/config","p50":70979,"p95":143176.75,"p99":148701.75,"numCalls":6},{"name":"/dispatch","p50":751639360,"p95":751639360,"p99":751639360,"numCalls":6}]`,
@@ -53,7 +54,7 @@ func TestServiceEndpoints(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Service.GetEndpoints","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
 		},
 	}

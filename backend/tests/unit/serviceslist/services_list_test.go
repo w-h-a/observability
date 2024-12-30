@@ -29,9 +29,10 @@ func TestServicesList(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back the slice of service names",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"str":        `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"additional": []interface{}(nil),
 				},
 			},
 			Payload: `["redis","postgres","customer","payments"]`,
@@ -42,9 +43,10 @@ func TestServicesList(t *testing.T) {
 			Client:          failureClient,
 			Then:            "then: we send back an internal server error message",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"str":        `SELECT DISTINCT ServiceName as serviceName FROM . WHERE toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"additional": []interface{}(nil),
 				},
 			},
 			Payload: `{"id":"Services.GetServicesList","code":500,"detail":"failed to retrieve services list: failed to process query","status":"Internal Server Error"}`,

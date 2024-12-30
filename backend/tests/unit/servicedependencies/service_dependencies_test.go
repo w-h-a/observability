@@ -63,9 +63,10 @@ func TestServiceDependencies(t *testing.T) {
 			Client:          successClient1,
 			Then:            "then: we send back the service dependencies",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000'`,
+					"str":        `SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM . WHERE Timestamp>=? AND Timestamp<=?`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000"},
 				},
 			},
 			Payload: `[{"parent":"frontend","child":"frontend","callCount":2},{"parent":"frontend","child":"customer","callCount":1}]`,
@@ -77,9 +78,10 @@ func TestServiceDependencies(t *testing.T) {
 			Client:          successClient2,
 			Then:            "then: we send back an empty slice",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000'`,
+					"str":        `SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM . WHERE Timestamp>=? AND Timestamp<=?`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000"},
 				},
 			},
 			Payload: `[]`,

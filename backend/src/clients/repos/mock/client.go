@@ -14,7 +14,7 @@ type MockRepoClient struct {
 	readImpl        func() error
 	xs              [][]interface{}
 	readCalledTimes int
-	readCalledWith  []map[string]string
+	readCalledWith  []map[string]interface{}
 	mtx             sync.RWMutex
 }
 
@@ -25,8 +25,9 @@ func (c *MockRepoClient) Options() repos.ClientOptions {
 func (c *MockRepoClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
 	c.mtx.Lock()
 
-	args := map[string]string{
-		"str": str,
+	args := map[string]interface{}{
+		"str":        str,
+		"additional": additional,
 	}
 
 	c.readCalledTimes += 1
@@ -66,12 +67,12 @@ func (c *MockRepoClient) Read(ctx context.Context, dest interface{}, str string,
 	return nil
 }
 
-func (c *MockRepoClient) ReadCalledWith() []map[string]string {
+func (c *MockRepoClient) ReadCalledWith() []map[string]interface{} {
 	return c.readCalledWith
 }
 
 func (c *MockRepoClient) ResetCalledWith() {
-	c.readCalledWith = []map[string]string{}
+	c.readCalledWith = []map[string]interface{}{}
 }
 
 func NewClient(opts ...repos.ClientOption) repos.Client {
@@ -79,7 +80,7 @@ func NewClient(opts ...repos.ClientOption) repos.Client {
 
 	c := &MockRepoClient{
 		options:        options,
-		readCalledWith: []map[string]string{},
+		readCalledWith: []map[string]interface{}{},
 		mtx:            sync.RWMutex{},
 	}
 

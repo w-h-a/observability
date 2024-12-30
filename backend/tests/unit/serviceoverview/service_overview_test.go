@@ -54,12 +54,14 @@ func TestServiceOverview(t *testing.T) {
 			Client:          successClient1,
 			Then:            "then: we send back a slice with the overview for the service without errors",
 			ReadCalledTimes: 2,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' AND ServiceName='route' GROUP BY time ORDER BY time DESC`,
+					"str":        `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' AND ServiceName=? GROUP BY time ORDER BY time DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000", "route"},
 				},
 				{
-					"str": `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, count(*) as numErrors FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' AND ServiceName='route' AND StatusCode='Error' GROUP BY time ORDER BY time DESC`,
+					"str":        `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, count(*) as numErrors FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' AND ServiceName=? AND StatusCode='Error' GROUP BY time ORDER BY time DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000", "route"},
 				},
 			},
 			Payload: `[{"timestamp":1735228800000000000,"p50":55396310,"p95":65587084,"p99":69049850,"numCalls":10,"callRate":0.16666667,"numErrors":0,"errorRate":0}]`,
@@ -71,12 +73,14 @@ func TestServiceOverview(t *testing.T) {
 			Client:          successClient2,
 			Then:            "then: we send back a slice with the overview for the service with errors",
 			ReadCalledTimes: 2,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' AND ServiceName='route' GROUP BY time ORDER BY time DESC`,
+					"str":        `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, quantile(0.99)(Duration) as p99, quantile(0.95)(Duration) as p95, quantile(0.50)(Duration) as p50, count(*) as numCalls FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' AND ServiceName=? GROUP BY time ORDER BY time DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000", "route"},
 				},
 				{
-					"str": `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, count(*) as numErrors FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' AND ServiceName='route' AND StatusCode='Error' GROUP BY time ORDER BY time DESC`,
+					"str":        `SELECT toStartOfInterval(Timestamp, INTERVAL 1 minute) as time, count(*) as numErrors FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' AND ServiceName=? AND StatusCode='Error' GROUP BY time ORDER BY time DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000", "route"},
 				},
 			},
 			Payload: `[{"timestamp":1735228800000000000,"p50":55396310,"p95":65587084,"p99":69049850,"numCalls":16,"callRate":0.26666668,"numErrors":4,"errorRate":0.06666667}]`,
@@ -88,7 +92,7 @@ func TestServiceOverview(t *testing.T) {
 			Client:          successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Service.GetServiceOverview","code":400,"detail":"failed to parse request: service param missing in query","status":"Bad Request"}`,
 		},
 		{
@@ -98,7 +102,7 @@ func TestServiceOverview(t *testing.T) {
 			Client:          successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Service.GetServiceOverview","code":400,"detail":"failed to parse request: step param is less than 60","status":"Bad Request"}`,
 		},
 	}

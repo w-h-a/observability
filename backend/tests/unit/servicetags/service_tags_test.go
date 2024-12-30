@@ -24,7 +24,7 @@ func TestServiceTags(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Service.GetTags","code":400,"detail":"failed to parse request: service param missing in query","status":"Bad Request"}`,
 		},
 		{
@@ -34,9 +34,10 @@ func TestServiceTags(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a slice of unique tag key values for this service",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT DISTINCT arrayJoin(SpanAttributes.keys) as tags FROM . WHERE ServiceName='driver' AND toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"str":        `SELECT DISTINCT arrayJoin(SpanAttributes.keys) as tags FROM . WHERE ServiceName=? AND toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"additional": []interface{}{"driver"},
 				},
 			},
 			Payload: `["rpc.service","rpc.method","rpc.system","net.sock.peer.addr","net.sock.peer.port"]`,
