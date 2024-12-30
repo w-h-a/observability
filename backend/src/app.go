@@ -47,6 +47,7 @@ func ServerFactory(repoClient repos.Client) serverv2.Server {
 	router.Methods(http.MethodGet).Path("/api/v1/service/operations").HandlerFunc(httpService.GetOperations)
 	router.Methods(http.MethodGet).Path("/api/v1/service/endpoints").HandlerFunc(httpService.GetEndpoints)
 	router.Methods(http.MethodGet).Path("/api/v1/service/overview").HandlerFunc(httpService.GetServiceOverview)
+	router.Methods(http.MethodGet).Path("/api/v1/service/tags").HandlerFunc(httpService.GetTags)
 	router.Methods(http.MethodGet).Path("/api/v1/spans/trace").HandlerFunc(httpSpans.GetSpansByTraceId)
 
 	httpOpts := []serverv2.ServerOption{

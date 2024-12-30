@@ -18,6 +18,7 @@ type Repo interface {
 	ReadServiceSpecificEndpoints(ctx context.Context, dest interface{}, serviceName string, startTimestamp, endTimestamps string) error
 	ReadServiceSpecificServerCalls(ctx context.Context, dest interface{}, serviceName, interval, startTimestamp, endTimestamp string) error
 	ReadServiceSpecificServerErrors(ctx context.Context, dest interface{}, serviceName, interval, startTimestamp, endTimestamp string) error
+	ReadServiceSpecificTags(ctx context.Context, dest interface{}, serviceName string) error
 	ReadSpanDependencies(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
 	ReadTraceSpecificSpans(ctx context.Context, dest interface{}, traceId string) error
 }

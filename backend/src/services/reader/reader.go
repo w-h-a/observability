@@ -198,6 +198,16 @@ func (r *Reader) MessagingOverview(ctx context.Context, query *OverviewArgs) ([]
 	return nil, nil
 }
 
+func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
+	tags := []string{}
+
+	if err := r.repo.ReadServiceSpecificTags(ctx, &tags, query.ServiceName); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
+}
+
 func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*SpanMatrix, error) {
 	return nil, nil
 }
@@ -225,10 +235,6 @@ func (r *Reader) SpansByTrace(ctx context.Context, query *SpansByTraceIdArgs) ([
 }
 
 func (r *Reader) SpansAggregate(ctx context.Context, query *SpansAggregateArgs) ([]*SpanAggregate, error) {
-	return nil, nil
-}
-
-func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
 	return nil, nil
 }
 
