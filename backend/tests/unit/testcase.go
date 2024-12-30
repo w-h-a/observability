@@ -9,6 +9,6 @@ type TestCase struct {
 	Client          repos.Client
 	Then            string
 	ReadCalledTimes int
-	ReadCalledWith  []map[string]string
+	ReadCalledWith  []map[string]interface{}
 	Payload         string
 }

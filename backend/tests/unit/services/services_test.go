@@ -52,7 +52,7 @@ func TestServices(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
 		},
 		{
@@ -62,7 +62,7 @@ func TestServices(t *testing.T) {
 			Client:          failureClient,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: end param missing in query","status":"Bad Request"}`,
 		},
 		{
@@ -72,12 +72,14 @@ func TestServices(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back the slice of services",
 			ReadCalledTimes: 2,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT ServiceName as serviceName, quantile(0.99)(Duration) as p99, avg(Duration) as avgDuration, count(*) as numCalls FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' GROUP BY serviceName ORDER BY p99 DESC`,
+					"str":        `SELECT ServiceName as serviceName, quantile(0.99)(Duration) as p99, avg(Duration) as avgDuration, count(*) as numCalls FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' GROUP BY serviceName ORDER BY p99 DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000"},
 				},
 				{
-					"str": `SELECT ServiceName as serviceName, count(*) as numErrors FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' AND StatusCode='Error' GROUP BY serviceName`,
+					"str":        `SELECT ServiceName as serviceName, count(*) as numErrors FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' AND StatusCode='Error' GROUP BY serviceName`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000"},
 				},
 			},
 			Payload: `[{"serviceName":"route","p99":723817200,"avgDuration":349520830,"numCalls":4000,"callRate":0.25149325,"numErrors":1,"errorRate":0.00006287331},{"serviceName":"customer","p99":299650080,"avgDuration":284536770,"numCalls":40,"callRate":0.0025149323,"numErrors":0,"errorRate":0}]`,
@@ -89,9 +91,10 @@ func TestServices(t *testing.T) {
 			Client:          failureClient,
 			Then:            "then: we send back a 500 error message",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT ServiceName as serviceName, quantile(0.99)(Duration) as p99, avg(Duration) as avgDuration, count(*) as numCalls FROM . WHERE Timestamp>='1734898000000000000' AND Timestamp<='1734913905000000000' AND SpanKind='Server' GROUP BY serviceName ORDER BY p99 DESC`,
+					"str":        `SELECT ServiceName as serviceName, quantile(0.99)(Duration) as p99, avg(Duration) as avgDuration, count(*) as numCalls FROM . WHERE Timestamp>=? AND Timestamp<=? AND SpanKind='Server' GROUP BY serviceName ORDER BY p99 DESC`,
+					"additional": []interface{}{"1734898000000000000", "1734913905000000000"},
 				},
 			},
 			Payload: `{"id":"Services.GetServices","code":500,"detail":"failed to retrieve services: failed to process query","status":"Internal Server Error"}`,

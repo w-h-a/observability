@@ -25,9 +25,10 @@ func TestServiceOperations(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a slice of the operations for the service",
 			ReadCalledTimes: 1,
-			ReadCalledWith: []map[string]string{
+			ReadCalledWith: []map[string]interface{}{
 				{
-					"str": `SELECT DISTINCT SpanName as spanName FROM . WHERE ServiceName='driver' AND toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"str":        `SELECT DISTINCT SpanName as spanName FROM . WHERE ServiceName=? AND toDate(Timestamp) > now() - INTERVAL 1 DAY`,
+					"additional": []interface{}{"driver"},
 				},
 			},
 			Payload: `["FindDriverIDs","GetDriver"]`,
@@ -39,7 +40,7 @@ func TestServiceOperations(t *testing.T) {
 			Client:          successClient,
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
-			ReadCalledWith:  []map[string]string{},
+			ReadCalledWith:  []map[string]interface{}{},
 			Payload:         `{"id":"Service.GetOperations","code":400,"detail":"failed to parse request: service param missing in query","status":"Bad Request"}`,
 		},
 	}
