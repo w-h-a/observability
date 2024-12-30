@@ -116,6 +116,19 @@ func (p *RequestParser) ParseGetOverviewRequest(r *http.Request) (*reader.Overvi
 	return serviceOverviewArgs, nil
 }
 
+func (p *RequestParser) ParseGetSpansByTraceRequest(r *http.Request) (*reader.SpansByTraceIdArgs, error) {
+	traceId := r.URL.Query().Get("traceId")
+	if len(traceId) == 0 {
+		return nil, errors.New("traceId param missing in query")
+	}
+
+	spansByTraceIdArgs := &reader.SpansByTraceIdArgs{
+		TraceId: traceId,
+	}
+
+	return spansByTraceIdArgs, nil
+}
+
 func (p *RequestParser) parseTime(param string, r *http.Request) (*time.Time, error) {
 	timeStr := r.URL.Query().Get(param)
 

@@ -5,18 +5,36 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/w-h-a/pkg/telemetry/log"
+	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/httputils"
+	"github.com/w-h-a/pkg/utils/memoryutils"
 	"github.com/w-h-a/trace-blame/backend/src"
 	"github.com/w-h-a/trace-blame/backend/src/clients/repos/mock"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 
 func RunTestCases(t *testing.T, testCases []TestCase) {
+	config.NewConfig()
+
+	// name
+	name := fmt.Sprintf("%s.%s", config.Namespace(), config.Name())
+
+	// log
+	logBuffer := memoryutils.NewBuffer()
+
+	logger := memorylog.NewLog(
+		log.LogWithPrefix(name),
+		memorylog.LogWithBuffer(logBuffer),
+	)
+
+	log.SetLogger(logger)
+
+	// traces
+
 	for _, testCase := range testCases {
 		var bs []byte
 		var err error
-
-		config.NewConfig()
 
 		httpServer := src.ServerFactory(testCase.Client)
 

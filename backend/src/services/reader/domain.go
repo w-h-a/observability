@@ -1,6 +1,9 @@
 package reader
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 // services
 
@@ -23,9 +26,9 @@ type Service struct {
 }
 
 type ServiceSpanDependency struct {
-	SpanId       string `json:"spanId,omitempty" db:"spanId,omitempty"`
-	ParentSpanId string `json:"parentSpanId,omitempty" db:"parentSpanId,omitempty"`
-	ServiceName  string `json:"serviceName,omitempty" db:"serviceName,omitempty"`
+	SpanId       string `db:"spanId,omitempty"`
+	ParentSpanId string `db:"parentSpanId,omitempty"`
+	ServiceName  string `db:"serviceName,omitempty"`
 }
 
 type ServiceDependency struct {
@@ -145,17 +148,40 @@ type SpansArgs struct {
 	Kind          string
 	Intervals     string
 	Start         *time.Time
+	StartTime     string
 	End           *time.Time
+	EndTime       string
 	MinDuration   string
 	MaxDuration   string
 	Tags          []TagQuery
 	Limit         int64
 	Order         string
 	Offset        int64
-	BatchSize     int64
+}
+
+type SpansByTraceIdArgs struct {
+	TraceId string
 }
 
 type Span struct {
+	Timestamp    string          `db:"timestamp"`
+	SpanId       string          `db:"spanId"`
+	ParentSpanId string          `db:"parentSpanId"`
+	TraceId      string          `db:"traceId"`
+	ServiceName  string          `db:"serviceName"`
+	Name         string          `db:"name"`
+	Kind         string          `db:"kind"`
+	Duration     int64           `db:"duration"`
+	Tags         [][]interface{} `db:"tags"`
+}
+
+func (s *Span) ToEventValues() []interface{} {
+	timeObj, _ := time.Parse(time.RFC3339Nano, s.Timestamp)
+
+	return []interface{}{int64(timeObj.UnixNano() / 1000000), s.SpanId, s.ParentSpanId, s.TraceId, s.ServiceName, s.Name, s.Kind, strconv.FormatInt(s.Duration, 10), s.Tags}
+}
+
+type SpanMatrix struct {
 	Columns []string        `json:"columns"`
 	Events  [][]interface{} `json:"events"`
 }
@@ -168,12 +194,12 @@ type SpansAggregateArgs struct {
 	Kind              string
 	Intervals         string
 	Start             *time.Time
+	StartTime         string
 	End               *time.Time
+	EndTime           string
 	MinDuration       string
 	MaxDuration       string
 	Tags              []TagQuery
-	GranOrigin        string
-	GranPeriod        string
 	StepSeconds       int
 	Dimension         string
 	AggregationOption string
@@ -193,7 +219,6 @@ type TagQuery struct {
 	Operator string
 }
 
-type TagItem struct {
-	TagKeys  string `json:"tagKeys" db:"tagKeys"`
-	TagCount int    `json:"tagCount" db:"tagCount"`
+type TagsArgs struct {
+	ServiceName string
 }

@@ -34,7 +34,7 @@ func TestServiceEndpoints(t *testing.T) {
 	testCases := []unit.TestCase{
 		{
 			When:            "when: we get a request to retrieve a service's endpoints and the client makes a successful call to the db",
-			Endpoint:        "/api/v1/services/endpoints",
+			Endpoint:        "/api/v1/service/endpoints",
 			Query:           "?service=frontend&start=1735254100&end=1735254931",
 			Client:          successClient,
 			Then:            "then: we send back a slice of the endpoints for the service",
@@ -48,13 +48,13 @@ func TestServiceEndpoints(t *testing.T) {
 		},
 		{
 			When:            "when: we get a request to retrieve a service's endpoints without start or end params",
-			Endpoint:        "/api/v1/services/endpoints",
+			Endpoint:        "/api/v1/service/endpoints",
 			Query:           "?service=driver",
 			Client:          successClient,
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]string{},
-			Payload:         `{"id":"Services.GetEndpoints","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Service.GetEndpoints","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
 		},
 	}
 

@@ -57,54 +57,6 @@ func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request
 	httputils.OkResponse(w, result)
 }
 
-func (s *Services) GetOperations(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetOperationsRequest(r)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetOperations", "failed to parse request: %v", err))
-		return
-	}
-
-	result, err := s.reader.Operations(context.TODO(), query)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetOperations", "failed to retrieve service operations: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
-func (s *Services) GetEndpoints(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetEndpointsRequest(r)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetEndpoints", "failed to parse request: %v", err))
-		return
-	}
-
-	result, err := s.reader.Endpoints(context.TODO(), query)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetEndpoints", "failed to retrieve top endpoints: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
-func (s *Services) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetOverviewRequest(r)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServiceOverview", "failed to parse request: %v", err))
-		return
-	}
-
-	result, err := s.reader.ServiceOverview(context.TODO(), query)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Services.GetServiceOverview", "failed to retrieve service overview: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
 func NewServicesHandler(reader *reader.Reader, parser *utils.RequestParser) *Services {
 	s := &Services{
 		reader: reader,
