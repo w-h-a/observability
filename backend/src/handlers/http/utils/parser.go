@@ -116,6 +116,19 @@ func (p *RequestParser) ParseGetOverviewRequest(r *http.Request) (*reader.Overvi
 	return serviceOverviewArgs, nil
 }
 
+func (p *RequestParser) ParseGetTagsRequest(r *http.Request) (*reader.TagsArgs, error) {
+	serviceName := r.URL.Query().Get("service")
+	if len(serviceName) == 0 {
+		return nil, errors.New("service param missing in query")
+	}
+
+	tagsArgs := &reader.TagsArgs{
+		ServiceName: serviceName,
+	}
+
+	return tagsArgs, nil
+}
+
 func (p *RequestParser) ParseGetSpansByTraceRequest(r *http.Request) (*reader.SpansByTraceIdArgs, error) {
 	traceId := r.URL.Query().Get("traceId")
 	if len(traceId) == 0 {

@@ -63,6 +63,22 @@ func (s *Service) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
+func (s *Service) GetTags(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetTagsRequest(r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetTags", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.Tags(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Service.GetTags", "failed to retrieve tags: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
 func NewServiceHandler(reader *reader.Reader, parser *utils.RequestParser) *Service {
 	s := &Service{
 		reader: reader,

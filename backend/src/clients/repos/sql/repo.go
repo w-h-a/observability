@@ -94,6 +94,17 @@ func (r *sqlRepo) ReadServiceSpecificServerErrors(ctx context.Context, dest inte
 	return nil
 }
 
+func (r *sqlRepo) ReadServiceSpecificTags(ctx context.Context, dest interface{}, serviceName string) error {
+	query := fmt.Sprintf(`SELECT DISTINCT arrayJoin(SpanAttributes.keys) as tags FROM %s.%s WHERE ServiceName='%s' AND toDate(Timestamp) > now() - INTERVAL 1 DAY`, r.options.Database, r.options.Table, serviceName)
+
+	if err := r.options.Client.Read(ctx, dest, query); err != nil {
+		log.Errorf("repo client failed to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
 func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error {
 	query := fmt.Sprintf(`SELECT SpanId as spanId, ParentSpanId as parentSpanId, ServiceName as serviceName FROM %s.%s WHERE Timestamp>='%s' AND Timestamp<='%s'`, r.options.Database, r.options.Table, startTimestamp, endTimestamp)
 
