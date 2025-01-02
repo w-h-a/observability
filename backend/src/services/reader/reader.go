@@ -160,22 +160,32 @@ func (r *Reader) ServiceOverview(ctx context.Context, query *OverviewArgs) ([]*S
 		timeToErrCount[int64(t.UnixNano())] = errService.NumErrors
 	}
 
+	result := []*ServiceOverview{}
+
 	for _, service := range serviceOverview {
-		service.CallRate = float32(service.NumCalls) / float32(query.StepSeconds)
+		overview := &ServiceOverview{
+			Percentile50: service.Percentile50,
+			Percentile95: service.Percentile95,
+			Percentile99: service.Percentile99,
+			NumCalls:     service.NumCalls,
+		}
+
+		overview.CallRate = float32(overview.NumCalls) / float32(query.StepSeconds)
 
 		t, _ := time.Parse(time.RFC3339Nano, service.Time)
 
-		service.Timestamp = int64(t.UnixNano())
-		service.Time = ""
+		overview.Timestamp = int64(t.UnixNano())
 
-		if val, ok := timeToErrCount[service.Timestamp]; ok {
-			service.NumErrors = val
+		if val, ok := timeToErrCount[overview.Timestamp]; ok {
+			overview.NumErrors = val
 		}
 
-		service.ErrorRate = float32(service.NumErrors) / float32(query.StepSeconds)
+		overview.ErrorRate = float32(overview.NumErrors) / float32(query.StepSeconds)
+
+		result = append(result, overview)
 	}
 
-	return serviceOverview, nil
+	return result, nil
 }
 
 // https://opentelemetry.io/docs/specs/semconv/http/http-spans/
@@ -209,7 +219,87 @@ func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
 }
 
 func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*SpanMatrix, error) {
-	return nil, nil
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	spans := []*Span{}
+
+	if err := r.repo.ReadSpans(
+		ctx,
+		&spans,
+		startTimestamp,
+		endTimestamp,
+		query.ServiceName,
+		query.Name,
+		query.Kind,
+		query.MinDuration,
+		query.MaxDuration,
+		query.TagQueries...,
+	); err != nil {
+		return nil, err
+	}
+
+	spanMatrix := []*SpanMatrix{
+		{
+			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "Duration", "Tags"},
+			Events:  make([][]interface{}, len(spans)),
+		},
+	}
+
+	for i, span := range spans {
+		event := span.ToEventValues()
+		spanMatrix[0].Events[i] = event
+	}
+
+	return spanMatrix, nil
+}
+
+func (r *Reader) AggregatedSpans(ctx context.Context, query *AggregatedSpansArgs) ([]*AggregatedSpans, error) {
+	interval := strconv.Itoa(int(query.StepSeconds / 60))
+
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
+
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	aggregationResults := []*AggregatedSpans{}
+
+	if err := r.repo.ReadAggregatedSpans(
+		ctx,
+		&aggregationResults,
+		query.Dimension,
+		query.AggregationOption,
+		interval,
+		startTimestamp,
+		endTimestamp,
+		query.ServiceName,
+		query.Name,
+		query.Kind,
+		query.MinDuration,
+		query.MaxDuration,
+		query.TagQueries...,
+	); err != nil {
+		return nil, err
+	}
+
+	result := []*AggregatedSpans{}
+
+	for _, aggregatedSpan := range aggregationResults {
+		agg := &AggregatedSpans{}
+
+		t, _ := time.Parse(time.RFC3339Nano, aggregatedSpan.Time)
+
+		agg.Timestamp = int64(t.UnixNano())
+		agg.Value = aggregatedSpan.Value
+
+		if query.AggregationOption == "rate_per_sec" {
+			agg.Value = float32(aggregatedSpan.Value) / float32(query.StepSeconds)
+		}
+
+		result = append(result, agg)
+	}
+
+	return result, nil
 }
 
 func (r *Reader) SpansByTrace(ctx context.Context, query *SpansByTraceIdArgs) ([]*SpanMatrix, error) {
@@ -232,10 +322,6 @@ func (r *Reader) SpansByTrace(ctx context.Context, query *SpansByTraceIdArgs) ([
 	}
 
 	return spanMatrix, nil
-}
-
-func (r *Reader) SpansAggregate(ctx context.Context, query *SpansAggregateArgs) ([]*SpanAggregate, error) {
-	return nil, nil
 }
 
 func NewReader(repo repos.Repo) *Reader {

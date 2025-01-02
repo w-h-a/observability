@@ -16,7 +16,7 @@ type Services struct {
 }
 
 func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetServicesRequest(r)
+	query, err := s.parser.ParseGetServicesRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServices", "failed to parse request: %v", err))
 		return
@@ -42,7 +42,7 @@ func (s *Services) GetServicesList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetServicesRequest(r)
+	query, err := s.parser.ParseGetServicesRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Services.GetServiceDependencies", "failed to parse request: %v", err))
 		return

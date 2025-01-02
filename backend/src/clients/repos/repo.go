@@ -20,5 +20,7 @@ type Repo interface {
 	ReadServiceSpecificServerErrors(ctx context.Context, dest interface{}, serviceName, interval, startTimestamp, endTimestamp string) error
 	ReadServiceSpecificTags(ctx context.Context, dest interface{}, serviceName string) error
 	ReadSpanDependencies(ctx context.Context, dest interface{}, startTimestamp, endTimestamp string) error
+	ReadSpans(ctx context.Context, dest interface{}, startTimestamp, endTimestamp, serviceName, spanName, spanKind, minDuration, maxDuration string, tagQueries ...TagQuery) error
+	ReadAggregatedSpans(ctx context.Context, dest interface{}, dimension, aggregationOption, interval, startTimestamp, endTimestamp, serviceName, spanName, spanKind, minDuration, maxDuration string, tagQueries ...TagQuery) error
 	ReadTraceSpecificSpans(ctx context.Context, dest interface{}, traceId string) error
 }

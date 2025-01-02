@@ -16,7 +16,7 @@ type Service struct {
 }
 
 func (s *Service) GetOperations(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetOperationsRequest(r)
+	query, err := s.parser.ParseGetOperationsRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetOperations", "failed to parse request: %v", err))
 		return
@@ -32,7 +32,7 @@ func (s *Service) GetOperations(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) GetEndpoints(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetEndpointsRequest(r)
+	query, err := s.parser.ParseGetEndpointsRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetEndpoints", "failed to parse request: %v", err))
 		return
@@ -48,7 +48,7 @@ func (s *Service) GetEndpoints(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetOverviewRequest(r)
+	query, err := s.parser.ParseGetOverviewRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetServiceOverview", "failed to parse request: %v", err))
 		return
@@ -64,7 +64,7 @@ func (s *Service) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) GetTags(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetTagsRequest(r)
+	query, err := s.parser.ParseGetTagsRequest(context.TODO(), r)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetTags", "failed to parse request: %v", err))
 		return
