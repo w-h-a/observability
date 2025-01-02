@@ -115,6 +115,94 @@ func (r *sqlRepo) ReadSpanDependencies(ctx context.Context, dest interface{}, st
 	return nil
 }
 
+func (r *sqlRepo) ReadSpans(
+	ctx context.Context,
+	dest interface{},
+	startTimestamp,
+	endTimestamp,
+	serviceName,
+	spanName,
+	spanKind,
+	minDuration,
+	maxDuration string,
+	tagQueries ...repos.TagQuery,
+) error {
+	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE timestamp>=? AND timestamp<=?`, r.options.Database, r.options.Table)
+
+	args := []interface{}{startTimestamp, endTimestamp}
+
+	var err error
+
+	query, args, err = r.buildUpSpanQuery(query, args, serviceName, spanName, spanKind, minDuration, maxDuration, tagQueries)
+	if err != nil {
+		return err
+	}
+
+	// TODO: make this configurable
+	query += " ORDER BY timestamp DESC LIMIT 100 OFFSET 0"
+
+	if err := r.options.Client.Read(ctx, dest, query, args...); err != nil {
+		log.Errorf("repo client failed to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
+func (r *sqlRepo) ReadAggregatedSpans(
+	ctx context.Context,
+	dest interface{},
+	dimension,
+	aggregationOption,
+	interval,
+	startTimestamp,
+	endTimestamp,
+	serviceName,
+	spanName,
+	spanKind,
+	minDuration,
+	maxDuration string,
+	tagQueries ...repos.TagQuery,
+) error {
+	aggregationQuery := ""
+
+	switch dimension {
+	case "duration":
+		switch aggregationOption {
+		case "avg":
+			aggregationQuery = "avg(Duration) as value"
+		case "p50":
+			aggregationQuery = "quantile(0.50)(Duration) as value"
+		case "p95":
+			aggregationQuery = "quantile(0.95)(Duration) as value"
+		case "p99":
+			aggregationQuery = "quantile(0.99)(Duration) as value"
+		}
+	case "calls":
+		aggregationQuery = "count(*) as value"
+	}
+
+	query := fmt.Sprintf(`SELECT toStartOfInterval(Timestamp, INTERVAL %s minute) as time, %s FROM %s.%s WHERE Timestamp>=? AND Timestamp<=?`, interval, aggregationQuery, r.options.Database, r.options.Table)
+
+	args := []interface{}{startTimestamp, endTimestamp}
+
+	var err error
+
+	query, args, err = r.buildUpSpanQuery(query, args, serviceName, spanName, spanKind, minDuration, maxDuration, tagQueries)
+	if err != nil {
+		return err
+	}
+
+	query += " GROUP BY time ORDER By time"
+
+	if err := r.options.Client.Read(ctx, dest, query, args...); err != nil {
+		log.Errorf("repo client failed to read: %v", err)
+		return repos.ErrProcessingQuery
+	}
+
+	return nil
+}
+
 func (r *sqlRepo) ReadTraceSpecificSpans(ctx context.Context, dest interface{}, traceId string) error {
 	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE traceId=?`, r.options.Database, r.options.Table)
 
@@ -124,6 +212,63 @@ func (r *sqlRepo) ReadTraceSpecificSpans(ctx context.Context, dest interface{}, 
 	}
 
 	return nil
+}
+
+func (*sqlRepo) buildUpSpanQuery(
+	query string,
+	args []interface{},
+	serviceName string,
+	spanName string,
+	spanKind string,
+	minDuration string,
+	maxDuration string,
+	tagQueries []repos.TagQuery,
+) (string, []interface{}, error) {
+	if len(serviceName) != 0 {
+		query += " AND ServiceName=?"
+		args = append(args, serviceName)
+	}
+
+	if len(spanName) != 0 {
+		query += " AND SpanName=?"
+		args = append(args, spanName)
+	}
+
+	if len(spanKind) != 0 {
+		query += " AND SpanKind=?"
+		args = append(args, spanKind)
+	}
+
+	if len(minDuration) != 0 {
+		query += " AND Duration>=?"
+		args = append(args, minDuration)
+	}
+
+	if len(maxDuration) != 0 {
+		query += " AND Duration<=?"
+		args = append(args, maxDuration)
+	}
+
+	for _, tagQuery := range tagQueries {
+		if tagQuery.Key == "error" && tagQuery.Value == "true" {
+			query += " AND (SpanAttributes['error']='true' OR StatusCode='Error')"
+			continue
+		}
+
+		switch tagQuery.Operator {
+		case "equals":
+			query += " AND SpanAttributes[?]=?"
+			args = append(args, tagQuery.Key, tagQuery.Value)
+		case "contains":
+			query += " AND SpanAttributes[?] ILIKE ?"
+			args = append(args, tagQuery.Key, fmt.Sprintf("%%%s%%", tagQuery.Value))
+		case "isnotnull":
+			query += " AND mapContains(SpanAttributes, ?)"
+			args = append(args, tagQuery.Key)
+		}
+	}
+
+	return query, args, nil
 }
 
 func NewRepo(opts ...repos.RepoOption) repos.Repo {

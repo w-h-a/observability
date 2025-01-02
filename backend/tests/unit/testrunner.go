@@ -44,7 +44,7 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 			err = httpServer.Run()
 			require.NoError(t, err)
 
-			bs, err = httputils.HttpGet(fmt.Sprintf("%s%s%s", httpServer.Options().Address, testCase.Endpoint, testCase.Query))
+			bs, err = httputils.HttpGet(fmt.Sprintf("http://%s%s%s", httpServer.Options().Address, testCase.Endpoint, testCase.Query))
 			require.NoError(t, err)
 
 			t.Log(testCase.Then)

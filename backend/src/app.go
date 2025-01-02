@@ -35,11 +35,11 @@ func ServerFactory(repoClient repos.Client) serverv2.Server {
 	// create http server
 	router := mux.NewRouter()
 
-	requestParser := &utils.RequestParser{}
+	httpRequestParser := &utils.RequestParser{}
 
-	httpServices := httphandlers.NewServicesHandler(reader, requestParser)
-	httpService := httphandlers.NewServiceHandler(reader, requestParser)
-	httpSpans := httphandlers.NewSpansHandler(reader, requestParser)
+	httpServices := httphandlers.NewServicesHandler(reader, httpRequestParser)
+	httpService := httphandlers.NewServiceHandler(reader, httpRequestParser)
+	httpSpans := httphandlers.NewSpansHandler(reader, httpRequestParser)
 
 	router.Methods(http.MethodGet).Path("/api/v1/services").HandlerFunc(httpServices.GetServices)
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
@@ -48,6 +48,8 @@ func ServerFactory(repoClient repos.Client) serverv2.Server {
 	router.Methods(http.MethodGet).Path("/api/v1/service/endpoints").HandlerFunc(httpService.GetEndpoints)
 	router.Methods(http.MethodGet).Path("/api/v1/service/overview").HandlerFunc(httpService.GetServiceOverview)
 	router.Methods(http.MethodGet).Path("/api/v1/service/tags").HandlerFunc(httpService.GetTags)
+	router.Methods(http.MethodGet).Path("/api/v1/spans").HandlerFunc(httpSpans.GetSpans)
+	router.Methods(http.MethodGet).Path("/api/v1/spans/aggregated").HandlerFunc(httpSpans.GetAggregatedSpans)
 	router.Methods(http.MethodGet).Path("/api/v1/spans/trace").HandlerFunc(httpSpans.GetSpansByTraceId)
 
 	httpOpts := []serverv2.ServerOption{

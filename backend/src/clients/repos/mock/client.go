@@ -72,6 +72,7 @@ func (c *MockRepoClient) ReadCalledWith() []map[string]interface{} {
 }
 
 func (c *MockRepoClient) ResetCalledWith() {
+	c.readCalledTimes = 0
 	c.readCalledWith = []map[string]interface{}{}
 }
 

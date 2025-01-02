@@ -3,6 +3,8 @@ package reader
 import (
 	"strconv"
 	"time"
+
+	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
 )
 
 // services
@@ -143,20 +145,19 @@ type MessagingOverview struct {
 // spans
 
 type SpansArgs struct {
-	ServiceName   string
-	OperationName string
-	Kind          string
-	Intervals     string
-	Start         *time.Time
-	StartTime     string
-	End           *time.Time
-	EndTime       string
-	MinDuration   string
-	MaxDuration   string
-	Tags          []TagQuery
-	Limit         int64
-	Order         string
-	Offset        int64
+	Start       *time.Time
+	StartTime   string
+	End         *time.Time
+	EndTime     string
+	ServiceName string
+	Name        string
+	Kind        string
+	MinDuration string
+	MaxDuration string
+	TagQueries  []repos.TagQuery
+	Order       string
+	Limit       int64
+	Offset      int64
 }
 
 type SpansByTraceIdArgs struct {
@@ -188,36 +189,29 @@ type SpanMatrix struct {
 
 // span agg
 
-type SpansAggregateArgs struct {
-	ServiceName       string
-	OperationName     string
-	Kind              string
-	Intervals         string
+type AggregatedSpansArgs struct {
+	Dimension         string
+	AggregationOption string
+	StepSeconds       int
 	Start             *time.Time
 	StartTime         string
 	End               *time.Time
 	EndTime           string
+	ServiceName       string
+	Name              string
+	Kind              string
 	MinDuration       string
 	MaxDuration       string
-	Tags              []TagQuery
-	StepSeconds       int
-	Dimension         string
-	AggregationOption string
+	TagQueries        []repos.TagQuery
 }
 
-type SpanAggregate struct {
+type AggregatedSpans struct {
 	Timestamp int64   `json:"timestamp,omitempty" db:"timestamp"`
 	Time      string  `json:"time,omitempty" db:"time"`
 	Value     float32 `json:"value,omitempty" db:"value"`
 }
 
 // tags
-
-type TagQuery struct {
-	Key      string
-	Value    string
-	Operator string
-}
 
 type TagsArgs struct {
 	ServiceName string
