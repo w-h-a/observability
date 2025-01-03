@@ -1,5 +1,5 @@
 FROM golang AS build
-WORKDIR /go/src/trace-blame-backend
+WORKDIR /trace-blame-backend
 COPY . .
 RUN CGO_ENABLED=0 go build -o /go/bin/trace-blame-backend ./
 

@@ -52,6 +52,19 @@ services:
       - hotrod-example
     depends_on:
       - clickhouse
+  
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: on-failure:10
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    networks:
+      - hotrod-example
 
 networks:
   hotrod-example:
