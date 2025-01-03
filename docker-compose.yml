@@ -61,10 +61,10 @@ services:
     restart: on-failure:10
     ports:
       - '3000:3000'
-    depends_on:
-      - backend
     networks:
       - hotrod-example
+    depends_on:
+      - backend
 
 networks:
   hotrod-example:
