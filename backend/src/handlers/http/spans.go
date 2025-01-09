@@ -6,13 +6,12 @@ import (
 
 	"github.com/w-h-a/pkg/utils/errorutils"
 	"github.com/w-h-a/pkg/utils/httputils"
-	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 type Spans struct {
 	reader *reader.Reader
-	parser *utils.RequestParser
+	parser *RequestParser
 }
 
 func (s *Spans) GetSpans(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +62,7 @@ func (s *Spans) GetSpansByTraceId(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
-func NewSpansHandler(reader *reader.Reader, parser *utils.RequestParser) *Spans {
+func NewSpansHandler(reader *reader.Reader, parser *RequestParser) *Spans {
 	s := &Spans{
 		reader: reader,
 		parser: parser,

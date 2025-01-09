@@ -6,13 +6,12 @@ import (
 
 	"github.com/w-h-a/pkg/utils/errorutils"
 	"github.com/w-h-a/pkg/utils/httputils"
-	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 type Services struct {
 	reader *reader.Reader
-	parser *utils.RequestParser
+	parser *RequestParser
 }
 
 func (s *Services) GetServices(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +56,7 @@ func (s *Services) GetServiceDependencies(w http.ResponseWriter, r *http.Request
 	httputils.OkResponse(w, result)
 }
 
-func NewServicesHandler(reader *reader.Reader, parser *utils.RequestParser) *Services {
+func NewServicesHandler(reader *reader.Reader, parser *RequestParser) *Services {
 	s := &Services{
 		reader: reader,
 		parser: parser,
