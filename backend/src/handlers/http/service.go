@@ -6,13 +6,12 @@ import (
 
 	"github.com/w-h-a/pkg/utils/errorutils"
 	"github.com/w-h-a/pkg/utils/httputils"
-	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 type Service struct {
 	reader *reader.Reader
-	parser *utils.RequestParser
+	parser *RequestParser
 }
 
 func (s *Service) GetOperations(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +78,7 @@ func (s *Service) GetTags(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
-func NewServiceHandler(reader *reader.Reader, parser *utils.RequestParser) *Service {
+func NewServiceHandler(reader *reader.Reader, parser *RequestParser) *Service {
 	s := &Service{
 		reader: reader,
 		parser: parser,

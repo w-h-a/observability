@@ -10,11 +10,10 @@ import (
 	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
-	"github.com/w-h-a/trace-blame/backend/src/handlers/http/utils"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
-func ServerFactory(repoClient repos.Client) serverv2.Server {
+func AppFactory(repoClient repos.Client) serverv2.Server {
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
 		repos.RepoWithClient(repoClient),
@@ -35,7 +34,7 @@ func ServerFactory(repoClient repos.Client) serverv2.Server {
 	// create http server
 	router := mux.NewRouter()
 
-	httpRequestParser := &utils.RequestParser{}
+	httpRequestParser := &httphandlers.RequestParser{}
 
 	httpServices := httphandlers.NewServicesHandler(reader, httpRequestParser)
 	httpService := httphandlers.NewServiceHandler(reader, httpRequestParser)
@@ -54,6 +53,7 @@ func ServerFactory(repoClient repos.Client) serverv2.Server {
 
 	httpOpts := []serverv2.ServerOption{
 		serverv2.ServerWithAddress(config.HttpAddress()),
+		httpserver.HttpServerWithMiddleware(httphandlers.NewCORSMiddleware()),
 	}
 
 	httpOpts = append(httpOpts, opts...)

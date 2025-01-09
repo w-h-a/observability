@@ -36,7 +36,7 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 		var bs []byte
 		var err error
 
-		httpServer := src.ServerFactory(testCase.Client)
+		httpServer := src.AppFactory(testCase.Client)
 
 		mockStoreClient := testCase.Client.(*mock.MockRepoClient)
 

@@ -40,7 +40,7 @@ func main() {
 	)
 
 	// server
-	httpServer := src.ServerFactory(repoClient)
+	httpServer := src.AppFactory(repoClient)
 
 	// wait group and error chan
 	wg := &sync.WaitGroup{}

@@ -1,0 +1,745 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ServicesTable > when: the user goes to the services table and the query client fails for some reason > then: we render the error table 1`] = `
+<div
+  className="ant-table-wrapper css-dev-only-do-not-override-161f05s"
+  style={{}}
+>
+  <div
+    className="ant-spin-nested-loading css-dev-only-do-not-override-161f05s"
+  >
+    <div
+      className="ant-spin-container"
+    >
+      <div
+        className="ant-table css-dev-only-do-not-override-161f05s"
+      >
+        <div
+          className="ant-table-container"
+        >
+          <div
+            className="ant-table-content"
+            onScroll={[Function]}
+            style={{}}
+          >
+            <table
+              style={
+                {
+                  "tableLayout": "auto",
+                }
+              }
+            >
+              <colgroup />
+              <thead
+                className="ant-table-thead"
+              >
+                <tr>
+                  <th
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                  >
+                    Service
+                  </th>
+                  <th
+                    aria-label="P99 latency (in ms)"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        P99 latency (in ms)
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Error Rate (in %)"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        Error Rate (in %)
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Requests Per Second"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        Requests Per Second
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className="ant-table-tbody"
+              >
+                <tr
+                  className="ant-table-row ant-table-row-level-0"
+                  data-row-key="service fetch failed"
+                  onClick={[Function]}
+                  style={{}}
+                >
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    <a
+                      aria-current={null}
+                      href="/application/service fetch failed"
+                      onClick={[Function]}
+                      style={
+                        {
+                          "textTransform": "capitalize",
+                        }
+                      }
+                    >
+                      <strong>
+                        service fetch failed
+                      </strong>
+                    </a>
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    NaN
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    NaN
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    NaN
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ServicesTable > when: the user goes to the services table and there are services > then: we render a table with the services 1`] = `
+<div
+  className="ant-table-wrapper css-dev-only-do-not-override-161f05s"
+  style={{}}
+>
+  <div
+    className="ant-spin-nested-loading css-dev-only-do-not-override-161f05s"
+  >
+    <div
+      className="ant-spin-container"
+    >
+      <div
+        className="ant-table css-dev-only-do-not-override-161f05s"
+      >
+        <div
+          className="ant-table-container"
+        >
+          <div
+            className="ant-table-content"
+            onScroll={[Function]}
+            style={{}}
+          >
+            <table
+              style={
+                {
+                  "tableLayout": "auto",
+                }
+              }
+            >
+              <colgroup />
+              <thead
+                className="ant-table-thead"
+              >
+                <tr>
+                  <th
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                  >
+                    Service
+                  </th>
+                  <th
+                    aria-label="P99 latency (in ms)"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        P99 latency (in ms)
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Error Rate (in %)"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        Error Rate (in %)
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Requests Per Second"
+                    className="ant-table-cell ant-table-column-has-sorters"
+                    colSpan={null}
+                    onClick={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    scope="col"
+                    style={{}}
+                    tabIndex={0}
+                  >
+                    <div
+                      className="ant-table-column-sorters"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                      onPointerEnter={[Function]}
+                      onPointerLeave={[Function]}
+                    >
+                      <span
+                        className="ant-table-column-title"
+                      >
+                        Requests Per Second
+                      </span>
+                      <span
+                        className="ant-table-column-sorter ant-table-column-sorter-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="ant-table-column-sorter-inner"
+                        >
+                          <span
+                            aria-label="caret-up"
+                            className="anticon anticon-caret-up ant-table-column-sorter-up"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-up"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M858.9 689L530.5 308.2c-9.4-10.9-27.5-10.9-37 0L165.1 689c-12.2 14.2-1.2 35 18.5 35h656.8c19.7 0 30.7-20.8 18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            aria-label="caret-down"
+                            className="anticon anticon-caret-down ant-table-column-sorter-down"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="caret-down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="0 0 1024 1024"
+                              width="1em"
+                            >
+                              <path
+                                d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className="ant-table-tbody"
+              >
+                <tr
+                  className="ant-table-row ant-table-row-level-0"
+                  data-row-key="testService1"
+                  onClick={[Function]}
+                  style={{}}
+                >
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    <a
+                      aria-current={null}
+                      href="/application/testService1"
+                      onClick={[Function]}
+                      style={
+                        {
+                          "textTransform": "capitalize",
+                        }
+                      }
+                    >
+                      <strong>
+                        testService1
+                      </strong>
+                    </a>
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    4000.00
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    0.00
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    0.50
+                  </td>
+                </tr>
+                <tr
+                  className="ant-table-row ant-table-row-level-0"
+                  data-row-key="testService2"
+                  onClick={[Function]}
+                  style={{}}
+                >
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    <a
+                      aria-current={null}
+                      href="/application/testService2"
+                      onClick={[Function]}
+                      style={
+                        {
+                          "textTransform": "capitalize",
+                        }
+                      }
+                    >
+                      <strong>
+                        testService2
+                      </strong>
+                    </a>
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    2000.00
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    0.01
+                  </td>
+                  <td
+                    className="ant-table-cell"
+                    colSpan={null}
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                    rowSpan={null}
+                    style={{}}
+                  >
+                    0.75
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
