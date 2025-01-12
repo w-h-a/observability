@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { ServicesUpdater } from "./services/servicesTable";
 import { TimeUpdater } from "./time/time";
+import { ServiceUpdater } from "./service/service";
 
 const reducer = combineReducers({
-	services: ServicesUpdater.ServicesTableReducer,
 	maxMinTime: TimeUpdater.MaxMinTimeReducer,
+	services: ServicesUpdater.ServicesReducer,
+	endpoints: ServiceUpdater.EndpointsReducer,
 });
 
 export const store = configureStore({

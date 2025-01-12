@@ -60,7 +60,7 @@ export class ServicesUpdater {
 		};
 	}
 
-	static ServicesTableReducer(
+	static ServicesReducer(
 		state: Array<Service> = ServicesUpdater.initialState,
 		action: Action,
 	): Array<Service> {
