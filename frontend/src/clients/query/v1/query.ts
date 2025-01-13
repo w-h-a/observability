@@ -8,13 +8,35 @@ export class Query {
 		end: number,
 	): Promise<{ data: T }> {
 		try {
-			const path = `${Config.GetInstance().get("baseUrl")}/services`;
+			const path = `/services`;
 
 			const query = `?start=${start}&end=${end}`;
 
-			return await client.get<T>(path + query);
+			return await client.get<T>(
+				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+			);
 		} catch (err: unknown) {
-			console.log(`query client failed: ${err}`);
+			console.log(`query client failed to retrieve services: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetEndpoints<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+		serviceName: string,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/service/endpoints`;
+
+			const query = `?start=${start}&end=${end}&service=${serviceName}`;
+
+			return await client.get<T>(
+				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+			);
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve endpoints: ${err}`);
 			throw err;
 		}
 	}

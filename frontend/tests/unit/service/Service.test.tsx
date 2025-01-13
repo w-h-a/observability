@@ -2,7 +2,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { render, RenderResult } from "@testing-library/react";
 import { TestCase } from "../testcase";
-import { ServicesTable } from "../../../src/views/Services/ServicesTable";
+import { Service } from "../../../src/views/Service/Service";
 import { store } from "../../../src/updaters/store";
 import { IClient } from "../../../src/clients/query/client";
 import { Client } from "../../../src/clients/query/mock/client";
@@ -14,50 +14,51 @@ vi.mock("../../../src/updaters/time/utils", () => {
 	};
 });
 
-describe("ServicesTable", () => {
+const service = "frontend";
+
+vi.mock("react-router-dom", async () => {
+	const mod = await vi.importActual("react-router-dom");
+	return {
+		...mod,
+		useParams: () => ({
+			service: service,
+		}),
+	};
+});
+
+describe("Service", () => {
 	const mockQueryClient: IClient = new Client();
 
 	const testCases: TestCase[] = [
 		{
-			When: "when: the user goes to the services table and there are services",
+			When:
+				"when: the user goes to the service page and calls to the backend are a success",
 			GetStub: function <T>(url: string): Promise<{ data: T }> {
 				return new Promise((resolve) => {
 					resolve({
 						data: [
 							{
-								serviceName: "testService1",
-								p99: 4000 * 1000000,
-								callRate: 0.5,
-								errorRate: 0.0,
+								name: "/config",
+								p50: 0.07 * 1000000,
+								p95: 0.09 * 1000000,
+								p99: 0.1 * 1000000,
+								numCalls: 8,
 							},
 							{
-								serviceName: "testService2",
-								p99: 2000 * 1000000,
-								callRate: 0.75,
-								errorRate: 0.01,
+								name: "/dispatch",
+								p50: 765.25 * 1000000,
+								p95: 904.79 * 1000000,
+								p99: 937.2 * 1000000,
+								numCalls: 6,
 							},
 						] as T,
 					});
 				});
 			},
-			Then: "then: we render a table with the services",
+			Then: "then: we render the service-specific tabs and tables",
 			ClientCalledTimes: 1,
 			ClientCalledWith: [
-				"http://localhost:4000/api/v1/services?start=1736392170&end=1736393070",
-			],
-		},
-		{
-			When:
-				"when: the user goes to the services table and the query client fails for some reason",
-			GetStub: function <T>(url: string): Promise<{ data: T }> {
-				return new Promise((_, reject) => {
-					reject(new Error("whoops!"));
-				});
-			},
-			Then: "then: we render the error table",
-			ClientCalledTimes: 1,
-			ClientCalledWith: [
-				"http://localhost:4000/api/v1/services?start=1736392170&end=1736393070",
+				`http://localhost:4000/api/v1/service/endpoints?start=1736392170&end=1736393070&service=${service}`,
 			],
 		},
 	];
@@ -73,7 +74,7 @@ describe("ServicesTable", () => {
 					<Provider store={store}>
 						<BrowserRouter>
 							<ClientContext.Provider value={{ queryClient: mockQueryClient }}>
-								<ServicesTable />
+								<Service />
 							</ClientContext.Provider>
 						</BrowserRouter>
 					</Provider>,

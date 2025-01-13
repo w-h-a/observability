@@ -1,18 +1,13 @@
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Layout } from "antd";
-import { Content, Footer } from "antd/es/layout/layout";
 import { SideNav } from "./views/Nav/SideNav";
 import { TopNav } from "./views/Nav/TopNav";
 import { ServicesTable } from "./views/Services/ServicesTable";
-import { Client } from "./clients/query/v1/client";
-import { IClient } from "./clients/query/client";
+import { Service } from "./views/Service/Service";
 import { store } from "./updaters/store";
-
-export const ClientContext = createContext<{ queryClient: IClient }>({
-	queryClient: new Client(),
-});
+import { ClientContext } from "./clients/query/clientCtx";
 
 export const App = () => {
 	return (
@@ -21,10 +16,11 @@ export const App = () => {
 				<Layout style={{ minHeight: "100vh" }}>
 					<SideNav />
 					<Layout className="site-layout">
-						<Content style={{ margin: "0 16px" }}>
+						<Layout.Content style={{ margin: "0 16px" }}>
 							<TopNav />
 							<ClientContext.Provider value={useContext(ClientContext)}>
 								<Switch>
+									<Route path="/application/:service" component={Service} />
 									<Route path="/application" component={ServicesTable} />
 									<Route
 										path="/"
@@ -35,8 +31,8 @@ export const App = () => {
 									/>
 								</Switch>
 							</ClientContext.Provider>
-						</Content>
-						<Footer>Trace-Blame 2025</Footer>
+						</Layout.Content>
+						<Layout.Footer>Trace-Blame 2025</Layout.Footer>
 					</Layout>
 				</Layout>
 			</BrowserRouter>
