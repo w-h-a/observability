@@ -34,31 +34,51 @@ describe("Service", () => {
 			When:
 				"when: the user goes to the service page and calls to the backend are a success",
 			GetStub: function <T>(url: string): Promise<{ data: T }> {
-				return new Promise((resolve) => {
-					resolve({
-						data: [
-							{
-								name: "/config",
-								p50: 0.07 * 1000000,
-								p95: 0.09 * 1000000,
-								p99: 0.1 * 1000000,
-								numCalls: 8,
-							},
-							{
-								name: "/dispatch",
-								p50: 765.25 * 1000000,
-								p95: 904.79 * 1000000,
-								p99: 937.2 * 1000000,
-								numCalls: 6,
-							},
-						] as T,
+				if (url.includes("endpoints")) {
+					return new Promise((resolve) => {
+						resolve({
+							data: [
+								{
+									name: "/config",
+									p50: 0.07 * 1000000,
+									p95: 0.09 * 1000000,
+									p99: 0.1 * 1000000,
+									numCalls: 8,
+								},
+								{
+									name: "/dispatch",
+									p50: 765.25 * 1000000,
+									p95: 904.79 * 1000000,
+									p99: 937.2 * 1000000,
+									numCalls: 6,
+								},
+							] as T,
+						});
 					});
-				});
+				} else {
+					return new Promise((resolve) => {
+						resolve({
+							data: [
+								{
+									timestamp: 1736953320000000000,
+									p50: 323597200,
+									p95: 1216585200,
+									p99: 1527190800,
+									numCalls: 46,
+									callRate: 0.76666665,
+									numErrors: 0,
+									errorRate: 0,
+								},
+							] as T,
+						});
+					});
+				}
 			},
 			Then: "then: we render the service-specific tabs and tables",
-			ClientCalledTimes: 1,
+			ClientCalledTimes: 2,
 			ClientCalledWith: [
 				`http://localhost:4000/api/v1/service/endpoints?start=1736392170&end=1736393070&service=${service}`,
+				`http://localhost:4000/api/v1/service/overview?start=1736392170&end=1736393070&step=60&service=${service}`,
 			],
 		},
 	];

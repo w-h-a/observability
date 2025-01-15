@@ -7,6 +7,7 @@ const reducer = combineReducers({
 	maxMinTime: TimeUpdater.MaxMinTimeReducer,
 	services: ServicesUpdater.ServicesReducer,
 	endpoints: ServiceUpdater.EndpointsReducer,
+	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
 });
 
 export const store = configureStore({

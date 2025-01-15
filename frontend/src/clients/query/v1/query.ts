@@ -40,4 +40,24 @@ export class Query {
 			throw err;
 		}
 	}
+
+	static async GetServiceMetrics<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+		serviceName: string,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/service/overview`;
+
+			const query = `?start=${start}&end=${end}&step=60&service=${serviceName}`;
+
+			return await client.get<T>(
+				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+			);
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve service metrics: ${err}`);
+			throw err;
+		}
+	}
 }
