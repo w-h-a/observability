@@ -3,11 +3,11 @@ import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { ServiceMetricItem } from "../../updaters/domain";
 
-interface RequestRateChartProps {
+interface ErrorRateChartProps {
 	data: ServiceMetricItem[];
 }
 
-export const RequestRateChart = (props: RequestRateChartProps) => {
+export const ErrorRateChart = (props: ErrorRateChartProps) => {
 	const ref = React.createRef() as any;
 
 	const data = (c: HTMLElement) => {
@@ -24,8 +24,8 @@ export const RequestRateChart = (props: RequestRateChartProps) => {
 			labels: props.data.map((item) => new Date(item.timestamp / 1000000)),
 			datasets: [
 				{
-					label: "Requests per sec",
-					data: props.data.map((item) => item.callRate),
+					label: "Errors per sec",
+					data: props.data.map((item) => item.errorRate),
 					pointRadius: 0.5,
 					borderColor: "rgba(250,174,50,1)",
 					borderWidth: 2,
@@ -42,7 +42,7 @@ export const RequestRateChart = (props: RequestRateChartProps) => {
 			text: "",
 			fontSize: 20,
 			position: "top",
-			padding: 2,
+			padding: 8,
 			fontFamily: "Arial",
 			fontStyle: "regular",
 			fontColor: "rgb(200, 200, 200)",
@@ -62,6 +62,7 @@ export const RequestRateChart = (props: RequestRateChartProps) => {
 			mode: "label",
 			bodyFontSize: 12,
 			titleFontSize: 12,
+
 			callbacks: {
 				label: function (tooltipItem, data) {
 					if (typeof tooltipItem.yLabel === "number") {
@@ -111,7 +112,7 @@ export const RequestRateChart = (props: RequestRateChartProps) => {
 	return (
 		<div>
 			{/* popup */}
-			<div style={{ textAlign: "center" }}>Requests per sec</div>
+			<div style={{ textAlign: "center" }}>Errors per sec</div>
 			<Line ref={ref} data={data} options={options} />
 		</div>
 	);
