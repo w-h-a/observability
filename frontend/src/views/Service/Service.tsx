@@ -7,6 +7,7 @@ import { RequestRateChart } from "./RequestRateChart";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { ServiceUpdater } from "../../updaters/service/service";
 import { ClientContext } from "../../clients/query/clientCtx";
+import { LatencyChart } from "./LatencyChart";
 
 export const Service = () => {
 	const { queryClient } = useContext(ClientContext);
@@ -29,12 +30,12 @@ export const Service = () => {
 			<Tabs.TabPane tab="Service Metrics" key="1">
 				<Row gutter={32} style={{ margin: 20 }}>
 					<Col span={12}>
-						{/* <Card bodyStyle={{ padding: 10 }}>
-							<LatencyLineChart
+						<Card bodyStyle={{ padding: 10 }}>
+							<LatencyChart
 								data={serviceMetrics}
 								// popupClickHandler={onTracePopupClick}
 							/>
-						</Card> */}
+						</Card>
 					</Col>
 					<Col span={12}>
 						<Card bodyStyle={{ padding: 10 }}>

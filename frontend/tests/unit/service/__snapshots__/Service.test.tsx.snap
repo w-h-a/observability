@@ -94,7 +94,30 @@ exports[`Service > when: the user goes to the service page and calls to the back
             <div
               class="ant-col ant-col-12 css-dev-only-do-not-override-7ny38l"
               style="padding-left: 16px; padding-right: 16px;"
-            />
+            >
+              <div
+                class="ant-card ant-card-bordered css-dev-only-do-not-override-7ny38l"
+              >
+                <div
+                  class="ant-card-body"
+                  style="padding: 10px;"
+                >
+                  <div>
+                    <div
+                      style="text-align: center;"
+                    >
+                      Latency in ms
+                    </div>
+                    <canvas
+                      class="chartjs-render-monitor"
+                      height="0"
+                      style="display: block;"
+                      width="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <div
               class="ant-col ant-col-12 css-dev-only-do-not-override-7ny38l"
               style="padding-left: 16px; padding-right: 16px;"
