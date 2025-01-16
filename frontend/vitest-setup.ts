@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import { vi } from "vitest";
+import 'vitest-canvas-mock';
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -14,4 +15,12 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
  })),
+});
+
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => ({
+    getPropertyValue: (prop) => {
+      return 'i do not care';
+    }
+  })
 });

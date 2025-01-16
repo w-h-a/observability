@@ -4,6 +4,7 @@ export interface StoreState {
 	maxMinTime: MaxMinTime;
 	services: Array<Service>;
 	endpoints: Array<Endpoint>;
+	serviceMetrics: Array<ServiceMetricItem>;
 }
 
 export interface MaxMinTime {
@@ -29,6 +30,17 @@ export interface Endpoint {
 	numCalls: number;
 }
 
+export interface ServiceMetricItem {
+	timestamp: number;
+	p50: number;
+	p95: number;
+	p99: number;
+	numCalls: number;
+	callRate: number;
+	numErrors: number;
+	errorRate: number;
+}
+
 // Actions
 
 export enum ActionTypes {
@@ -37,6 +49,8 @@ export enum ActionTypes {
 	servicesFailure = "SERVICES_FAILURE",
 	endpointsSuccess = "ENDPOINTS_SUCCESS",
 	endpointsFailure = "ENDPOINTS_FAILURE",
+	serviceMetricsSuccess = "SERVICE_METRICS_SUCCESS",
+	serviceMetricsFailure = "SERVICE_METRICS_FAILURE",
 }
 
 export type MaxMinTimeAction = {
@@ -64,9 +78,21 @@ export type EndpointsFailure = {
 	payload: Endpoint[];
 };
 
+export type ServiceMetricsSuccess = {
+	type: ActionTypes.serviceMetricsSuccess;
+	payload: ServiceMetricItem[];
+};
+
+export type ServiceMetricsFailure = {
+	type: ActionTypes.serviceMetricsFailure;
+	payload: ServiceMetricItem[];
+};
+
 export type Action =
 	| MaxMinTimeAction
 	| ServicesActionSuccess
 	| ServicesActionFailure
 	| EndpointsSuccess
-	| EndpointsFailure;
+	| EndpointsFailure
+	| ServiceMetricsSuccess
+	| ServiceMetricsFailure;
