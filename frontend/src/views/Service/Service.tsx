@@ -4,10 +4,11 @@ import { useParams } from "react-router-dom";
 import { Card, Col, Row, Tabs } from "antd";
 import { EndpointsTable } from "./EndpointsTable";
 import { RequestRateChart } from "./RequestRateChart";
+import { LatencyChart } from "./LatencyChart";
+import { ErrorRateChart } from "./ErrorRateChart";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { ServiceUpdater } from "../../updaters/service/service";
 import { ClientContext } from "../../clients/query/clientCtx";
-import { LatencyChart } from "./LatencyChart";
 
 export const Service = () => {
 	const { queryClient } = useContext(ClientContext);
@@ -45,12 +46,12 @@ export const Service = () => {
 				</Row>
 				<Row gutter={32} style={{ margin: 20 }}>
 					<Col span={12}>
-						{/* <Card bodyStyle={{ padding: 10 }}>
+						<Card bodyStyle={{ padding: 10 }}>
 							<ErrorRateChart
 								data={serviceMetrics}
 								// popupClickHandler={onErrTracePopupClick}
 							/>
-						</Card> */}
+						</Card>
 					</Col>
 					<Col span={12}>
 						<EndpointsTable data={endpoints} />
