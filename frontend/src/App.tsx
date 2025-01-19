@@ -6,6 +6,7 @@ import { SideNav } from "./views/Nav/SideNav";
 import { TopNav } from "./views/Nav/TopNav";
 import { ServicesTable } from "./views/Services/ServicesTable";
 import { Service } from "./views/Service/Service";
+import { Spans } from "./views/Spans/Spans";
 import { store } from "./updaters/store";
 import { ClientContext } from "./clients/query/clientCtx";
 
@@ -20,6 +21,7 @@ export const App = () => {
 							<TopNav />
 							<ClientContext.Provider value={useContext(ClientContext)}>
 								<Switch>
+									<Route path="/spans" component={Spans} />
 									<Route path="/application/:service" component={Service} />
 									<Route path="/application" component={ServicesTable} />
 									<Route

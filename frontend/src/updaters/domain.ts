@@ -5,6 +5,7 @@ export interface StoreState {
 	services: Array<Service>;
 	endpoints: Array<Endpoint>;
 	serviceMetrics: Array<ServiceMetricItem>;
+	spanMatrix: SpanMatrix;
 }
 
 export interface MaxMinTime {
@@ -41,6 +42,27 @@ export interface ServiceMetricItem {
 	errorRate: number;
 }
 
+export interface SpanMatrix {
+	[id: string]: Spans;
+}
+
+export interface Spans {
+	columns: string[];
+	events: Span[];
+}
+
+export type Span = [
+	number, // time
+	string, // spanid
+	string, // parentid
+	string, // traceid
+	string, // service
+	string, // name
+	string, // kind
+	string, // duration
+	string[][], // tags
+];
+
 // Actions
 
 export enum ActionTypes {
@@ -51,6 +73,8 @@ export enum ActionTypes {
 	endpointsFailure = "ENDPOINTS_FAILURE",
 	serviceMetricsSuccess = "SERVICE_METRICS_SUCCESS",
 	serviceMetricsFailure = "SERVICE_METRICS_FAILURE",
+	spanMatrixSuccess = "SPAN_MATRIX_SUCCESS",
+	spanMatrixFailure = "SPAN_MATRIX_FAILURE",
 }
 
 export type MaxMinTimeAction = {
@@ -88,6 +112,16 @@ export type ServiceMetricsFailure = {
 	payload: ServiceMetricItem[];
 };
 
+export type SpanMatrixSuccess = {
+	type: ActionTypes.spanMatrixSuccess;
+	payload: SpanMatrix;
+};
+
+export type SpanMatrixFailure = {
+	type: ActionTypes.spanMatrixFailure;
+	payload: SpanMatrix;
+};
+
 export type Action =
 	| MaxMinTimeAction
 	| ServicesActionSuccess
@@ -95,4 +129,6 @@ export type Action =
 	| EndpointsSuccess
 	| EndpointsFailure
 	| ServiceMetricsSuccess
-	| ServiceMetricsFailure;
+	| ServiceMetricsFailure
+	| SpanMatrixSuccess
+	| SpanMatrixFailure;
