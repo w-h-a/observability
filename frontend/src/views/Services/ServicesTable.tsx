@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Table } from "antd";
-import { ServicesUpdater } from "../../updaters/services/servicesTable";
+import { ServicesUpdater } from "../../updaters/services/services";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { Service } from "../../updaters/domain";
 import { ClientContext } from "../../clients/query/clientCtx";
