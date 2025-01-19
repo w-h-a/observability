@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 import { Table } from "antd";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { SpansUpdater } from "../../updaters/spans/spans";
-import { ClientContext } from "../../clients/query/clientCtx";
 import { StartTime } from "../../updaters/time/utils";
+import { ClientContext } from "../../clients/query/clientCtx";
 
 interface SpanView {
 	key: string;
@@ -16,6 +16,7 @@ interface SpanView {
 	serviceName: string;
 	operationName: string;
 	kind: string;
+	code: string;
 	duration: number;
 }
 
@@ -45,6 +46,11 @@ const columns = [
 		key: "operationName",
 	},
 	{
+		title: "Status Code",
+		dataIndex: "code",
+		key: "code",
+	},
+	{
 		title: "TraceID",
 		dataIndex: "traceid",
 		key: "traceid",
@@ -70,7 +76,8 @@ export const SpansTable = () => {
 			serviceName: span[4],
 			operationName: span[5],
 			kind: span[6],
-			duration: Number(span[7]),
+			code: span[7],
+			duration: Number(span[8]),
 		};
 	});
 

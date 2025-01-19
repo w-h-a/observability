@@ -59,9 +59,27 @@ export type Span = [
 	string, // service
 	string, // name
 	string, // kind
+	string, // code
 	string, // duration
 	string[][], // tags
+	Tree[], // children
 ];
+
+export interface Tree {
+	id: string;
+	startTime: number;
+	name: string;
+	code: string;
+	value: number;
+	time: number;
+	tags: Tag[];
+	children: Tree[];
+}
+
+export interface Tag {
+	key: string;
+	value: string;
+}
 
 // Actions
 

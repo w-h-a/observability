@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TraceGraph > when: the user goes to the spans page and calls to the backend are a success > then: we render the spans table 1`] = `
+<div>
+  <div
+    class="ant-row css-dev-only-do-not-override-7ny38l"
+    style="margin-left: -16px; margin-right: -16px;"
+  >
+    <div
+      class="ant-col ant-col-sm-24 ant-col-md-24 css-dev-only-do-not-override-7ny38l"
+      style="padding-left: 16px; padding-right: 16px;"
+    >
+      <div
+        class="ant-space css-dev-only-do-not-override-7ny38l ant-space-vertical ant-space-gap-row-middle ant-space-gap-col-middle"
+        style="width: 100%;"
+      >
+        <div
+          class="ant-space-item"
+        >
+          <div
+            class="ant-card ant-card-bordered css-dev-only-do-not-override-7ny38l"
+            style="height: 500px;"
+          >
+            <div
+              class="ant-card-body"
+              style="padding: 80px;"
+            >
+              <div
+                style="display: flex; justify-content: center; flex-direction: column; align-items: center;"
+              >
+                <div
+                  style="text-align: center; margin-top: 40px;"
+                >
+                  Trace Graph For Trace 
+                  8fb945b2df69da477a98886d79c9a26d
+                   
+                </div>
+                <div
+                  id="graph"
+                  style="font-size: 12px; margin-top: 80px;"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

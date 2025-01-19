@@ -10,6 +10,7 @@ const reducer = combineReducers({
 	endpoints: ServiceUpdater.EndpointsReducer,
 	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
 	spanMatrix: SpansUpdater.SpanMatrixReducer,
+	spanMatrixForATrace: SpansUpdater.SpanMatrixForATraceReducer,
 });
 
 export const store = configureStore({

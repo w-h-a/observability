@@ -1,21 +1,30 @@
+import { Config } from "../../../src/config/config";
+
+Config.GetInstance();
+
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { render, RenderResult } from "@testing-library/react";
 import { TestCase } from "../testcase";
-import { Spans } from "../../../src/views/Spans/Spans";
+import { TraceGraph } from "../../../src/views/Trace/TraceGraph";
 import { store } from "../../../src/updaters/store";
 import { IClient } from "../../../src/clients/query/client";
 import { Client } from "../../../src/clients/query/mock/client";
 import { ClientContext } from "../../../src/clients/query/clientCtx";
 
-vi.mock("../../../src/updaters/time/utils", () => {
+const traceId = "8fb945b2df69da477a98886d79c9a26d";
+
+vi.mock("react-router-dom", async () => {
+	const mod = await vi.importActual("react-router-dom");
 	return {
-		Now: vi.fn(() => 1736393070 * 1000),
-		StartTime: vi.fn(() => "2025-01-19 12:05:33"),
+		...mod,
+		useParams: () => ({
+			id: traceId,
+		}),
 	};
 });
 
-describe("Spans", () => {
+describe("TraceGraph", () => {
 	const mockQueryClient: IClient = new Client();
 
 	const testCases: TestCase[] = [
@@ -58,7 +67,7 @@ describe("Spans", () => {
 									[
 										1737306333966,
 										"bfcf37f4c5b5568c",
-										"8e45426a4194bb99",
+										"",
 										"8fb945b2df69da477a98886d79c9a26d",
 										"frontend",
 										"HTTP GET",
@@ -83,7 +92,7 @@ describe("Spans", () => {
 			Then: "then: we render the spans table",
 			ClientCalledTimes: 1,
 			ClientCalledWith: [
-				"http://localhost:4000/api/v1/spans?start=1736392170&end=1736393070",
+				`http://localhost:4000/api/v1/spans/trace?traceId=${traceId}`,
 			],
 		},
 	];
@@ -99,7 +108,7 @@ describe("Spans", () => {
 					<Provider store={store}>
 						<BrowserRouter>
 							<ClientContext.Provider value={{ queryClient: mockQueryClient }}>
-								<Spans />
+								<TraceGraph />
 							</ClientContext.Provider>
 						</BrowserRouter>
 					</Provider>,
