@@ -127,7 +127,7 @@ func (r *sqlRepo) ReadSpans(
 	maxDuration string,
 	tagQueries ...repos.TagQuery,
 ) error {
-	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE timestamp>=? AND timestamp<=?`, r.options.Database, r.options.Table)
+	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, StatusCode as statusCode, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE timestamp>=? AND timestamp<=?`, r.options.Database, r.options.Table)
 
 	args := []interface{}{startTimestamp, endTimestamp}
 
@@ -204,7 +204,7 @@ func (r *sqlRepo) ReadAggregatedSpans(
 }
 
 func (r *sqlRepo) ReadTraceSpecificSpans(ctx context.Context, dest interface{}, traceId string) error {
-	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE traceId=?`, r.options.Database, r.options.Table)
+	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, StatusCode as statusCode, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE traceId=?`, r.options.Database, r.options.Table)
 
 	if err := r.options.Client.Read(ctx, dest, query, traceId); err != nil {
 		log.Errorf("repo client failed to read: %v", err)

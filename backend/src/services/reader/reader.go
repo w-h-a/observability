@@ -242,7 +242,7 @@ func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*SpanMatrix, er
 
 	spanMatrix := []*SpanMatrix{
 		{
-			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "Duration", "Tags"},
+			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "StatusCode", "Duration", "Tags"},
 			Events:  make([][]interface{}, len(spans)),
 		},
 	}
@@ -311,7 +311,7 @@ func (r *Reader) SpansByTrace(ctx context.Context, query *SpansByTraceIdArgs) ([
 
 	spanMatrix := []*SpanMatrix{
 		{
-			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "Duration", "Tags"},
+			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "StatusCode", "Duration", "Tags"},
 			Events:  make([][]interface{}, len(spans)),
 		},
 	}
