@@ -172,6 +172,7 @@ type Span struct {
 	ServiceName  string          `db:"serviceName"`
 	Name         string          `db:"name"`
 	Kind         string          `db:"kind"`
+	StatusCode   string          `db:"statusCode"`
 	Duration     int64           `db:"duration"`
 	Tags         [][]interface{} `db:"tags"`
 }
@@ -179,7 +180,7 @@ type Span struct {
 func (s *Span) ToEventValues() []interface{} {
 	timeObj, _ := time.Parse(time.RFC3339Nano, s.Timestamp)
 
-	return []interface{}{int64(timeObj.UnixNano() / 1000000), s.SpanId, s.ParentSpanId, s.TraceId, s.ServiceName, s.Name, s.Kind, strconv.FormatInt(s.Duration, 10), s.Tags}
+	return []interface{}{int64(timeObj.UnixNano() / 1000000), s.SpanId, s.ParentSpanId, s.TraceId, s.ServiceName, s.Name, s.Kind, s.StatusCode, strconv.FormatInt(s.Duration, 10), s.Tags}
 }
 
 type SpanMatrix struct {
