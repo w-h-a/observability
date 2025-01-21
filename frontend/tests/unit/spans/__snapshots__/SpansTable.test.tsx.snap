@@ -176,6 +176,12 @@ exports[`Spans > when: the user goes to the spans page and calls to the backend 
                             class="ant-table-cell"
                             scope="col"
                           >
+                            Status Code
+                          </th>
+                          <th
+                            class="ant-table-cell"
+                            scope="col"
+                          >
                             TraceID
                           </th>
                         </tr>
@@ -210,6 +216,11 @@ exports[`Spans > when: the user goes to the spans page and calls to the backend 
                           <td
                             class="ant-table-cell"
                           >
+                            Ok
+                          </td>
+                          <td
+                            class="ant-table-cell"
+                          >
                             <a
                               href="/traces/8fb945b2df69da477a98886d79c9a26d"
                             >
@@ -240,6 +251,11 @@ exports[`Spans > when: the user goes to the spans page and calls to the backend 
                             class="ant-table-cell"
                           >
                             HTTP GET
+                          </td>
+                          <td
+                            class="ant-table-cell"
+                          >
+                            Ok
                           </td>
                           <td
                             class="ant-table-cell"

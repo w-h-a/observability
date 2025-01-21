@@ -13,7 +13,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
 			);
 
 			return rsp;
@@ -35,7 +35,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}&service=${serviceName}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
 			);
 
 			return rsp;
@@ -57,7 +57,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}&step=60&service=${serviceName}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
 			);
 
 			return rsp;
@@ -79,12 +79,32 @@ export class Query {
 			const query = `?start=${start}&end=${end}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("baseUrl")}${path}${query}`,
+				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
 			);
 
 			return rsp;
 		} catch (err: unknown) {
 			console.log(`query client failed to retrieve spans: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetSpansByTraceId<T = any>(
+		client: IClient,
+		traceId: string,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/spans/trace`;
+
+			const query = `?traceId=${traceId}`;
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve spans by trace id: ${err}`);
 			throw err;
 		}
 	}
