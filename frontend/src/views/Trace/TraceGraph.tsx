@@ -10,7 +10,7 @@ import * as d3Tip from "d3-tip";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { SpansUpdater } from "../../updaters/spans/spans";
 import { ClientContext } from "../../clients/query/clientCtx";
-import { Config } from "../../config/config";
+import { Config, EnvVar } from "../../config/config";
 
 export const TraceGraph = () => {
 	const { queryClient } = useContext(ClientContext);
@@ -57,7 +57,7 @@ export const TraceGraph = () => {
 		.sort(true);
 
 	// hack for now
-	if (Config.GetInstance().get("ENVIRONMENT") !== "test") {
+	if (Config.GetInstance().get(EnvVar.ENVIRONMENT) !== "test") {
 		graph.tooltip(tip);
 	}
 

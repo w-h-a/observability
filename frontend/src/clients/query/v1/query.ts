@@ -1,4 +1,4 @@
-import { Config } from "../../../config/config";
+import { Config, EnvVar } from "../../../config/config";
 import { IClient } from "../client";
 
 export class Query {
@@ -13,7 +13,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
 			);
 
 			return rsp;
@@ -35,7 +35,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}&service=${serviceName}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
 			);
 
 			return rsp;
@@ -57,7 +57,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}&step=60&service=${serviceName}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
 			);
 
 			return rsp;
@@ -79,7 +79,7 @@ export class Query {
 			const query = `?start=${start}&end=${end}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
 			);
 
 			return rsp;
@@ -99,7 +99,7 @@ export class Query {
 			const query = `?traceId=${traceId}`;
 
 			const rsp = await client.get<T>(
-				`${Config.GetInstance().get("BASE_QUERY_URL")}${path}${query}`,
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
 			);
 
 			return rsp;
