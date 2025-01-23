@@ -1,6 +1,7 @@
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { render, RenderResult } from "@testing-library/react";
+import { act, render, RenderResult, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TestCase } from "../testcase";
 import { Spans } from "../../../src/views/Spans/Spans";
 import { store } from "../../../src/updaters/store";
@@ -23,6 +24,12 @@ describe("Spans", () => {
 			When:
 				"when: the user goes to the spans page and calls to the backend are a success",
 			GetStub: function <T>(url: string): Promise<{ data: T }> {
+				if (url.includes("services/list")) {
+					return new Promise((resolve) => {
+						resolve({ data: ["route", "frontend"] as T });
+					});
+				}
+
 				return new Promise((resolve) => {
 					resolve({
 						data: [
@@ -81,8 +88,9 @@ describe("Spans", () => {
 				});
 			},
 			Then: "then: we render the spans table",
-			ClientCalledTimes: 1,
+			ClientCalledTimes: 2,
 			ClientCalledWith: [
+				"http://localhost:4000/api/v1/services/list",
 				"http://localhost:4000/api/v1/spans?start=1736392170&end=1736393070",
 			],
 		},
@@ -93,6 +101,8 @@ describe("Spans", () => {
 			let view: RenderResult;
 
 			beforeEach(async () => {
+				const user = userEvent.setup();
+
 				mockQueryClient.get = vi.fn().mockImplementation(testCase.GetStub);
 
 				view = render(
@@ -104,6 +114,10 @@ describe("Spans", () => {
 						</BrowserRouter>
 					</Provider>,
 				);
+
+				await act(async () => {
+					await user.click(view.getAllByRole("combobox")[0]);
+				});
 			});
 
 			afterEach(() => {
@@ -120,6 +134,11 @@ describe("Spans", () => {
 						testCase.ClientCalledWith[count - 1],
 					);
 				}
+
+				const options = view.getAllByRole("option");
+				expect(options).toHaveLength(2);
+				expect(within(options[0]).getByText("route")).toBeInTheDocument();
+				expect(within(options[1]).getByText("frontend")).toBeInTheDocument();
 
 				expect(view.container).toMatchSnapshot();
 			});

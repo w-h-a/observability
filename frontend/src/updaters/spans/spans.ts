@@ -6,12 +6,13 @@ import {
 	MaxMinTime,
 	Span,
 	SpanMatrix,
-	SpanMatrixFailure,
-	SpanMatrixSuccess,
+	SpanMatrixActionFailure,
+	SpanMatrixActionSuccess,
 	Tag,
 	Tree,
 } from "../domain";
 import { Query } from "../../clients/query/v1/query";
+import { FilteredQuery } from "../../clients/query/filteredQuery";
 
 export class SpansUpdater {
 	private static initialState = { "0": { columns: [], events: [] } };
@@ -21,7 +22,7 @@ export class SpansUpdater {
 	static Spans(
 		client: IClient,
 		maxMinTime: MaxMinTime,
-		filters?: string,
+		filters?: FilteredQuery,
 	): (dispatch: Dispatch) => Promise<void> {
 		return async (dispatch: Dispatch) => {
 			try {
@@ -32,12 +33,12 @@ export class SpansUpdater {
 					filters,
 				);
 
-				dispatch<SpanMatrixSuccess>({
+				dispatch<SpanMatrixActionSuccess>({
 					type: ActionTypes.spanMatrixSuccess,
 					payload: rsp.data,
 				});
 			} catch (_: unknown) {
-				dispatch<SpanMatrixFailure>({
+				dispatch<SpanMatrixActionFailure>({
 					type: ActionTypes.spanMatrixFailure,
 					payload: {},
 				});
@@ -67,12 +68,12 @@ export class SpansUpdater {
 			try {
 				const rsp = await Query.GetSpansByTraceId<SpanMatrix>(client, traceId);
 
-				dispatch<SpanMatrixSuccess>({
+				dispatch<SpanMatrixActionSuccess>({
 					type: ActionTypes.spanMatrixSuccess,
 					payload: rsp.data,
 				});
 			} catch (_: unknown) {
-				dispatch<SpanMatrixFailure>({
+				dispatch<SpanMatrixActionFailure>({
 					type: ActionTypes.spanMatrixFailure,
 					payload: {},
 				});

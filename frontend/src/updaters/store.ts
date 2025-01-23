@@ -7,6 +7,9 @@ import { SpansUpdater } from "./spans/spans";
 const reducer = combineReducers({
 	maxMinTime: TimeUpdater.MaxMinTimeReducer,
 	services: ServicesUpdater.ServicesReducer,
+	serviceNames: ServicesUpdater.ServiceNamesReducer,
+	operationNames: ServiceUpdater.OperationNamesReducer,
+	tags: ServiceUpdater.TagsReducer,
 	endpoints: ServiceUpdater.EndpointsReducer,
 	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
 	spanMatrix: SpansUpdater.SpanMatrixReducer,

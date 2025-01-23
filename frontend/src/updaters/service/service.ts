@@ -4,12 +4,16 @@ import {
 	Action,
 	ActionTypes,
 	Endpoint,
-	EndpointsFailure,
-	EndpointsSuccess,
+	EndpointsActionFailure,
+	EndpointsActionSuccess,
 	MaxMinTime,
+	OperationNamesActionFailure,
+	OperationNamesActionSuccess,
 	ServiceMetricItem,
-	ServiceMetricsFailure,
-	ServiceMetricsSuccess,
+	ServiceMetricsActionFailure,
+	ServiceMetricsActionSuccess,
+	TagsActionFailure,
+	TagsActionSuccess,
 } from "../domain";
 import { Query } from "../../clients/query/v1/query";
 
@@ -60,6 +64,73 @@ export class ServiceUpdater {
 		},
 	];
 
+	static OperationNames(
+		client: IClient,
+		serviceName: string,
+	): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetOperationNames<string[]>(client, serviceName);
+
+				dispatch<OperationNamesActionSuccess>({
+					type: ActionTypes.operationNamesSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<OperationNamesActionFailure>({
+					type: ActionTypes.operationNamesFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static OperationNamesReducer(
+		state: Array<string> = [],
+		action: Action,
+	): Array<string> {
+		switch (action.type) {
+			case ActionTypes.operationNamesSuccess:
+				return action.payload;
+			case ActionTypes.operationNamesFailure:
+				return [];
+			default:
+				return state;
+		}
+	}
+
+	static Tags(
+		client: IClient,
+		serviceName: string,
+	): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetTags<string[]>(client, serviceName);
+
+				dispatch<TagsActionSuccess>({
+					type: ActionTypes.tagsSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<TagsActionFailure>({
+					type: ActionTypes.tagsFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static TagsReducer(state: Array<string> = [], action: Action): Array<string> {
+		switch (action.type) {
+			case ActionTypes.tagsSuccess:
+				return action.payload;
+			case ActionTypes.tagsFailure:
+				return [];
+			default:
+				return state;
+		}
+	}
+
 	static Endpoints(
 		client: IClient,
 		maxMinTime: MaxMinTime,
@@ -74,12 +145,12 @@ export class ServiceUpdater {
 					serviceName,
 				);
 
-				dispatch<EndpointsSuccess>({
+				dispatch<EndpointsActionSuccess>({
 					type: ActionTypes.endpointsSuccess,
 					payload: rsp.data,
 				});
 			} catch (_: unknown) {
-				dispatch<EndpointsFailure>({
+				dispatch<EndpointsActionFailure>({
 					type: ActionTypes.endpointsFailure,
 					payload: [],
 				});
@@ -115,12 +186,12 @@ export class ServiceUpdater {
 					serviceName,
 				);
 
-				dispatch<ServiceMetricsSuccess>({
+				dispatch<ServiceMetricsActionSuccess>({
 					type: ActionTypes.serviceMetricsSuccess,
 					payload: rsp.data,
 				});
 			} catch (_: unknown) {
-				dispatch<ServiceMetricsFailure>({
+				dispatch<ServiceMetricsActionFailure>({
 					type: ActionTypes.serviceMetricsFailure,
 					payload: [],
 				});

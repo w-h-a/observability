@@ -3,6 +3,9 @@
 export interface StoreState {
 	maxMinTime: MaxMinTime;
 	services: Array<Service>;
+	serviceNames: Array<string>;
+	operationNames: Array<string>;
+	tags: Array<string>;
 	endpoints: Array<Endpoint>;
 	serviceMetrics: Array<ServiceMetricItem>;
 	spanMatrix: SpanMatrix;
@@ -87,6 +90,12 @@ export enum ActionTypes {
 	maxMinTime = "MAX_MIN_TIME",
 	servicesSuccess = "SERVICES_SUCCESS",
 	servicesFailure = "SERVICES_FAILURE",
+	serviceNamesSuccess = "SERVICE_NAMES_SUCCESS",
+	serviceNamesFailure = "SERVICE_NAMES_FAILURE",
+	operationNamesSuccess = "OPERATION_NAMES_SUCCESS",
+	operationNamesFailure = "OPERATION_NAMES_FAILURE",
+	tagsSuccess = "TAGS_SUCCESS",
+	tagsFailure = "TAGS_FAILURE",
 	endpointsSuccess = "ENDPOINTS_SUCCESS",
 	endpointsFailure = "ENDPOINTS_FAILURE",
 	serviceMetricsSuccess = "SERVICE_METRICS_SUCCESS",
@@ -110,32 +119,62 @@ export type ServicesActionFailure = {
 	payload: Service[];
 };
 
-export type EndpointsSuccess = {
+export type ServiceNamesActionSuccess = {
+	type: ActionTypes.serviceNamesSuccess;
+	payload: string[];
+};
+
+export type ServiceNamesActionFailure = {
+	type: ActionTypes.serviceNamesFailure;
+	payload: string[];
+};
+
+export type OperationNamesActionSuccess = {
+	type: ActionTypes.operationNamesSuccess;
+	payload: string[];
+};
+
+export type OperationNamesActionFailure = {
+	type: ActionTypes.operationNamesFailure;
+	payload: string[];
+};
+
+export type TagsActionSuccess = {
+	type: ActionTypes.tagsSuccess;
+	payload: string[];
+};
+
+export type TagsActionFailure = {
+	type: ActionTypes.tagsFailure;
+	payload: string[];
+};
+
+export type EndpointsActionSuccess = {
 	type: ActionTypes.endpointsSuccess;
 	payload: Endpoint[];
 };
 
-export type EndpointsFailure = {
+export type EndpointsActionFailure = {
 	type: ActionTypes.endpointsFailure;
 	payload: Endpoint[];
 };
 
-export type ServiceMetricsSuccess = {
+export type ServiceMetricsActionSuccess = {
 	type: ActionTypes.serviceMetricsSuccess;
 	payload: ServiceMetricItem[];
 };
 
-export type ServiceMetricsFailure = {
+export type ServiceMetricsActionFailure = {
 	type: ActionTypes.serviceMetricsFailure;
 	payload: ServiceMetricItem[];
 };
 
-export type SpanMatrixSuccess = {
+export type SpanMatrixActionSuccess = {
 	type: ActionTypes.spanMatrixSuccess;
 	payload: SpanMatrix;
 };
 
-export type SpanMatrixFailure = {
+export type SpanMatrixActionFailure = {
 	type: ActionTypes.spanMatrixFailure;
 	payload: SpanMatrix;
 };
@@ -144,9 +183,15 @@ export type Action =
 	| MaxMinTimeAction
 	| ServicesActionSuccess
 	| ServicesActionFailure
-	| EndpointsSuccess
-	| EndpointsFailure
-	| ServiceMetricsSuccess
-	| ServiceMetricsFailure
-	| SpanMatrixSuccess
-	| SpanMatrixFailure;
+	| ServiceNamesActionSuccess
+	| ServiceNamesActionFailure
+	| OperationNamesActionSuccess
+	| OperationNamesActionFailure
+	| TagsActionSuccess
+	| TagsActionFailure
+	| EndpointsActionSuccess
+	| EndpointsActionFailure
+	| ServiceMetricsActionSuccess
+	| ServiceMetricsActionFailure
+	| SpanMatrixActionSuccess
+	| SpanMatrixActionFailure;

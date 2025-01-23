@@ -4,6 +4,8 @@ import {
 	ActionTypes,
 	MaxMinTime,
 	Service,
+	ServiceNamesActionFailure,
+	ServiceNamesActionSuccess,
 	ServicesActionFailure,
 	ServicesActionSuccess,
 } from "../domain";
@@ -69,6 +71,38 @@ export class ServicesUpdater {
 				return action.payload;
 			case ActionTypes.servicesFailure:
 				return ServicesUpdater.errorState;
+			default:
+				return state;
+		}
+	}
+
+	static ServiceNames(client: IClient): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetServiceNames<string[]>(client);
+
+				dispatch<ServiceNamesActionSuccess>({
+					type: ActionTypes.serviceNamesSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<ServiceNamesActionFailure>({
+					type: ActionTypes.serviceNamesFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static ServiceNamesReducer(
+		state: Array<string> = [],
+		action: Action,
+	): Array<string> {
+		switch (action.type) {
+			case ActionTypes.serviceNamesSuccess:
+				return action.payload;
+			case ActionTypes.serviceNamesFailure:
+				return [];
 			default:
 				return state;
 		}
