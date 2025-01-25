@@ -3,11 +3,16 @@ import { IClient } from "../../clients/query/client";
 import {
 	Action,
 	ActionTypes,
+	CustomMetric,
+	CustomMetricsActionFailure,
+	CustomMetricsActionSuccess,
 	MaxMinTime,
 	Span,
 	SpanMatrix,
 	SpanMatrixActionFailure,
 	SpanMatrixActionSuccess,
+	SpanMatrixForATraceActionFailure,
+	SpanMatrixForATraceActionSuccess,
 	Tag,
 	Tree,
 } from "../domain";
@@ -18,6 +23,10 @@ export class SpansUpdater {
 	private static initialState = { "0": { columns: [], events: [] } };
 
 	private static errorState = { "0": { columns: [], events: [] } };
+
+	private static initialCustomMetricsState = [{ timestamp: 0, value: 0 }];
+
+	private static errorCustomMetricsState = [{ timestamp: 0, value: 0 }];
 
 	static Spans(
 		client: IClient,
@@ -60,6 +69,51 @@ export class SpansUpdater {
 		}
 	}
 
+	static CustomMetrics(
+		client: IClient,
+		maxMinTime: MaxMinTime,
+		dimension: string,
+		aggregation: string,
+		filters?: FilteredQuery,
+	): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetCustomMetrics<CustomMetric[]>(
+					client,
+					maxMinTime.minTime,
+					maxMinTime.maxTime,
+					dimension,
+					aggregation,
+					filters,
+				);
+
+				dispatch<CustomMetricsActionSuccess>({
+					type: ActionTypes.customMetricsSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<CustomMetricsActionFailure>({
+					type: ActionTypes.customMetricsFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static CustomMetricsReducer(
+		state: CustomMetric[] = SpansUpdater.initialCustomMetricsState,
+		action: Action,
+	): CustomMetric[] {
+		switch (action.type) {
+			case ActionTypes.customMetricsSuccess:
+				return action.payload;
+			case ActionTypes.customMetricsFailure:
+				return SpansUpdater.errorCustomMetricsState;
+			default:
+				return state;
+		}
+	}
+
 	static SpansByTraceId(
 		client: IClient,
 		traceId: string,
@@ -68,13 +122,13 @@ export class SpansUpdater {
 			try {
 				const rsp = await Query.GetSpansByTraceId<SpanMatrix>(client, traceId);
 
-				dispatch<SpanMatrixActionSuccess>({
-					type: ActionTypes.spanMatrixSuccess,
+				dispatch<SpanMatrixForATraceActionSuccess>({
+					type: ActionTypes.spanMatrixForATraceSuccess,
 					payload: rsp.data,
 				});
 			} catch (_: unknown) {
-				dispatch<SpanMatrixActionFailure>({
-					type: ActionTypes.spanMatrixFailure,
+				dispatch<SpanMatrixForATraceActionFailure>({
+					type: ActionTypes.spanMatrixForATraceFailure,
 					payload: {},
 				});
 			}
@@ -86,9 +140,9 @@ export class SpansUpdater {
 		action: Action,
 	): SpanMatrix {
 		switch (action.type) {
-			case ActionTypes.spanMatrixSuccess:
+			case ActionTypes.spanMatrixForATraceSuccess:
 				return action.payload;
-			case ActionTypes.spanMatrixFailure:
+			case ActionTypes.spanMatrixForATraceFailure:
 				return SpansUpdater.errorState;
 			default:
 				return state;
@@ -96,7 +150,7 @@ export class SpansUpdater {
 	}
 
 	// TODO: rework this and the data structure it assumes
-	static SpansToTree = (spans: Span[]): Tree => {
+	static SpansToTree(spans: Span[]): Tree {
 		let tree: Tree = {
 			id: "empty",
 			startTime: 0,
@@ -141,5 +195,5 @@ export class SpansUpdater {
 		}
 
 		return tree;
-	};
+	}
 }

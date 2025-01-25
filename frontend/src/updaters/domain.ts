@@ -9,6 +9,8 @@ export interface StoreState {
 	endpoints: Array<Endpoint>;
 	serviceMetrics: Array<ServiceMetricItem>;
 	spanMatrix: SpanMatrix;
+	customMetrics: CustomMetric[];
+	spanMatrixForATrace: SpanMatrix;
 }
 
 export interface MaxMinTime {
@@ -84,6 +86,11 @@ export interface Tag {
 	value: string;
 }
 
+export interface CustomMetric {
+	timestamp: number;
+	value: number;
+}
+
 // Actions
 
 export enum ActionTypes {
@@ -102,6 +109,10 @@ export enum ActionTypes {
 	serviceMetricsFailure = "SERVICE_METRICS_FAILURE",
 	spanMatrixSuccess = "SPAN_MATRIX_SUCCESS",
 	spanMatrixFailure = "SPAN_MATRIX_FAILURE",
+	customMetricsSuccess = "CUSTOM_METRICS_SUCCESS",
+	customMetricsFailure = "CUSTOM_METRICS_FAILURE",
+	spanMatrixForATraceSuccess = "SPAN_MATRIX_FOR_A_TRACE_SUCCESS",
+	spanMatrixForATraceFailure = "SPAN_MATRIX_FOR_A_TRACE_FAILURE",
 }
 
 export type MaxMinTimeAction = {
@@ -179,6 +190,26 @@ export type SpanMatrixActionFailure = {
 	payload: SpanMatrix;
 };
 
+export type CustomMetricsActionSuccess = {
+	type: ActionTypes.customMetricsSuccess;
+	payload: CustomMetric[];
+};
+
+export type CustomMetricsActionFailure = {
+	type: ActionTypes.customMetricsFailure;
+	payload: CustomMetric[];
+};
+
+export type SpanMatrixForATraceActionSuccess = {
+	type: ActionTypes.spanMatrixForATraceSuccess;
+	payload: SpanMatrix;
+};
+
+export type SpanMatrixForATraceActionFailure = {
+	type: ActionTypes.spanMatrixForATraceFailure;
+	payload: SpanMatrix;
+};
+
 export type Action =
 	| MaxMinTimeAction
 	| ServicesActionSuccess
@@ -194,4 +225,8 @@ export type Action =
 	| ServiceMetricsActionSuccess
 	| ServiceMetricsActionFailure
 	| SpanMatrixActionSuccess
-	| SpanMatrixActionFailure;
+	| SpanMatrixActionFailure
+	| CustomMetricsActionSuccess
+	| CustomMetricsActionFailure
+	| SpanMatrixForATraceActionSuccess
+	| SpanMatrixForATraceActionFailure;

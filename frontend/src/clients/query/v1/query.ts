@@ -135,27 +135,7 @@ export class Query {
 			let query = `?start=${start}&end=${end}`;
 
 			if (filters) {
-				if (filters.service) {
-					query += `&service=${filters.service}`;
-				}
-
-				if (filters.operation) {
-					query += `&name=${filters.operation}`;
-				}
-
-				if (filters.duration) {
-					if (filters.duration.min) {
-						query += `&minDuration=${filters.duration.min}`;
-					}
-
-					if (filters.duration.max) {
-						query += `&maxDuration=${filters.duration.max}`;
-					}
-				}
-
-				if (filters.tags.length !== 0) {
-					query += `&tags=${encodeURIComponent(JSON.stringify(filters.tags))}`;
-				}
+				query = Query.applyFilters(filters, query);
 			}
 
 			const rsp = await client.get<T>(
@@ -165,6 +145,34 @@ export class Query {
 			return rsp;
 		} catch (err: unknown) {
 			console.log(`query client failed to retrieve spans: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetCustomMetrics<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+		dimension: string,
+		aggregation: string,
+		filters?: FilteredQuery,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/spans/aggregated`;
+
+			let query = `?start=${start}&end=${end}&dimension=${dimension}&aggregation=${aggregation}&step=60`;
+
+			if (filters) {
+				query = Query.applyFilters(filters, query);
+			}
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve custom metrics: ${err}`);
 			throw err;
 		}
 	}
@@ -187,5 +195,31 @@ export class Query {
 			console.log(`query client failed to retrieve spans by trace id: ${err}`);
 			throw err;
 		}
+	}
+
+	private static applyFilters(filters: FilteredQuery, query: string) {
+		if (filters.service) {
+			query += `&service=${filters.service}`;
+		}
+
+		if (filters.operation) {
+			query += `&name=${filters.operation}`;
+		}
+
+		if (filters.duration) {
+			if (filters.duration.min) {
+				query += `&minDuration=${filters.duration.min}`;
+			}
+
+			if (filters.duration.max) {
+				query += `&maxDuration=${filters.duration.max}`;
+			}
+		}
+
+		if (filters.tags.length !== 0) {
+			query += `&tags=${encodeURIComponent(JSON.stringify(filters.tags))}`;
+		}
+
+		return query;
 	}
 }
