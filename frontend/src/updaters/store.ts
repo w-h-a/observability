@@ -13,6 +13,7 @@ const reducer = combineReducers({
 	endpoints: ServiceUpdater.EndpointsReducer,
 	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
 	spanMatrix: SpansUpdater.SpanMatrixReducer,
+	customMetrics: SpansUpdater.CustomMetricsReducer,
 	spanMatrixForATrace: SpansUpdater.SpanMatrixForATraceReducer,
 });
 

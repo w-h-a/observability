@@ -1,9 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AutoComplete, Button, Card, Form, Input, Select, Tag } from "antd";
+import {
+	AutoComplete,
+	Button,
+	Card,
+	Form,
+	Input,
+	Select,
+	Space,
+	Tag,
+} from "antd";
 import { Store } from "antd/es/form/interface";
 import FormItem from "antd/es/form/FormItem";
 import { DurationModelForm } from "./DurationModalForm";
+import { GenericVisualizations, GraphType } from "./GenericVisualizations";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { SpansUpdater } from "../../updaters/spans/spans";
 import { ServiceUpdater } from "../../updaters/service/service";
@@ -19,6 +29,48 @@ enum TagValue {
 	maxDuration = "maxDuration",
 }
 
+enum CustomVisualizationField {
+	dimension = "dimension",
+	aggregation = "aggregation",
+	interval = "interval",
+	graphType = "graph_type",
+}
+
+// TODO: status code?
+const dimensions = [
+	{
+		title: "Calls",
+		key: "calls",
+		value: "calls",
+	},
+	{
+		title: "Duration",
+		key: "duration",
+		value: "duration",
+	},
+];
+
+const aggregations = [
+	{
+		dimension: "calls",
+		defaultSelected: { title: "Count", key: "count", value: "count" },
+		optionsAvailable: [
+			{ title: "Count", key: "count", value: "count" },
+			{ title: "Rate (per sec)", key: "rate_per_sec", value: "rate_per_sec" },
+		],
+	},
+	{
+		dimension: "duration",
+		defaultSelected: { title: "p99", key: "p99", value: "p99" },
+		optionsAvailable: [
+			{ title: "p99", key: "p99", value: "p99" },
+			{ title: "p95", key: "p95", value: "p95" },
+			{ title: "p50", key: "p50", value: "p50" },
+			{ title: "avg", key: "avg", value: "avg" },
+		],
+	},
+];
+
 export const SpanFilter = () => {
 	// clients
 	const { queryClient } = useContext(ClientContext);
@@ -31,12 +83,16 @@ export const SpanFilter = () => {
 		duration: { min: "", max: "" },
 		tags: [],
 	});
+	const [dimension, setDimension] = useState("calls");
+	const [aggregation, setAggregation] = useState("count");
+	// const [step, setStep] = useState("60");
 
 	// store state
 	const maxMinTime = useSelector((state: RootState) => state.maxMinTime);
 	const serviceNames = useSelector((state: RootState) => state.serviceNames);
 	const operationNames = useSelector((state: RootState) => state.operationNames);
 	const tags = useSelector((state: RootState) => state.tags);
+	const customMetrics = useSelector((state: RootState) => state.customMetrics);
 
 	const dispatch: AppDispatch = useDispatch();
 
@@ -162,7 +218,6 @@ export const SpanFilter = () => {
 					...spanFilters,
 					duration: { min: spanFilters.duration?.min ?? "", max: "" },
 				});
-
 				break;
 			case TagValue.maxDuration:
 				setSpanFilters({
@@ -188,178 +243,286 @@ export const SpanFilter = () => {
 		});
 	};
 
+	// custom visualizations stuff
+	const [customVizForm] = Form.useForm();
+
+	const onValuesChangeHandler = (changedValues: any) => {
+		const field = Object.keys(changedValues)[0];
+
+		switch (field) {
+			case CustomVisualizationField.dimension:
+				const tempAgg = aggregations.filter((a) => {
+					return a.dimension === changedValues[field];
+				})[0];
+
+				customVizForm.setFieldsValue({
+					aggregation: tempAgg.defaultSelected.value,
+				});
+
+				const values = customVizForm.getFieldsValue([
+					CustomVisualizationField.dimension,
+					CustomVisualizationField.aggregation,
+				]);
+
+				setDimension(values[CustomVisualizationField.dimension]);
+				setAggregation(values[CustomVisualizationField.aggregation]);
+
+				break;
+			case CustomVisualizationField.aggregation:
+				setAggregation(changedValues[field]);
+				break;
+			case CustomVisualizationField.interval:
+				break;
+			case CustomVisualizationField.graphType:
+				break;
+		}
+	};
+
+	useEffect(() => {
+		dispatch(
+			SpansUpdater.CustomMetrics(
+				queryClient,
+				{
+					minTime: maxMinTime.minTime - 15 * 60,
+					maxTime: maxMinTime.maxTime + 15 * 60,
+				},
+				dimension,
+				aggregation,
+				spanFilters,
+			),
+		);
+	}, [dispatch, queryClient, maxMinTime, dimension, aggregation, spanFilters]);
+
 	return (
 		<div>
-			<div>Filter Spans</div>
-			<Form
-				form={initialForm}
-				layout="inline"
-				initialValues={{ service: "", operation: "", duration: "Duration" }}
-				style={{ marginTop: 10, marginBottom: 10 }}
-			>
-				<FormItem rules={[{ required: true }]} name="service">
-					<Select
-						showSearch
-						style={{ width: 180 }}
-						onChange={onChangeService}
-						placeholder="Select Service"
-						allowClear
-					>
-						{serviceNames.map((name: string, idx: number) => {
-							return (
-								<Select.Option value={name} key={idx}>
-									{name}
-								</Select.Option>
-							);
-						})}
-					</Select>
-				</FormItem>
-				<FormItem name="operation">
-					<Select
-						showSearch
-						style={{ width: 180 }}
-						onChange={onChangeOperation}
-						placeholder="Select Operation"
-						allowClear
-					>
-						{operationNames.map((name: string, idx: number) => {
-							return (
-								<Select.Option value={name} key={idx}>
-									{name}
-								</Select.Option>
-							);
-						})}
-					</Select>
-				</FormItem>
-				<FormItem name="duration">
-					<Input style={{ width: 180 }} type="button" onClick={onClickDuration} />
-				</FormItem>
-			</Form>
-			<Card
-				style={{ padding: 6, marginTop: 10, marginBottom: 10 }}
-				bodyStyle={{ padding: 6 }}
-			>
-				{!spanFilters.service ? null : (
-					<Tag
-						style={{ fontSize: 14, padding: 8 }}
-						closable
-						onClose={() => onCloseTag(TagValue.service)}
-					>
-						service:{spanFilters.service}
-					</Tag>
-				)}
-				{!spanFilters.operation ? null : (
-					<Tag
-						style={{ fontSize: 14, padding: 8 }}
-						closable
-						onClose={() => onCloseTag(TagValue.operation)}
-					>
-						operation:{spanFilters.operation}
-					</Tag>
-				)}
-				{!spanFilters.duration || !spanFilters.duration.min ? null : (
-					<Tag
-						style={{ fontSize: 14, padding: 8 }}
-						closable
-						onClose={() => onCloseTag(TagValue.minDuration)}
-					>
-						minDuration:
-						{(Number(spanFilters.duration.min) / 1000000).toString()}ms
-					</Tag>
-				)}
-				{!spanFilters.duration || !spanFilters.duration.max ? null : (
-					<Tag
-						style={{ fontSize: 14, padding: 8 }}
-						closable
-						onClose={() => onCloseTag(TagValue.maxDuration)}
-					>
-						maxDuration:
-						{(Number(spanFilters.duration.max) / 1000000).toString()}ms
-					</Tag>
-				)}
-				{!spanFilters.tags
-					? null
-					: spanFilters.tags
-							.filter((t, i) => {
-								const found = spanFilters.tags.findIndex((e) => {
-									return (
-										t.key === e.key && t.operator === e.operator && t.value === e.value
-									);
-								});
-								return i === found;
-							})
-							.map((t) => {
+			<Card>
+				<div>Filter Spans</div>
+				<Form
+					form={initialForm}
+					layout="inline"
+					initialValues={{ service: "", operation: "", duration: "Duration" }}
+					style={{ marginTop: 10, marginBottom: 10 }}
+				>
+					<FormItem rules={[{ required: true }]} name="service">
+						<Select
+							showSearch
+							style={{ width: 180 }}
+							onChange={onChangeService}
+							placeholder="Select Service"
+							allowClear
+						>
+							{serviceNames.map((name: string, idx: number) => {
 								return (
-									<Tag
-										style={{ fontSize: 14, padding: 8 }}
-										closable
-										key={`${t.key}-${t.operator}-${t.value}`}
-										onClose={() => onCloseTagTag(t)}
-									>
-										{t.key} {t.operator} {t.value}
-									</Tag>
+									<Select.Option value={name} key={idx}>
+										{name}
+									</Select.Option>
 								);
 							})}
-			</Card>
-			<div>Select service to get tag suggestions</div>
-			<Form
-				form={tagForm}
-				layout="inline"
-				onFinish={onTagFormSubmit}
-				initialValues={{ operator: "equals" }}
-				style={{ marginTop: 10, marginBottom: 10 }}
-			>
-				<FormItem rules={[{ required: true }]} name="tag_key">
-					<AutoComplete
-						options={tags.map((key: string) => {
-							return { value: key };
-						})}
-						style={{ width: 200, textAlign: "center" }}
-						onChange={onChangeTagKey}
-						filterOption={(input: string, option: { value: string } | undefined) => {
-							return !!(
-								option && option.value.toUpperCase().includes(input.toUpperCase())
-							);
+						</Select>
+					</FormItem>
+					<FormItem name="operation">
+						<Select
+							showSearch
+							style={{ width: 180 }}
+							onChange={onChangeOperation}
+							placeholder="Select Operation"
+							allowClear
+						>
+							{operationNames.map((name: string, idx: number) => {
+								return (
+									<Select.Option value={name} key={idx}>
+										{name}
+									</Select.Option>
+								);
+							})}
+						</Select>
+					</FormItem>
+					<FormItem name="duration">
+						<Input style={{ width: 180 }} type="button" onClick={onClickDuration} />
+					</FormItem>
+				</Form>
+				<Card
+					style={{ padding: 6, marginTop: 10, marginBottom: 10 }}
+					bodyStyle={{ padding: 6 }}
+				>
+					{!spanFilters.service ? null : (
+						<Tag
+							style={{ fontSize: 14, padding: 8 }}
+							closable
+							onClose={() => onCloseTag(TagValue.service)}
+						>
+							service:{spanFilters.service}
+						</Tag>
+					)}
+					{!spanFilters.operation ? null : (
+						<Tag
+							style={{ fontSize: 14, padding: 8 }}
+							closable
+							onClose={() => onCloseTag(TagValue.operation)}
+						>
+							operation:{spanFilters.operation}
+						</Tag>
+					)}
+					{!spanFilters.duration || !spanFilters.duration.min ? null : (
+						<Tag
+							style={{ fontSize: 14, padding: 8 }}
+							closable
+							onClose={() => onCloseTag(TagValue.minDuration)}
+						>
+							minDuration:
+							{(Number(spanFilters.duration.min) / 1000000).toString()}ms
+						</Tag>
+					)}
+					{!spanFilters.duration || !spanFilters.duration.max ? null : (
+						<Tag
+							style={{ fontSize: 14, padding: 8 }}
+							closable
+							onClose={() => onCloseTag(TagValue.maxDuration)}
+						>
+							maxDuration:
+							{(Number(spanFilters.duration.max) / 1000000).toString()}ms
+						</Tag>
+					)}
+					{!spanFilters.tags
+						? null
+						: spanFilters.tags
+								.filter((t, i) => {
+									const found = spanFilters.tags.findIndex((e) => {
+										return (
+											t.key === e.key && t.operator === e.operator && t.value === e.value
+										);
+									});
+									return i === found;
+								})
+								.map((t) => {
+									return (
+										<Tag
+											style={{ fontSize: 14, padding: 8 }}
+											closable
+											key={`${t.key}-${t.operator}-${t.value}`}
+											onClose={() => onCloseTagTag(t)}
+										>
+											{t.key} {t.operator} {t.value}
+										</Tag>
+									);
+								})}
+				</Card>
+				<div>Select service to get tag suggestions</div>
+				<Form
+					form={tagForm}
+					layout="inline"
+					onFinish={onTagFormSubmit}
+					initialValues={{ operator: "equals" }}
+					style={{ marginTop: 10, marginBottom: 10 }}
+				>
+					<FormItem rules={[{ required: true }]} name="tag_key">
+						<AutoComplete
+							options={tags.map((key: string) => {
+								return { value: key };
+							})}
+							style={{ width: 200, textAlign: "center" }}
+							onChange={onChangeTagKey}
+							filterOption={(input: string, option: { value: string } | undefined) => {
+								return !!(
+									option && option.value.toUpperCase().includes(input.toUpperCase())
+								);
+							}}
+							placeholder="Tag Key"
+						/>
+					</FormItem>
+					<FormItem name="operator">
+						<Select style={{ width: 120, textAlign: "center" }}>
+							<Select.Option value="equals">EQUAL</Select.Option>
+							<Select.Option value="contains">CONTAINS</Select.Option>
+						</Select>
+					</FormItem>
+					<FormItem rules={[{ required: true }]} name="tag_value">
+						<Input
+							style={{ width: 160, textAlign: "center" }}
+							placeholder="Tag Value"
+						/>
+					</FormItem>
+					<FormItem>
+						<Button type="primary" htmlType="submit">
+							{" "}
+							Apply Tag Filter{" "}
+						</Button>
+					</FormItem>
+				</Form>
+				{modalVisible && (
+					<DurationModelForm
+						onCreate={onCreateDuration}
+						durationFilterValues={
+							spanFilters.duration &&
+							(spanFilters.duration.min || spanFilters.duration.max)
+								? {
+										min: (Number(spanFilters.duration.min) / 1000000).toString() || "",
+										max: (Number(spanFilters.duration.max) / 1000000).toString() || "",
+									}
+								: { min: "", max: "" }
+						}
+						onCancel={() => {
+							setModalVisible(false);
 						}}
-						placeholder="Tag Key"
 					/>
-				</FormItem>
-				<FormItem name="operator">
-					<Select style={{ width: 120, textAlign: "center" }}>
-						<Select.Option value="equals">EQUAL</Select.Option>
-						<Select.Option value="contains">CONTAINS</Select.Option>
-					</Select>
-				</FormItem>
-				<FormItem rules={[{ required: true }]} name="tag_value">
-					<Input
-						style={{ width: 160, textAlign: "center" }}
-						placeholder="Tag Value"
-					/>
-				</FormItem>
-				<FormItem>
-					<Button type="primary" htmlType="submit">
-						{" "}
-						Apply Tag Filter{" "}
-					</Button>
-				</FormItem>
-			</Form>
-			{modalVisible && (
-				<DurationModelForm
-					onCreate={onCreateDuration}
-					durationFilterValues={
-						spanFilters.duration &&
-						(spanFilters.duration.min || spanFilters.duration.max)
-							? {
-									min: (Number(spanFilters.duration.min) / 1000000).toString() || "",
-									max: (Number(spanFilters.duration.max) / 1000000).toString() || "",
-								}
-							: { min: "", max: "" }
-					}
-					onCancel={() => {
-						setModalVisible(false);
+				)}
+			</Card>
+			<Card>
+				<div>Custom Visualizations</div>
+				<Form
+					form={customVizForm}
+					onValuesChange={onValuesChangeHandler}
+					initialValues={{
+						aggOptions: "Count",
+						graphType: "line",
+						interval: "5m",
+						groupBy: "none",
 					}}
-				/>
-			)}
+				>
+					<Space>
+						<Form.Item name={CustomVisualizationField.dimension}>
+							<Select defaultValue={dimension} style={{ width: 120 }}>
+								{dimensions.map((d) => {
+									return (
+										<Select.Option key={d.key} value={d.value}>
+											{d.title}
+										</Select.Option>
+									);
+								})}
+							</Select>
+						</Form.Item>
+						<Form.Item name={CustomVisualizationField.aggregation}>
+							<Select style={{ width: 120 }}>
+								{aggregations
+									.filter((a) => {
+										return a.dimension === dimension;
+									})[0]
+									.optionsAvailable.map((a) => {
+										return (
+											<Select.Option key={a.key} value={a.value}>
+												{a.title}
+											</Select.Option>
+										);
+									})}
+							</Select>
+						</Form.Item>
+						<Form.Item name={CustomVisualizationField.interval}>
+							<Select style={{ width: 120 }} allowClear>
+								<Select.Option value="1m">1 min</Select.Option>
+								<Select.Option value="5m">5 min</Select.Option>
+								<Select.Option value="30m">30 min</Select.Option>
+							</Select>
+						</Form.Item>
+						<Form.Item name={CustomVisualizationField.graphType}>
+							<Select style={{ width: 120 }} allowClear>
+								<Select.Option value={GraphType.line}>Line</Select.Option>
+								<Select.Option value={GraphType.bar}>Bar</Select.Option>
+							</Select>
+						</Form.Item>
+					</Space>
+				</Form>
+				<GenericVisualizations graphType={GraphType.line} data={customMetrics} />
+			</Card>
 		</div>
 	);
 };

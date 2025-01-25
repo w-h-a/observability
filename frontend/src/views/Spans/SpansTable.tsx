@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { Table } from "antd";
+import { Card, Table } from "antd";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { SpansUpdater } from "../../updaters/spans/spans";
 import { StartTime } from "../../updaters/time/utils";
@@ -88,11 +88,11 @@ export const SpansTable = () => {
 	}, [dispatch, queryClient, maxMinTime]);
 
 	return (
-		<div>
+		<Card>
 			<div>List of spans</div>
 			<div>
 				<Table dataSource={spans} columns={columns} size="middle" />
 			</div>
-		</div>
+		</Card>
 	);
 };
