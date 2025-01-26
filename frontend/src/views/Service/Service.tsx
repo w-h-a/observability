@@ -32,10 +32,7 @@ export const Service = () => {
 				<Row gutter={32} style={{ margin: 20 }}>
 					<Col span={12}>
 						<Card bodyStyle={{ padding: 10 }}>
-							<LatencyChart
-								data={serviceMetrics}
-								// popupClickHandler={onTracePopupClick}
-							/>
+							<LatencyChart data={serviceMetrics} />
 						</Card>
 					</Col>
 					<Col span={12}>
@@ -47,10 +44,7 @@ export const Service = () => {
 				<Row gutter={32} style={{ margin: 20 }}>
 					<Col span={12}>
 						<Card bodyStyle={{ padding: 10 }}>
-							<ErrorRateChart
-								data={serviceMetrics}
-								// popupClickHandler={onErrTracePopupClick}
-							/>
+							<ErrorRateChart data={serviceMetrics} />
 						</Card>
 					</Col>
 					<Col span={12}>

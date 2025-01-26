@@ -5,6 +5,7 @@ import {
 	AlignLeftOutlined,
 	BarChartOutlined,
 	DeploymentUnitOutlined,
+	ExperimentOutlined,
 } from "@ant-design/icons";
 import Sider from "antd/es/layout/Sider";
 
@@ -36,7 +37,12 @@ export const SideNav = () => {
 						Service Map
 					</NavLink>
 				</Menu.Item>
-				<Menu.Item key="/spans" icon={<AlignLeftOutlined />}>
+				<Menu.Item key="/traces" icon={<AlignLeftOutlined />}>
+					<NavLink to="/traces" style={{ fontSize: 12, textDecoration: "none" }}>
+						Traces
+					</NavLink>
+				</Menu.Item>
+				<Menu.Item key="/spans" icon={<ExperimentOutlined />}>
 					<NavLink to="/spans" style={{ fontSize: 12, textDecoration: "none" }}>
 						Spans
 					</NavLink>

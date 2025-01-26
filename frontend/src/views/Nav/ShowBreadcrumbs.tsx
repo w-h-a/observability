@@ -4,6 +4,7 @@ import { Link, withRouter } from "react-router-dom";
 const breadcrumbMap: Record<string, string> = {
 	"/application": "Services",
 	"/service-map": "Service Map",
+	"/traces": "Traces",
 	"/spans": "Spans",
 };
 

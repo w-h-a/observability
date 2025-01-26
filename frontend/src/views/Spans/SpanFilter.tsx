@@ -246,7 +246,7 @@ export const SpanFilter = () => {
 	// custom visualizations stuff
 	const [customVizForm] = Form.useForm();
 
-	const onValuesChangeHandler = (changedValues: any) => {
+	const onCustomVizValuesChange = (changedValues: any) => {
 		const field = Object.keys(changedValues)[0];
 
 		switch (field) {
@@ -471,7 +471,7 @@ export const SpanFilter = () => {
 				<div>Custom Visualizations</div>
 				<Form
 					form={customVizForm}
-					onValuesChange={onValuesChangeHandler}
+					onValuesChange={onCustomVizValuesChange}
 					initialValues={{
 						aggOptions: "Count",
 						graphType: "line",
