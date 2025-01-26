@@ -111,7 +111,6 @@ export const ErrorRateChart = (props: ErrorRateChartProps) => {
 
 	return (
 		<div>
-			{/* popup */}
 			<div style={{ textAlign: "center" }}>Errors per sec</div>
 			<Line ref={ref} data={data} options={options} />
 		</div>

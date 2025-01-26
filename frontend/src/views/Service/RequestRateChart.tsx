@@ -110,7 +110,6 @@ export const RequestRateChart = (props: RequestRateChartProps) => {
 
 	return (
 		<div>
-			{/* popup */}
 			<div style={{ textAlign: "center" }}>Requests per sec</div>
 			<Line ref={ref} data={data} options={options} />
 		</div>
