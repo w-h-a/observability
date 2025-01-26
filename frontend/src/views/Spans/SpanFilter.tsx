@@ -473,15 +473,15 @@ export const SpanFilter = () => {
 					form={customVizForm}
 					onValuesChange={onCustomVizValuesChange}
 					initialValues={{
-						aggOptions: "Count",
-						graphType: "line",
-						interval: "5m",
-						groupBy: "none",
+						[CustomVisualizationField.dimension]: dimension,
+						[CustomVisualizationField.aggregation]: "Count",
+						[CustomVisualizationField.interval]: "1m",
+						[CustomVisualizationField.graphType]: "line",
 					}}
 				>
 					<Space>
 						<Form.Item name={CustomVisualizationField.dimension}>
-							<Select defaultValue={dimension} style={{ width: 120 }}>
+							<Select style={{ width: 120 }}>
 								{dimensions.map((d) => {
 									return (
 										<Select.Option key={d.key} value={d.value}>
