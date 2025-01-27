@@ -39,26 +39,6 @@ export class Query {
 		}
 	}
 
-	static async GetOperationNames<T = any>(
-		client: IClient,
-		serviceName: string,
-	): Promise<{ data: T }> {
-		try {
-			const path = `/service/operations`;
-
-			const query = `?service=${serviceName}`;
-
-			const rsp = await client.get<T>(
-				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
-			);
-
-			return rsp;
-		} catch (err: unknown) {
-			console.log(`query client failed to retrieve operation names: ${err}`);
-			throw err;
-		}
-	}
-
 	static async GetTags<T = any>(
 		client: IClient,
 		serviceName: string,
@@ -75,6 +55,26 @@ export class Query {
 			return rsp;
 		} catch (err: unknown) {
 			console.log(`query client failed to retrieve tags: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetOperationNames<T = any>(
+		client: IClient,
+		serviceName: string,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/service/operations`;
+
+			const query = `?service=${serviceName}`;
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve operation names: ${err}`);
 			throw err;
 		}
 	}
@@ -119,6 +119,37 @@ export class Query {
 			return rsp;
 		} catch (err: unknown) {
 			console.log(`query client failed to retrieve service metrics: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetTraces<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+		service: string,
+		traceId: string,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/traces`;
+
+			let query = `?start=${start}&end=${end}`;
+
+			if (service.length !== 0) {
+				query += `&service=${service}`;
+			}
+
+			if (traceId.length !== 0) {
+				query += `&traceId=${traceId}`;
+			}
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve traces: ${err}`);
 			throw err;
 		}
 	}
@@ -173,26 +204,6 @@ export class Query {
 			return rsp;
 		} catch (err: unknown) {
 			console.log(`query client failed to retrieve custom metrics: ${err}`);
-			throw err;
-		}
-	}
-
-	static async GetSpansByTraceId<T = any>(
-		client: IClient,
-		traceId: string,
-	): Promise<{ data: T }> {
-		try {
-			const path = `/spans/trace`;
-
-			const query = `?traceId=${traceId}`;
-
-			const rsp = await client.get<T>(
-				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
-			);
-
-			return rsp;
-		} catch (err: unknown) {
-			console.log(`query client failed to retrieve spans by trace id: ${err}`);
 			throw err;
 		}
 	}

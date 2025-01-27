@@ -481,15 +481,7 @@ exports[`Service > when: the user goes to the service page and calls to the back
                                   <td
                                     class="ant-table-cell"
                                   >
-                                    <button
-                                      class="ant-btn css-dev-only-do-not-override-7ny38l ant-btn-link ant-btn-color-primary ant-btn-variant-link"
-                                      type="button"
-                                    >
-                                      <span>
-                                        /config
-                                      </span>
-                                      
-                                    </button>
+                                    /config
                                   </td>
                                   <td
                                     class="ant-table-cell"
@@ -519,15 +511,7 @@ exports[`Service > when: the user goes to the service page and calls to the back
                                   <td
                                     class="ant-table-cell"
                                   >
-                                    <button
-                                      class="ant-btn css-dev-only-do-not-override-7ny38l ant-btn-link ant-btn-color-primary ant-btn-variant-link"
-                                      type="button"
-                                    >
-                                      <span>
-                                        /dispatch
-                                      </span>
-                                      
-                                    </button>
+                                    /dispatch
                                   </td>
                                   <td
                                     class="ant-table-cell"

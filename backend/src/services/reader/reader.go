@@ -66,7 +66,7 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 
 	serviceSpanDependencies := []*ServiceSpanDependency{}
 
-	if err := r.repo.ReadSpanDependencies(ctx, &serviceSpanDependencies, startTimestamp, endTimestamp); err != nil {
+	if err := r.repo.ReadServiceDependencies(ctx, &serviceSpanDependencies, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -107,6 +107,16 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 	})
 
 	return serviceDependencies, nil
+}
+
+func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
+	tags := []string{}
+
+	if err := r.repo.ReadServiceSpecificTags(ctx, &tags, query.ServiceName); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
 }
 
 func (r *Reader) Operations(ctx context.Context, query *OperationsArgs) ([]string, error) {
@@ -208,14 +218,30 @@ func (r *Reader) MessagingOverview(ctx context.Context, query *OverviewArgs) ([]
 	return nil, nil
 }
 
-func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
-	tags := []string{}
+func (r *Reader) Traces(ctx context.Context, query *TracesArgs) ([]*SpanMatrix, error) {
+	startTimestamp := strconv.FormatInt(query.Start.UnixNano(), 10)
 
-	if err := r.repo.ReadServiceSpecificTags(ctx, &tags, query.ServiceName); err != nil {
+	endTimestamp := strconv.FormatInt(query.End.UnixNano(), 10)
+
+	spans := []*Span{}
+
+	if err := r.repo.ReadTraces(ctx, &spans, startTimestamp, endTimestamp, query.ServiceName, query.TraceId); err != nil {
 		return nil, err
 	}
 
-	return tags, nil
+	spanMatrix := []*SpanMatrix{
+		{
+			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "StatusCode", "Duration", "Tags"},
+			Events:  make([][]interface{}, len(spans)),
+		},
+	}
+
+	for i, span := range spans {
+		event := span.ToEventValues()
+		spanMatrix[0].Events[i] = event
+	}
+
+	return spanMatrix, nil
 }
 
 func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*SpanMatrix, error) {
@@ -300,28 +326,6 @@ func (r *Reader) AggregatedSpans(ctx context.Context, query *AggregatedSpansArgs
 	}
 
 	return result, nil
-}
-
-func (r *Reader) SpansByTrace(ctx context.Context, query *SpansByTraceIdArgs) ([]*SpanMatrix, error) {
-	spans := []*Span{}
-
-	if err := r.repo.ReadTraceSpecificSpans(ctx, &spans, query.TraceId); err != nil {
-		return nil, err
-	}
-
-	spanMatrix := []*SpanMatrix{
-		{
-			Columns: []string{"Time", "SpanId", "ParentSpanId", "TraceId", "ServiceName", "Name", "Kind", "StatusCode", "Duration", "Tags"},
-			Events:  make([][]interface{}, len(spans)),
-		},
-	}
-
-	for i, span := range spans {
-		event := span.ToEventValues()
-		spanMatrix[0].Events[i] = event
-	}
-
-	return spanMatrix, nil
 }
 
 func NewReader(repo repos.Repo) *Reader {

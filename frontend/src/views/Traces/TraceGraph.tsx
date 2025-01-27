@@ -8,7 +8,7 @@ import * as d3 from "d3";
 // @ts-ignore
 import * as d3Tip from "d3-tip";
 import { AppDispatch, RootState } from "../../updaters/store";
-import { SpansUpdater } from "../../updaters/spans/spans";
+import { TracesUpdater } from "../../updaters/traces/traces";
 import { ClientContext } from "../../clients/query/clientCtx";
 import { Config, EnvVar } from "../../config/config";
 
@@ -17,15 +17,14 @@ export const TraceGraph = () => {
 
 	const { id } = useParams<{ id: string }>();
 
-	const spanMatrixForATrace = useSelector(
-		(state: RootState) => state.spanMatrixForATrace,
-	);
+	const maxMinTime = useSelector((state: RootState) => state.maxMinTime);
+	const traces = useSelector((state: RootState) => state.traces);
 
 	const dispatch: AppDispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(SpansUpdater.SpansByTraceId(queryClient, id));
-	}, [dispatch, queryClient, id]);
+		dispatch(TracesUpdater.Traces(queryClient, maxMinTime, "", id));
+	}, [dispatch, queryClient, maxMinTime, id]);
 
 	const tip = d3Tip
 		.default()
@@ -62,13 +61,11 @@ export const TraceGraph = () => {
 	}
 
 	useEffect(() => {
-		if (spanMatrixForATrace[0].events.length !== 0) {
-			const tree = SpansUpdater.SpansToTree(
-				structuredClone(spanMatrixForATrace[0].events),
-			);
+		if (traces[0].events.length !== 0) {
+			const tree = TracesUpdater.SpansToTree(structuredClone(traces[0].events));
 			d3.select("#graph").datum(tree).call(graph);
 		}
-	}, [spanMatrixForATrace, graph]);
+	}, [traces, graph]);
 
 	return (
 		<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>

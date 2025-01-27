@@ -46,22 +46,6 @@ func (s *Spans) GetAggregatedSpans(w http.ResponseWriter, r *http.Request) {
 	httputils.OkResponse(w, result)
 }
 
-func (s *Spans) GetSpansByTraceId(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetSpansByTraceRequest(context.TODO(), r)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.BadRequest("Spans.GetSpansByTraceId", "failed to parse request: %v", err))
-		return
-	}
-
-	result, err := s.reader.SpansByTrace(context.TODO(), query)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Spans.GetSpansByTraceId", "failed to retrieve spans by traceId: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
 func NewSpansHandler(reader *reader.Reader, parser *RequestParser) *Spans {
 	s := &Spans{
 		reader: reader,

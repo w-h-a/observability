@@ -38,18 +38,19 @@ func AppFactory(repoClient repos.Client) serverv2.Server {
 
 	httpServices := httphandlers.NewServicesHandler(reader, httpRequestParser)
 	httpService := httphandlers.NewServiceHandler(reader, httpRequestParser)
+	httpTraces := httphandlers.NewTracesHandler(reader, httpRequestParser)
 	httpSpans := httphandlers.NewSpansHandler(reader, httpRequestParser)
 
 	router.Methods(http.MethodGet).Path("/api/v1/services").HandlerFunc(httpServices.GetServices)
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
 	router.Methods(http.MethodGet).Path("/api/v1/services/dependencies").HandlerFunc(httpServices.GetServiceDependencies)
+	router.Methods(http.MethodGet).Path("/api/v1/service/tags").HandlerFunc(httpService.GetTags)
 	router.Methods(http.MethodGet).Path("/api/v1/service/operations").HandlerFunc(httpService.GetOperations)
 	router.Methods(http.MethodGet).Path("/api/v1/service/endpoints").HandlerFunc(httpService.GetEndpoints)
 	router.Methods(http.MethodGet).Path("/api/v1/service/overview").HandlerFunc(httpService.GetServiceOverview)
-	router.Methods(http.MethodGet).Path("/api/v1/service/tags").HandlerFunc(httpService.GetTags)
+	router.Methods(http.MethodGet).Path("/api/v1/traces").HandlerFunc(httpTraces.GetTraces)
 	router.Methods(http.MethodGet).Path("/api/v1/spans").HandlerFunc(httpSpans.GetSpans)
 	router.Methods(http.MethodGet).Path("/api/v1/spans/aggregated").HandlerFunc(httpSpans.GetAggregatedSpans)
-	router.Methods(http.MethodGet).Path("/api/v1/spans/trace").HandlerFunc(httpSpans.GetSpansByTraceId)
 
 	httpOpts := []serverv2.ServerOption{
 		serverv2.ServerWithAddress(config.HttpAddress()),

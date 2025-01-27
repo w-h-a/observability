@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`TraceGraph > when: the user goes to the spans page and calls to the backend are a success > then: we render the spans table 1`] = `
+exports[`TraceGraph > when: the user goes to the trace graph page and calls to the backend are a success > then: we render the trace flame graph 1`] = `
 <div>
   <div
     class="ant-row css-dev-only-do-not-override-7ny38l"

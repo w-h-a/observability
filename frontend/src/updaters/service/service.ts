@@ -64,6 +64,38 @@ export class ServiceUpdater {
 		},
 	];
 
+	static Tags(
+		client: IClient,
+		serviceName: string,
+	): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetTags<string[]>(client, serviceName);
+
+				dispatch<TagsActionSuccess>({
+					type: ActionTypes.tagsSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<TagsActionFailure>({
+					type: ActionTypes.tagsFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static TagsReducer(state: Array<string> = [], action: Action): Array<string> {
+		switch (action.type) {
+			case ActionTypes.tagsSuccess:
+				return action.payload;
+			case ActionTypes.tagsFailure:
+				return [];
+			default:
+				return state;
+		}
+	}
+
 	static OperationNames(
 		client: IClient,
 		serviceName: string,
@@ -93,38 +125,6 @@ export class ServiceUpdater {
 			case ActionTypes.operationNamesSuccess:
 				return action.payload;
 			case ActionTypes.operationNamesFailure:
-				return [];
-			default:
-				return state;
-		}
-	}
-
-	static Tags(
-		client: IClient,
-		serviceName: string,
-	): (dispatch: Dispatch) => Promise<void> {
-		return async (dispatch: Dispatch) => {
-			try {
-				const rsp = await Query.GetTags<string[]>(client, serviceName);
-
-				dispatch<TagsActionSuccess>({
-					type: ActionTypes.tagsSuccess,
-					payload: rsp.data,
-				});
-			} catch (_: unknown) {
-				dispatch<TagsActionFailure>({
-					type: ActionTypes.tagsFailure,
-					payload: [],
-				});
-			}
-		};
-	}
-
-	static TagsReducer(state: Array<string> = [], action: Action): Array<string> {
-		switch (action.type) {
-			case ActionTypes.tagsSuccess:
-				return action.payload;
-			case ActionTypes.tagsFailure:
 				return [];
 			default:
 				return state;

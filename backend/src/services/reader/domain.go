@@ -39,6 +39,12 @@ type ServiceDependency struct {
 	CallCount int    `json:"callCount,omitempty"`
 }
 
+// tags
+
+type TagsArgs struct {
+	ServiceName string
+}
+
 // operations
 
 type OperationsArgs struct {
@@ -142,6 +148,17 @@ type MessagingOverview struct {
 	ErrorRate          float32 `json:"errorRate" db:"errorRate"`
 }
 
+// traces
+
+type TracesArgs struct {
+	Start       *time.Time
+	StartTime   string
+	End         *time.Time
+	EndTime     string
+	ServiceName string
+	TraceId     string
+}
+
 // spans
 
 type SpansArgs struct {
@@ -158,10 +175,6 @@ type SpansArgs struct {
 	Order       string
 	Limit       int64
 	Offset      int64
-}
-
-type SpansByTraceIdArgs struct {
-	TraceId string
 }
 
 type Span struct {
@@ -210,10 +223,4 @@ type AggregatedSpans struct {
 	Timestamp int64   `json:"timestamp,omitempty" db:"timestamp"`
 	Time      string  `json:"time,omitempty" db:"time"`
 	Value     float32 `json:"value,omitempty" db:"value"`
-}
-
-// tags
-
-type TagsArgs struct {
-	ServiceName string
 }
