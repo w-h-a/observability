@@ -14,6 +14,22 @@ type Service struct {
 	parser *RequestParser
 }
 
+func (s *Service) GetTags(w http.ResponseWriter, r *http.Request) {
+	query, err := s.parser.ParseGetTagsRequest(context.TODO(), r)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetTags", "failed to parse request: %v", err))
+		return
+	}
+
+	result, err := s.reader.Tags(context.TODO(), query)
+	if err != nil {
+		httputils.ErrResponse(w, errorutils.InternalServerError("Service.GetTags", "failed to retrieve tags: %v", err))
+		return
+	}
+
+	httputils.OkResponse(w, result)
+}
+
 func (s *Service) GetOperations(w http.ResponseWriter, r *http.Request) {
 	query, err := s.parser.ParseGetOperationsRequest(context.TODO(), r)
 	if err != nil {
@@ -56,22 +72,6 @@ func (s *Service) GetServiceOverview(w http.ResponseWriter, r *http.Request) {
 	result, err := s.reader.ServiceOverview(context.TODO(), query)
 	if err != nil {
 		httputils.ErrResponse(w, errorutils.InternalServerError("Service.GetServiceOverview", "failed to retrieve service overview: %v", err))
-		return
-	}
-
-	httputils.OkResponse(w, result)
-}
-
-func (s *Service) GetTags(w http.ResponseWriter, r *http.Request) {
-	query, err := s.parser.ParseGetTagsRequest(context.TODO(), r)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.BadRequest("Service.GetTags", "failed to parse request: %v", err))
-		return
-	}
-
-	result, err := s.reader.Tags(context.TODO(), query)
-	if err != nil {
-		httputils.ErrResponse(w, errorutils.InternalServerError("Service.GetTags", "failed to retrieve tags: %v", err))
 		return
 	}
 

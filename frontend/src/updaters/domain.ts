@@ -8,9 +8,9 @@ export interface StoreState {
 	tags: Array<string>;
 	endpoints: Array<Endpoint>;
 	serviceMetrics: Array<ServiceMetricItem>;
+	traces: SpanMatrix;
 	spanMatrix: SpanMatrix;
 	customMetrics: CustomMetric[];
-	spanMatrixForATrace: SpanMatrix;
 }
 
 export interface MaxMinTime {
@@ -107,12 +107,12 @@ export enum ActionTypes {
 	endpointsFailure = "ENDPOINTS_FAILURE",
 	serviceMetricsSuccess = "SERVICE_METRICS_SUCCESS",
 	serviceMetricsFailure = "SERVICE_METRICS_FAILURE",
+	tracesSuccess = "TRACES_SUCCESS",
+	tracesFailure = "TRACES_FAILURE",
 	spanMatrixSuccess = "SPAN_MATRIX_SUCCESS",
 	spanMatrixFailure = "SPAN_MATRIX_FAILURE",
 	customMetricsSuccess = "CUSTOM_METRICS_SUCCESS",
 	customMetricsFailure = "CUSTOM_METRICS_FAILURE",
-	spanMatrixForATraceSuccess = "SPAN_MATRIX_FOR_A_TRACE_SUCCESS",
-	spanMatrixForATraceFailure = "SPAN_MATRIX_FOR_A_TRACE_FAILURE",
 }
 
 export type MaxMinTimeAction = {
@@ -180,6 +180,16 @@ export type ServiceMetricsActionFailure = {
 	payload: ServiceMetricItem[];
 };
 
+export type TracesActionSuccess = {
+	type: ActionTypes.tracesSuccess;
+	payload: SpanMatrix;
+};
+
+export type TracesActionFailure = {
+	type: ActionTypes.tracesFailure;
+	payload: SpanMatrix;
+};
+
 export type SpanMatrixActionSuccess = {
 	type: ActionTypes.spanMatrixSuccess;
 	payload: SpanMatrix;
@@ -200,16 +210,6 @@ export type CustomMetricsActionFailure = {
 	payload: CustomMetric[];
 };
 
-export type SpanMatrixForATraceActionSuccess = {
-	type: ActionTypes.spanMatrixForATraceSuccess;
-	payload: SpanMatrix;
-};
-
-export type SpanMatrixForATraceActionFailure = {
-	type: ActionTypes.spanMatrixForATraceFailure;
-	payload: SpanMatrix;
-};
-
 export type Action =
 	| MaxMinTimeAction
 	| ServicesActionSuccess
@@ -224,9 +224,9 @@ export type Action =
 	| EndpointsActionFailure
 	| ServiceMetricsActionSuccess
 	| ServiceMetricsActionFailure
+	| TracesActionSuccess
+	| TracesActionFailure
 	| SpanMatrixActionSuccess
 	| SpanMatrixActionFailure
 	| CustomMetricsActionSuccess
-	| CustomMetricsActionFailure
-	| SpanMatrixForATraceActionSuccess
-	| SpanMatrixForATraceActionFailure;
+	| CustomMetricsActionFailure;

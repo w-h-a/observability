@@ -3,6 +3,7 @@ import { ServicesUpdater } from "./services/services";
 import { TimeUpdater } from "./time/time";
 import { ServiceUpdater } from "./service/service";
 import { SpansUpdater } from "./spans/spans";
+import { TracesUpdater } from "./traces/traces";
 
 const reducer = combineReducers({
 	maxMinTime: TimeUpdater.MaxMinTimeReducer,
@@ -12,9 +13,9 @@ const reducer = combineReducers({
 	tags: ServiceUpdater.TagsReducer,
 	endpoints: ServiceUpdater.EndpointsReducer,
 	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
+	traces: TracesUpdater.TracesReducer,
 	spanMatrix: SpansUpdater.SpanMatrixReducer,
 	customMetrics: SpansUpdater.CustomMetricsReducer,
-	spanMatrixForATrace: SpansUpdater.SpanMatrixForATraceReducer,
 });
 
 export const store = configureStore({

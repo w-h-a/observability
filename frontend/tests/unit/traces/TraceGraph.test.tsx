@@ -6,11 +6,17 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { render, RenderResult } from "@testing-library/react";
 import { TestCase } from "../testcase";
-import { TraceGraph } from "../../../src/views/Trace/TraceGraph";
+import { TraceGraph } from "../../../src/views/Traces/TraceGraph";
 import { store } from "../../../src/updaters/store";
 import { IClient } from "../../../src/clients/query/client";
 import { Client } from "../../../src/clients/query/mock/client";
 import { ClientContext } from "../../../src/clients/query/clientCtx";
+
+vi.mock("../../../src/updaters/time/utils", () => {
+	return {
+		Now: vi.fn(() => 1736393070 * 1000),
+	};
+});
 
 const traceId = "8fb945b2df69da477a98886d79c9a26d";
 
@@ -30,7 +36,7 @@ describe("TraceGraph", () => {
 	const testCases: TestCase[] = [
 		{
 			When:
-				"when: the user goes to the spans page and calls to the backend are a success",
+				"when: the user goes to the trace graph page and calls to the backend are a success",
 			GetStub: function <T>(url: string): Promise<{ data: T }> {
 				return new Promise((resolve) => {
 					resolve({
@@ -89,10 +95,10 @@ describe("TraceGraph", () => {
 					});
 				});
 			},
-			Then: "then: we render the spans table",
+			Then: "then: we render the trace flame graph",
 			ClientCalledTimes: 1,
 			ClientCalledWith: [
-				`http://localhost:4000/api/v1/spans/trace?traceId=${traceId}`,
+				`http://localhost:4000/api/v1/traces?start=1736392170&end=1736393070&traceId=${traceId}`,
 			],
 		},
 	];

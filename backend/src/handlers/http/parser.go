@@ -39,6 +39,19 @@ func (p *RequestParser) ParseGetServicesRequest(ctx context.Context, r *http.Req
 	return serviceArgs, nil
 }
 
+func (p *RequestParser) ParseGetTagsRequest(ctx context.Context, r *http.Request) (*reader.TagsArgs, error) {
+	serviceName := r.URL.Query().Get("service")
+	if len(serviceName) == 0 {
+		return nil, errors.New("service param missing in query")
+	}
+
+	tagsArgs := &reader.TagsArgs{
+		ServiceName: serviceName,
+	}
+
+	return tagsArgs, nil
+}
+
 func (p *RequestParser) ParseGetOperationsRequest(ctx context.Context, r *http.Request) (*reader.OperationsArgs, error) {
 	serviceName := r.URL.Query().Get("service")
 	if len(serviceName) == 0 {
@@ -121,17 +134,35 @@ func (p *RequestParser) ParseGetOverviewRequest(ctx context.Context, r *http.Req
 	return serviceOverviewArgs, nil
 }
 
-func (p *RequestParser) ParseGetTagsRequest(ctx context.Context, r *http.Request) (*reader.TagsArgs, error) {
+func (p *RequestParser) ParseGetTracesRequest(ctx context.Context, r *http.Request) (*reader.TracesArgs, error) {
+	startTime, err := p.parseTime("start", r)
+	if err != nil {
+		return nil, err
+	}
+
+	endTime, err := p.parseTime("end", r)
+	if err != nil {
+		return nil, err
+	}
+
+	tracesArgs := &reader.TracesArgs{
+		Start:     startTime,
+		StartTime: startTime.Format(time.RFC3339Nano),
+		End:       endTime,
+		EndTime:   endTime.Format(time.RFC3339Nano),
+	}
+
 	serviceName := r.URL.Query().Get("service")
-	if len(serviceName) == 0 {
-		return nil, errors.New("service param missing in query")
+	if len(serviceName) != 0 {
+		tracesArgs.ServiceName = serviceName
 	}
 
-	tagsArgs := &reader.TagsArgs{
-		ServiceName: serviceName,
+	traceId := r.URL.Query().Get("traceId")
+	if len(traceId) != 0 {
+		tracesArgs.TraceId = traceId
 	}
 
-	return tagsArgs, nil
+	return tracesArgs, nil
 }
 
 func (p *RequestParser) ParseGetSpansRequest(ctx context.Context, r *http.Request) (*reader.SpansArgs, error) {
@@ -275,19 +306,6 @@ func (p *RequestParser) ParseGetAggregatedSpansRequest(ctx context.Context, r *h
 	}
 
 	return spanAggregatesArgs, nil
-}
-
-func (p *RequestParser) ParseGetSpansByTraceRequest(ctx context.Context, r *http.Request) (*reader.SpansByTraceIdArgs, error) {
-	traceId := r.URL.Query().Get("traceId")
-	if len(traceId) == 0 {
-		return nil, errors.New("traceId param missing in query")
-	}
-
-	spansByTraceIdArgs := &reader.SpansByTraceIdArgs{
-		TraceId: traceId,
-	}
-
-	return spansByTraceIdArgs, nil
 }
 
 func (p *RequestParser) parseTime(param string, r *http.Request) (*time.Time, error) {
