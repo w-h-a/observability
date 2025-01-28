@@ -39,6 +39,27 @@ export class Query {
 		}
 	}
 
+	static async GetServiceDependencies<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/services/dependencies`;
+
+			const query = `?start=${start}&end=${end}`;
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve service dependencies: ${err}`);
+			throw err;
+		}
+	}
+
 	static async GetTags<T = any>(
 		client: IClient,
 		serviceName: string,

@@ -4,6 +4,9 @@ import {
 	ActionTypes,
 	MaxMinTime,
 	Service,
+	ServiceDependenciesActionFailure,
+	ServiceDependenciesActionSuccess,
+	ServiceDependency,
 	ServiceNamesActionFailure,
 	ServiceNamesActionSuccess,
 	ServicesActionFailure,
@@ -35,6 +38,14 @@ export class ServicesUpdater {
 			numErrors: NaN,
 			errorRate: NaN,
 		},
+	];
+
+	private static initialServiceDependencyState = [
+		{ parent: "", child: "", callCount: 0 },
+	];
+
+	private static errorServiceDependencyState = [
+		{ parent: "failed", child: "failed", callCount: 0 },
 	];
 
 	static Services(
@@ -103,6 +114,45 @@ export class ServicesUpdater {
 				return action.payload;
 			case ActionTypes.serviceNamesFailure:
 				return [];
+			default:
+				return state;
+		}
+	}
+
+	static ServiceDependency(
+		client: IClient,
+		maxMinTime: MaxMinTime,
+	): (dispatch: Dispatch) => Promise<void> {
+		return async (dispatch: Dispatch) => {
+			try {
+				const rsp = await Query.GetServiceDependencies<ServiceDependency[]>(
+					client,
+					maxMinTime.minTime,
+					maxMinTime.maxTime,
+				);
+
+				dispatch<ServiceDependenciesActionSuccess>({
+					type: ActionTypes.serviceDependenciesSuccess,
+					payload: rsp.data,
+				});
+			} catch (_: unknown) {
+				dispatch<ServiceDependenciesActionFailure>({
+					type: ActionTypes.serviceDependenciesFailure,
+					payload: [],
+				});
+			}
+		};
+	}
+
+	static ServiceDependencyReducer(
+		state: ServiceDependency[] = ServicesUpdater.initialServiceDependencyState,
+		action: Action,
+	): ServiceDependency[] {
+		switch (action.type) {
+			case ActionTypes.serviceDependenciesSuccess:
+				return action.payload;
+			case ActionTypes.serviceDependenciesFailure:
+				return ServicesUpdater.errorServiceDependencyState;
 			default:
 				return state;
 		}
