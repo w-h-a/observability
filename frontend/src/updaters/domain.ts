@@ -35,6 +35,25 @@ export interface ServiceDependency {
 	callCount: number;
 }
 
+export interface GraphNode {
+	id: string;
+	group: number;
+	p99: number;
+	callRate: string;
+	errorRate: string;
+}
+
+export interface GraphLink {
+	source: string;
+	target: string;
+	value: number;
+}
+
+export interface Graph {
+	nodes: GraphNode[];
+	links: GraphLink[];
+}
+
 export interface Endpoint {
 	name: string;
 	p50: number;

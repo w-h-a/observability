@@ -1,7 +1,11 @@
+import { maxBy, uniq, uniqBy } from "lodash";
 import { Dispatch } from "@reduxjs/toolkit";
 import {
 	Action,
 	ActionTypes,
+	Graph,
+	GraphLink,
+	GraphNode,
 	MaxMinTime,
 	Service,
 	ServiceDependenciesActionFailure,
@@ -150,11 +154,72 @@ export class ServicesUpdater {
 	): ServiceDependency[] {
 		switch (action.type) {
 			case ActionTypes.serviceDependenciesSuccess:
+				if (action.payload.length === 0) {
+					return ServicesUpdater.initialServiceDependencyState;
+				}
 				return action.payload;
 			case ActionTypes.serviceDependenciesFailure:
 				return ServicesUpdater.errorServiceDependencyState;
 			default:
 				return state;
 		}
+	}
+
+	static Graph(services: Service[], dependencies: ServiceDependency[]): Graph {
+		const highestCallCount = maxBy(
+			dependencies,
+			(dep) => dep.callCount,
+		)!.callCount;
+
+		const div = Number(
+			String(1).padEnd(highestCallCount?.toString().length, "0"),
+		);
+
+		const links: GraphLink[] = structuredClone(dependencies).map((node) => {
+			const { parent, child, callCount } = node;
+			// HACK: the graph is being rendered in the wrong direction
+			return {
+				source: child,
+				target: parent,
+				value: (100 - callCount / div) * 0.01,
+			};
+		});
+
+		const uniqParent = uniqBy(structuredClone(dependencies), "parent").map(
+			(dep) => dep.parent,
+		);
+
+		const uniqChild = uniqBy(structuredClone(dependencies), "child").map(
+			(dep) => dep.child,
+		);
+
+		const uniqNodes = uniq([...uniqParent, ...uniqChild]);
+
+		const nodes: GraphNode[] = uniqNodes.map((node, idx) => {
+			const service = services.find((service) => service.serviceName === node);
+
+			if (!service) {
+				return {
+					id: node,
+					group: idx + 1,
+					p99: 0,
+					callRate: "0",
+					errorRate: "0",
+				};
+			}
+
+			return {
+				id: node,
+				group: idx + 1,
+				p99: service.p99,
+				callRate: service.callRate.toFixed(2),
+				errorRate: service.errorRate.toFixed(2),
+			};
+		});
+
+		return {
+			nodes: nodes,
+			links: links,
+		};
 	}
 }
