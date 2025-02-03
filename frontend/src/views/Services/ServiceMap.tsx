@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ForceGraph2D } from "react-force-graph";
+import { Spin } from "antd";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { ServicesUpdater } from "../../updaters/services/services";
 import { ClientContext } from "../../clients/query/clientCtx";
@@ -20,6 +21,14 @@ export const ServiceMap = () => {
 		dispatch(ServicesUpdater.Services(queryClient, maxMinTime));
 		dispatch(ServicesUpdater.ServiceDependency(queryClient, maxMinTime));
 	}, [dispatch, queryClient, maxMinTime]);
+
+	if (
+		services[0].serviceName.length === 0 ||
+		(serviceDependencies[0].parent.length === 0 &&
+			serviceDependencies[0].child.length === 0)
+	) {
+		return <Spin />;
+	}
 
 	const graphData = ServicesUpdater.Graph(services, serviceDependencies);
 
