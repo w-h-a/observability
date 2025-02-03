@@ -4,8 +4,9 @@ export interface StoreState {
 	maxMinTime: MaxMinTime;
 	services: Array<Service>;
 	serviceNames: Array<string>;
-	operationNames: Array<string>;
+	serviceDependencies: Array<ServiceDependency>;
 	tags: Array<string>;
+	operationNames: Array<string>;
 	endpoints: Array<Endpoint>;
 	serviceMetrics: Array<ServiceMetricItem>;
 	traces: SpanMatrix;
@@ -26,6 +27,12 @@ export interface Service {
 	callRate: number;
 	numErrors: number;
 	errorRate: number;
+}
+
+export interface ServiceDependency {
+	parent: string;
+	child: string;
+	callCount: number;
 }
 
 export interface Endpoint {
@@ -99,10 +106,12 @@ export enum ActionTypes {
 	servicesFailure = "SERVICES_FAILURE",
 	serviceNamesSuccess = "SERVICE_NAMES_SUCCESS",
 	serviceNamesFailure = "SERVICE_NAMES_FAILURE",
-	operationNamesSuccess = "OPERATION_NAMES_SUCCESS",
-	operationNamesFailure = "OPERATION_NAMES_FAILURE",
+	serviceDependenciesSuccess = "SERVICE_DEPENDENCIES_SUCCESS",
+	serviceDependenciesFailure = "SERVICE_DEPENDENCIES_FAILURE",
 	tagsSuccess = "TAGS_SUCCESS",
 	tagsFailure = "TAGS_FAILURE",
+	operationNamesSuccess = "OPERATION_NAMES_SUCCESS",
+	operationNamesFailure = "OPERATION_NAMES_FAILURE",
 	endpointsSuccess = "ENDPOINTS_SUCCESS",
 	endpointsFailure = "ENDPOINTS_FAILURE",
 	serviceMetricsSuccess = "SERVICE_METRICS_SUCCESS",
@@ -140,14 +149,14 @@ export type ServiceNamesActionFailure = {
 	payload: string[];
 };
 
-export type OperationNamesActionSuccess = {
-	type: ActionTypes.operationNamesSuccess;
-	payload: string[];
+export type ServiceDependenciesActionSuccess = {
+	type: ActionTypes.serviceDependenciesSuccess;
+	payload: ServiceDependency[];
 };
 
-export type OperationNamesActionFailure = {
-	type: ActionTypes.operationNamesFailure;
-	payload: string[];
+export type ServiceDependenciesActionFailure = {
+	type: ActionTypes.serviceDependenciesFailure;
+	payload: ServiceDependency[];
 };
 
 export type TagsActionSuccess = {
@@ -157,6 +166,16 @@ export type TagsActionSuccess = {
 
 export type TagsActionFailure = {
 	type: ActionTypes.tagsFailure;
+	payload: string[];
+};
+
+export type OperationNamesActionSuccess = {
+	type: ActionTypes.operationNamesSuccess;
+	payload: string[];
+};
+
+export type OperationNamesActionFailure = {
+	type: ActionTypes.operationNamesFailure;
 	payload: string[];
 };
 
@@ -216,10 +235,12 @@ export type Action =
 	| ServicesActionFailure
 	| ServiceNamesActionSuccess
 	| ServiceNamesActionFailure
-	| OperationNamesActionSuccess
-	| OperationNamesActionFailure
+	| ServiceDependenciesActionSuccess
+	| ServiceDependenciesActionFailure
 	| TagsActionSuccess
 	| TagsActionFailure
+	| OperationNamesActionSuccess
+	| OperationNamesActionFailure
 	| EndpointsActionSuccess
 	| EndpointsActionFailure
 	| ServiceMetricsActionSuccess
