@@ -36,7 +36,6 @@
 	stroke-linecap: round;
 	stroke-linejoin: round;
 }
-/* Transparency simulates sub pixel border https://stackoverflow.com/questions/13891177/css-border-less-than-1px */
 
 .d3-flame-graph-label:hover {
 	border: 1px dotted;
