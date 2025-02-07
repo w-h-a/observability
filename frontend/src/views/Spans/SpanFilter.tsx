@@ -19,12 +19,17 @@ import { SpansUpdater } from "../../updaters/spans/spans";
 import { ServiceUpdater } from "../../updaters/service/service";
 import { ServicesUpdater } from "../../updaters/services/services";
 import { ClientContext } from "../../clients/query/clientCtx";
-import { FilteredQuery, Operator } from "../../clients/query/filteredQuery";
+import {
+	FilteredQuery,
+	Operator,
+	SpanKind,
+} from "../../clients/query/filteredQuery";
 
 // TODO: status code
 enum TagValue {
 	service = "service",
 	operation = "operation",
+	kind = "kind",
 	minDuration = "minDuration",
 	maxDuration = "maxDuration",
 }
@@ -80,6 +85,7 @@ export const SpanFilter = () => {
 	const [spanFilters, setSpanFilters] = useState<FilteredQuery>({
 		service: "",
 		operation: "",
+		kind: SpanKind.default,
 		duration: { min: "", max: "" },
 		tags: [],
 	});
@@ -100,6 +106,7 @@ export const SpanFilter = () => {
 	useEffect(() => {
 		if (
 			spanFilters.service ||
+			spanFilters.kind ||
 			spanFilters.operation ||
 			(spanFilters.duration &&
 				(spanFilters.duration.min || spanFilters.duration.max)) ||
@@ -141,6 +148,17 @@ export const SpanFilter = () => {
 			initialForm.setFieldsValue({ operation: spanFilters.operation });
 		}
 	}, [initialForm, spanFilters.operation]);
+
+	// filter on span kind
+	const onChangeKind = (value: SpanKind) => {
+		setSpanFilters({ ...spanFilters, kind: value });
+	};
+
+	useEffect(() => {
+		if (spanFilters.kind) {
+			initialForm.setFieldsValue({ kind: spanFilters.kind });
+		}
+	}, [initialForm, spanFilters.kind]);
 
 	// filter on duration
 	const onClickDuration = () => {
@@ -212,6 +230,9 @@ export const SpanFilter = () => {
 				break;
 			case TagValue.operation:
 				setSpanFilters({ ...spanFilters, operation: "" });
+				break;
+			case TagValue.kind:
+				setSpanFilters({ ...spanFilters, kind: SpanKind.default });
 				break;
 			case TagValue.minDuration:
 				setSpanFilters({
@@ -337,6 +358,25 @@ export const SpanFilter = () => {
 							})}
 						</Select>
 					</FormItem>
+					<FormItem name="kind">
+						<Select
+							showSearch
+							style={{ width: 180 }}
+							onChange={onChangeKind}
+							placeholder="Select Span Kind"
+							allowClear
+						>
+							{[SpanKind.server, SpanKind.client].map(
+								(name: SpanKind, idx: number) => {
+									return (
+										<Select.Option value={name} key={idx}>
+											{name}
+										</Select.Option>
+									);
+								},
+							)}
+						</Select>
+					</FormItem>
 					<FormItem name="duration">
 						<Input style={{ width: 180 }} type="button" onClick={onClickDuration} />
 					</FormItem>
@@ -361,6 +401,15 @@ export const SpanFilter = () => {
 							onClose={() => onCloseTag(TagValue.operation)}
 						>
 							operation:{spanFilters.operation}
+						</Tag>
+					)}
+					{!spanFilters.kind ? null : (
+						<Tag
+							style={{ fontSize: 14, padding: 8 }}
+							closable
+							onClose={() => onCloseTag(TagValue.kind)}
+						>
+							kind:{spanFilters.kind}
 						</Tag>
 					)}
 					{!spanFilters.duration || !spanFilters.duration.min ? null : (
