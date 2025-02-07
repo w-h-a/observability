@@ -238,6 +238,10 @@ export class Query {
 			query += `&name=${filters.operation}`;
 		}
 
+		if (filters.kind) {
+			query += `&kind=${filters.kind}`;
+		}
+
 		if (filters.duration) {
 			if (filters.duration.min) {
 				query += `&minDuration=${filters.duration.min}`;
