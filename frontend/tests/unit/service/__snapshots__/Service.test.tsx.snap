@@ -47,7 +47,7 @@ exports[`Service > when: the user goes to the service page and calls to the back
           aria-hidden="true"
           class="ant-tabs-nav-more"
           id="rc-tabs-test-more"
-          style="visibility: hidden; order: 1;"
+          style="margin-left: 48px; visibility: hidden; order: 1;"
           tabindex="-1"
           type="button"
         >

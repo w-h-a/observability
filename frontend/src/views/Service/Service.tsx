@@ -27,7 +27,7 @@ export const Service = () => {
 	}, [dispatch, queryClient, maxMinTime, service]);
 
 	return (
-		<Tabs defaultActiveKey="1">
+		<Tabs defaultActiveKey="1" tabBarGutter={48}>
 			<Tabs.TabPane tab="Service Metrics" key="1">
 				<Row gutter={32} style={{ margin: 20 }}>
 					<Col span={12}>
