@@ -4,7 +4,7 @@ Config.GetInstance();
 
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { render, RenderResult } from "@testing-library/react";
+import { act, render, RenderResult } from "@testing-library/react";
 import { TestCase } from "../testcase";
 import { TraceGraph } from "../../../src/views/Traces/TraceGraph";
 import { store } from "../../../src/updaters/store";
@@ -95,7 +95,7 @@ describe("TraceGraph", () => {
 					});
 				});
 			},
-			Then: "then: we render the trace flame graph",
+			Then: "then: we render the trace waterfall graph",
 			ClientCalledTimes: 1,
 			ClientCalledWith: [
 				`http://localhost:4000/api/v1/traces?start=1736392170&end=1736393070&traceId=${traceId}`,
@@ -119,6 +119,10 @@ describe("TraceGraph", () => {
 						</BrowserRouter>
 					</Provider>,
 				);
+
+				await act(async () => {
+					await new Promise((resolve) => setTimeout(resolve, 0));
+				});
 			});
 
 			afterEach(() => {
