@@ -1,6 +1,6 @@
 # trace-blame
 
-trace-blame is an opensource tracing tool that performs causal discovery given some assumptions and span data.
+trace-blame is an opensource tracing tool that performs causal discovery given some experiments and span data.
 
 ### features
 
