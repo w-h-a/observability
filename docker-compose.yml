@@ -1,7 +1,7 @@
 services:
   clickhouse:
     container_name: clickhouse
-    image: clickhouse/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:24.12.3
     ports:
       - '9000:9000'
       - '8123:8123'
@@ -17,13 +17,54 @@ services:
     depends_on:
       - clickhouse
 
-  hotrod:
-    container_name: hotrod
-    image: jaegertracing/example-hotrod:latest
+  hotrod-frontend:
+    container_name: hotrod-frontend
+    image: hotrod:0.1.0-alpha.2
     ports:
       - '8080:8080'
+    command: ["frontend", "--customer-service-hostname", "hotrod-customer", "-c", "8081", "--driver-service-hostname", "hotrod-driver", "-d", "8082", "--route-service-hostname", "hotrod-route", "-r", "8083"]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+    networks:
+      - hotrod-example
+    depends_on:
+      - otelcol
+      - hotrod-customer
+      - hotrod-driver
+      - hotrod-route
+
+  hotrod-customer:
+    container_name: hotrod-customer
+    image: hotrod:0.1.0-alpha.2
+    ports:
+      - '8081:8081'
+    command: ["customer", "-c", "8081"]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+    networks:
+      - hotrod-example
+    depends_on:
+      - otelcol
+
+  hotrod-driver:
+    container_name: hotrod-driver
+    image: hotrod:0.1.0-alpha.2
+    ports:
+      - '8082:8082'
+    command: ["driver", "-d", "8082"]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+    networks:
+      - hotrod-example
+    depends_on:
+      - otelcol
+
+  hotrod-route:
+    container_name: hotrod-route
+    image: hotrod:0.1.0-alpha.2
+    ports:
       - '8083:8083'
-    command: ['all']
+    command: ["route", "-r", "8083"]
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
     networks:

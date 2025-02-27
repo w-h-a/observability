@@ -1226,7 +1226,7 @@ exports[`Spans > when: the user goes to the spans page and calls to the backend 
                               <a
                                 href="/traces/8fb945b2df69da477a98886d79c9a26d"
                               >
-                                7a98886d79c9a26d
+                                8fb945b2df69da47
                               </a>
                             </td>
                           </tr>
@@ -1265,7 +1265,7 @@ exports[`Spans > when: the user goes to the spans page and calls to the backend 
                               <a
                                 href="/traces/8fb945b2df69da477a98886d79c9a26d"
                               >
-                                7a98886d79c9a26d
+                                8fb945b2df69da47
                               </a>
                             </td>
                           </tr>
