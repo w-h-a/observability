@@ -55,7 +55,7 @@ const columns = [
 		dataIndex: "traceid",
 		key: "traceid",
 		render: (id: string) => (
-			<NavLink to={`/traces/${id}`}>{id.slice(-16)}</NavLink>
+			<NavLink to={`/traces/${id}`}>{id.slice(0, 16)}</NavLink>
 		),
 	},
 ];
