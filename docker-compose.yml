@@ -1,4 +1,143 @@
 services:
+  front:
+    container_name: front
+    image: wesha/toy:0.6.0
+    command: server
+    ports:
+      - '8080:8080'
+    environment:
+      - NAMESPACE=toy
+      - NAME=front
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+  
+  ad:
+    container_name: ad
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=ad
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  rec:
+    container_name: rec
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=rec
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  prod:
+    container_name: prod
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=prod
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  cart:
+    container_name: cart
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=cart
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  curr:
+    container_name: curr
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=curr
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  postgres:
+    container_name: postgres
+    image: postgres:14-bullseye
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - toy-example
+
+  redis:
+    container_name: redis
+    image: redis:7.0-bullseye
+    networks:
+      - toy-example
+
+  ship:
+    container_name: ship
+    image: wesha/toy:0.6.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=ship
+      - VERSION=0.6.0-rc.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  otelcol:
+    container_name: otelcol
+    image: wesha/otel-coll:0.5.0
+    restart: on-failure:10
+    networks:
+      - toy-example
+    depends_on:
+      - clickhouse
+      - prometheus
+
   clickhouse:
     container_name: clickhouse
     image: clickhouse/clickhouse-server:24.12.3
@@ -6,72 +145,22 @@ services:
       - '9000:9000'
       - '8123:8123'
     networks:
-      - hotrod-example
+      - toy-example
 
-  otelcol:
-    container_name: otelcol
-    image: wesha/otel-clickhouse:0.4.0
-    restart: on-failure:10
-    networks:
-      - hotrod-example
-    depends_on:
-      - clickhouse
-
-  hotrod-frontend:
-    container_name: hotrod-frontend
-    image: hotrod:0.1.0-alpha.2
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v3.0.0
+    command: 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-remote-write-receiver"
+      - "--enable-feature=remote-write-receiver"
     ports:
-      - '8080:8080'
-    command: ["frontend", "--customer-service-hostname", "hotrod-customer", "-c", "8081", "--driver-service-hostname", "hotrod-driver", "-d", "8082", "--route-service-hostname", "hotrod-route", "-r", "8083"]
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - hotrod-example
-    depends_on:
-      - otelcol
-      - hotrod-customer
-      - hotrod-driver
-      - hotrod-route
-
-  hotrod-customer:
-    container_name: hotrod-customer
-    image: hotrod:0.1.0-alpha.2
-    ports:
-      - '8081:8081'
-    command: ["customer", "-c", "8081"]
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
-    networks:
-      - hotrod-example
-    depends_on:
-      - otelcol
-
-  hotrod-driver:
-    container_name: hotrod-driver
-    image: hotrod:0.1.0-alpha.2
-    ports:
-      - '8082:8082'
-    command: ["driver", "-d", "8082"]
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
-    networks:
-      - hotrod-example
-    depends_on:
-      - otelcol
-
-  hotrod-route:
-    container_name: hotrod-route
-    image: hotrod:0.1.0-alpha.2
-    ports:
-      - '8083:8083'
-    command: ["route", "-r", "8083"]
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
-    networks:
-      - hotrod-example
-    depends_on:
-      - otelcol
-
+      - toy-example
+  
   backend:
     container_name: backend
     build:
@@ -81,7 +170,7 @@ services:
     ports:
       - '4000:4000'
     environment:
-      - NAMESPACE=hotrod
+      - NAMESPACE=toy
       - NAME=backend
       - VERSION=0.1.0-alpha.0
       - HTTP_ADDRESS=:4000
@@ -90,9 +179,10 @@ services:
       - DB=default
       - TABLE=otel_traces
     networks:
-      - hotrod-example
+      - toy-example
     depends_on:
       - clickhouse
+      - prometheus
   
   frontend:
     container_name: frontend
@@ -103,9 +193,9 @@ services:
     ports:
       - '3000:3000'
     networks:
-      - hotrod-example
+      - toy-example
     depends_on:
       - backend
 
 networks:
-  hotrod-example:
+  toy-example:
