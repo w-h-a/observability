@@ -6,8 +6,8 @@ require (
 	github.com/ClickHouse/clickhouse-go v1.5.4
 	github.com/gorilla/mux v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/stretchr/testify v1.9.0
-	github.com/w-h-a/pkg v0.37.0
+	github.com/stretchr/testify v1.10.0
+	github.com/w-h-a/pkg v0.40.0
 )
 
 require (
