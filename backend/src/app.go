@@ -13,7 +13,7 @@ import (
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
-func AppFactory(repoClient traces.Client) serverv2.Server {
+func Factory(repoClient traces.Client) serverv2.Server {
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
 		traces.RepoWithClient(repoClient),

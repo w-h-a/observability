@@ -16,9 +16,9 @@ import (
 
 func main() {
 	// config
-	config.NewConfig()
+	config.New()
 
-	// name
+	// resource
 	name := fmt.Sprintf("%s.%s", config.Namespace(), config.Name())
 
 	// log
@@ -40,7 +40,7 @@ func main() {
 	)
 
 	// server
-	httpServer := src.AppFactory(repoClient)
+	httpServer := src.Factory(repoClient)
 
 	// wait group and error chan
 	wg := &sync.WaitGroup{}

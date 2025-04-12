@@ -23,7 +23,7 @@ type config struct {
 	tracesTable        string
 }
 
-func NewConfig() {
+func New() {
 	once.Do(func() {
 		instance = &config{
 			namespace:          "test",
