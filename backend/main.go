@@ -9,8 +9,8 @@ import (
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/memoryutils"
 	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
-	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
+	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/traces/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 
@@ -35,8 +35,8 @@ func main() {
 
 	// clients
 	repoClient := sqlrepo.NewClient(
-		repos.ClientWithDriver(config.Store()),
-		repos.ClientWithAddrs(config.StoreAddress()),
+		traces.ClientWithDriver(config.TracesStore()),
+		traces.ClientWithAddrs(config.TracesStoreAddress()),
 	)
 
 	// server

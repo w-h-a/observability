@@ -10,7 +10,7 @@ import (
 	"github.com/w-h-a/pkg/utils/httputils"
 	"github.com/w-h-a/pkg/utils/memoryutils"
 	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos/mock"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces/mock"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 

@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/w-h-a/pkg/telemetry/log"
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type sqlRepo struct {
-	options repos.RepoOptions
+	options traces.RepoOptions
 }
 
-func (r *sqlRepo) Options() repos.RepoOptions {
+func (r *sqlRepo) Options() traces.RepoOptions {
 	return r.options
 }
 
@@ -21,7 +21,7 @@ func (r *sqlRepo) ReadServerCalls(ctx context.Context, dest interface{}, startTi
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamp); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -32,7 +32,7 @@ func (r *sqlRepo) ReadServerErrors(ctx context.Context, dest interface{}, startT
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamp); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -43,7 +43,7 @@ func (r *sqlRepo) ReadServiceNames(ctx context.Context, dest interface{}) error 
 
 	if err := r.options.Client.Read(ctx, dest, query); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -54,7 +54,7 @@ func (r *sqlRepo) ReadServiceDependencies(ctx context.Context, dest interface{},
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamp); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -65,7 +65,7 @@ func (r *sqlRepo) ReadServiceSpecificTags(ctx context.Context, dest interface{},
 
 	if err := r.options.Client.Read(ctx, dest, query, serviceName); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (r *sqlRepo) ReadServiceSpecificOperations(ctx context.Context, dest interf
 
 	if err := r.options.Client.Read(ctx, dest, query, serviceName); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -87,7 +87,7 @@ func (r *sqlRepo) ReadServiceSpecificEndpoints(ctx context.Context, dest interfa
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamps, serviceName); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func (r *sqlRepo) ReadServiceSpecificServerCalls(ctx context.Context, dest inter
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamp, serviceName); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func (r *sqlRepo) ReadServiceSpecificServerErrors(ctx context.Context, dest inte
 
 	if err := r.options.Client.Read(ctx, dest, query, startTimestamp, endTimestamp, serviceName); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -132,7 +132,7 @@ func (r *sqlRepo) ReadTraces(ctx context.Context, dest interface{}, startTimesta
 
 	if err := r.options.Client.Read(ctx, dest, query, args...); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -148,7 +148,7 @@ func (r *sqlRepo) ReadSpans(
 	spanKind,
 	minDuration,
 	maxDuration string,
-	tagQueries ...repos.TagQuery,
+	tagQueries ...traces.TagQuery,
 ) error {
 	query := fmt.Sprintf(`SELECT Timestamp as timestamp, SpanId as spanId, ParentSpanId as parentSpanId, TraceId as traceId, ServiceName as serviceName, SpanName as name, SpanKind as kind, StatusCode as statusCode, Duration as duration, arrayMap(key -> tuple(key, SpanAttributes[key]), SpanAttributes.keys) as tags FROM %s.%s WHERE timestamp>=? AND timestamp<=?`, r.options.Database, r.options.Table)
 
@@ -166,7 +166,7 @@ func (r *sqlRepo) ReadSpans(
 
 	if err := r.options.Client.Read(ctx, dest, query, args...); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -185,7 +185,7 @@ func (r *sqlRepo) ReadAggregatedSpans(
 	spanKind,
 	minDuration,
 	maxDuration string,
-	tagQueries ...repos.TagQuery,
+	tagQueries ...traces.TagQuery,
 ) error {
 	aggregationQuery := ""
 
@@ -220,7 +220,7 @@ func (r *sqlRepo) ReadAggregatedSpans(
 
 	if err := r.options.Client.Read(ctx, dest, query, args...); err != nil {
 		log.Errorf("repo client failed to read: %v", err)
-		return repos.ErrProcessingQuery
+		return traces.ErrProcessingQuery
 	}
 
 	return nil
@@ -234,7 +234,7 @@ func (*sqlRepo) buildUpSpanQuery(
 	spanKind string,
 	minDuration string,
 	maxDuration string,
-	tagQueries []repos.TagQuery,
+	tagQueries []traces.TagQuery,
 ) (string, []interface{}, error) {
 	if len(serviceName) != 0 {
 		query += " AND ServiceName=?"
@@ -283,8 +283,8 @@ func (*sqlRepo) buildUpSpanQuery(
 	return query, args, nil
 }
 
-func NewRepo(opts ...repos.RepoOption) repos.Repo {
-	options := repos.NewRepoOptions(opts...)
+func NewRepo(opts ...traces.RepoOption) traces.Repo {
+	options := traces.NewRepoOptions(opts...)
 
 	r := &sqlRepo{
 		options: options,

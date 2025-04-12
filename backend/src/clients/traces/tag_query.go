@@ -1,4 +1,4 @@
-package repos
+package traces
 
 type TagQuery struct {
 	Key      string `json:"key"`

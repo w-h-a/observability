@@ -1,14 +1,14 @@
 services:
   front:
     container_name: front
-    image: wesha/toy:0.6.0
+    image: wesha/toy:0.8.0
     command: server
     ports:
       - '8080:8080'
     environment:
       - NAMESPACE=toy
       - NAME=front
-      - VERSION=0.6.0-rc.0
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -17,14 +17,46 @@ services:
     depends_on:
       - otelcol
   
-  ad:
-    container_name: ad
-    image: wesha/toy:0.6.0
+  # orders:
+  #   container_name: orders
+  #   image: wesha/toy:0.8.0
+  #   command: server
+  #   environment:
+  #     - NAMESPACE=toy
+  #     - NAME=orders
+  #     - VERSION=0.8.0
+  #     - HTTP_ADDRESS=:8080
+  #     - TRACE_ADDRESS=otelcol:4318
+  #     - METRICS_ADDRESS=otelcol:4318
+  #   networks:
+  #     - toy-example
+  #   depends_on:
+  #     - otelcol
+
+  # payments:
+  #   container_name: payments
+  #   image: wesha/toy:0.8.0
+  #   command: server
+  #   environment:
+  #     - NAMESPACE=toy
+  #     - NAME=payments
+  #     - VERSION=0.8.0
+  #     - HTTP_ADDRESS=:8080
+  #     - TRACE_ADDRESS=otelcol:4318
+  #     - METRICS_ADDRESS=otelcol:4318
+  #   networks:
+  #     - toy-example
+  #   depends_on:
+  #     - otelcol
+
+  planning:
+    container_name: planning
+    image: wesha/toy:0.8.0
     command: server
     environment:
       - NAMESPACE=toy
-      - NAME=ad
-      - VERSION=0.6.0-rc.0
+      - NAME=planning
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -33,14 +65,14 @@ services:
     depends_on:
       - otelcol
 
-  rec:
-    container_name: rec
-    image: wesha/toy:0.6.0
+  risk:
+    container_name: risk
+    image: wesha/toy:0.8.0
     command: server
     environment:
       - NAMESPACE=toy
-      - NAME=rec
-      - VERSION=0.6.0-rc.0
+      - NAME=risk
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -49,14 +81,14 @@ services:
     depends_on:
       - otelcol
 
-  prod:
-    container_name: prod
-    image: wesha/toy:0.6.0
+  analytics:
+    container_name: analytics
+    image: wesha/toy:0.8.0
     command: server
     environment:
       - NAMESPACE=toy
-      - NAME=prod
-      - VERSION=0.6.0-rc.0
+      - NAME=analytics
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -65,14 +97,14 @@ services:
     depends_on:
       - otelcol
 
-  cart:
-    container_name: cart
-    image: wesha/toy:0.6.0
+  transaction:
+    container_name: transaction
+    image: wesha/toy:0.8.0
     command: server
     environment:
       - NAMESPACE=toy
-      - NAME=cart
-      - VERSION=0.6.0-rc.0
+      - NAME=transaction
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -81,14 +113,30 @@ services:
     depends_on:
       - otelcol
 
-  curr:
-    container_name: curr
-    image: wesha/toy:0.6.0
+  reporting:
+    container_name: reporting
+    image: wesha/toy:0.8.0
     command: server
     environment:
       - NAMESPACE=toy
-      - NAME=curr
-      - VERSION=0.6.0-rc.0
+      - NAME=reporting
+      - VERSION=0.8.0
+      - HTTP_ADDRESS=:8080
+      - TRACE_ADDRESS=otelcol:4318
+      - METRICS_ADDRESS=otelcol:4318
+    networks:
+      - toy-example
+    depends_on:
+      - otelcol
+
+  portfolio:
+    container_name: portfolio
+    image: wesha/toy:0.8.0
+    command: server
+    environment:
+      - NAMESPACE=toy
+      - NAME=portfolio
+      - VERSION=0.8.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -111,22 +159,6 @@ services:
     image: redis:7.0-bullseye
     networks:
       - toy-example
-
-  ship:
-    container_name: ship
-    image: wesha/toy:0.6.0
-    command: server
-    environment:
-      - NAMESPACE=toy
-      - NAME=ship
-      - VERSION=0.6.0-rc.0
-      - HTTP_ADDRESS=:8080
-      - TRACE_ADDRESS=otelcol:4318
-      - METRICS_ADDRESS=otelcol:4318
-    networks:
-      - toy-example
-    depends_on:
-      - otelcol
 
   otelcol:
     container_name: otelcol
@@ -174,10 +206,10 @@ services:
       - NAME=backend
       - VERSION=0.1.0-alpha.0
       - HTTP_ADDRESS=:4000
-      - STORE=clickhouse
-      - STORE_ADDRESS=tcp://clickhouse:9000
-      - DB=default
-      - TABLE=otel_traces
+      - TRACES_STORE=clickhouse
+      - TRACES_STORE_ADDRESS=tcp://clickhouse:9000
+      - TRACES_DB=default
+      - TRACES_TABLE=otel_traces
     networks:
       - toy-example
     depends_on:

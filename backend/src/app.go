@@ -6,19 +6,19 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/w-h-a/pkg/serverv2"
 	httpserver "github.com/w-h-a/pkg/serverv2/http"
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
-	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/repos/sql"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
+	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/traces/sql"
 	"github.com/w-h-a/trace-blame/backend/src/config"
 	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
-func AppFactory(repoClient repos.Client) serverv2.Server {
+func AppFactory(repoClient traces.Client) serverv2.Server {
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
-		repos.RepoWithClient(repoClient),
-		repos.RepoWithDatabase(config.DB()),
-		repos.RepoWithTable(config.Table()),
+		traces.RepoWithClient(repoClient),
+		traces.RepoWithDatabase(config.TracesDB()),
+		traces.RepoWithTable(config.TracesTable()),
 	)
 
 	// services

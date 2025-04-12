@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type Reader struct {
-	repo repos.Repo
+	traceRepo traces.Repo
 }
 
 func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service, error) {
@@ -20,13 +20,13 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 
 	services := []*Service{}
 
-	if err := r.repo.ReadServerCalls(ctx, &services, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServerCalls(ctx, &services, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
 	errServices := []*Service{}
 
-	if err := r.repo.ReadServerErrors(ctx, &errServices, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServerErrors(ctx, &errServices, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service,
 func (r *Reader) ServicesList(ctx context.Context) ([]string, error) {
 	services := []string{}
 
-	if err := r.repo.ReadServiceNames(ctx, &services); err != nil {
+	if err := r.traceRepo.ReadServiceNames(ctx, &services); err != nil {
 		return nil, err
 	}
 
@@ -66,7 +66,7 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 
 	serviceSpanDependencies := []*ServiceSpanDependency{}
 
-	if err := r.repo.ReadServiceDependencies(ctx, &serviceSpanDependencies, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServiceDependencies(ctx, &serviceSpanDependencies, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +112,7 @@ func (r *Reader) ServiceDependencies(ctx context.Context, query *ServicesArgs) (
 func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
 	tags := []string{}
 
-	if err := r.repo.ReadServiceSpecificTags(ctx, &tags, query.ServiceName); err != nil {
+	if err := r.traceRepo.ReadServiceSpecificTags(ctx, &tags, query.ServiceName); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func (r *Reader) Tags(ctx context.Context, query *TagsArgs) ([]string, error) {
 func (r *Reader) Operations(ctx context.Context, query *OperationsArgs) ([]string, error) {
 	operations := []string{}
 
-	if err := r.repo.ReadServiceSpecificOperations(ctx, &operations, query.ServiceName); err != nil {
+	if err := r.traceRepo.ReadServiceSpecificOperations(ctx, &operations, query.ServiceName); err != nil {
 		return nil, err
 	}
 
@@ -136,7 +136,7 @@ func (r *Reader) Endpoints(ctx context.Context, query *EndpointsArgs) ([]*Endpoi
 
 	topEndpoints := []*Endpoint{}
 
-	if err := r.repo.ReadServiceSpecificEndpoints(ctx, &topEndpoints, query.ServiceName, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServiceSpecificEndpoints(ctx, &topEndpoints, query.ServiceName, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -152,13 +152,13 @@ func (r *Reader) ServiceOverview(ctx context.Context, query *OverviewArgs) ([]*S
 
 	serviceOverview := []*ServiceOverview{}
 
-	if err := r.repo.ReadServiceSpecificServerCalls(ctx, &serviceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServiceSpecificServerCalls(ctx, &serviceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
 	errServiceOverview := []*ServiceOverview{}
 
-	if err := r.repo.ReadServiceSpecificServerErrors(ctx, &errServiceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
+	if err := r.traceRepo.ReadServiceSpecificServerErrors(ctx, &errServiceOverview, query.ServiceName, interval, startTimestamp, endTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -225,7 +225,7 @@ func (r *Reader) Traces(ctx context.Context, query *TracesArgs) ([]*SpanMatrix, 
 
 	spans := []*Span{}
 
-	if err := r.repo.ReadTraces(ctx, &spans, startTimestamp, endTimestamp, query.ServiceName, query.TraceId); err != nil {
+	if err := r.traceRepo.ReadTraces(ctx, &spans, startTimestamp, endTimestamp, query.ServiceName, query.TraceId); err != nil {
 		return nil, err
 	}
 
@@ -251,7 +251,7 @@ func (r *Reader) Spans(ctx context.Context, query *SpansArgs) ([]*SpanMatrix, er
 
 	spans := []*Span{}
 
-	if err := r.repo.ReadSpans(
+	if err := r.traceRepo.ReadSpans(
 		ctx,
 		&spans,
 		startTimestamp,
@@ -290,7 +290,7 @@ func (r *Reader) AggregatedSpans(ctx context.Context, query *AggregatedSpansArgs
 
 	aggregationResults := []*AggregatedSpans{}
 
-	if err := r.repo.ReadAggregatedSpans(
+	if err := r.traceRepo.ReadAggregatedSpans(
 		ctx,
 		&aggregationResults,
 		query.Dimension,
@@ -328,9 +328,9 @@ func (r *Reader) AggregatedSpans(ctx context.Context, query *AggregatedSpansArgs
 	return result, nil
 }
 
-func NewReader(repo repos.Repo) *Reader {
+func NewReader(traceRepo traces.Repo) *Reader {
 	r := &Reader{
-		repo: repo,
+		traceRepo: traceRepo,
 	}
 
 	return r
