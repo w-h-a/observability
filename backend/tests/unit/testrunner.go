@@ -15,7 +15,7 @@ import (
 )
 
 func RunTestCases(t *testing.T, testCases []TestCase) {
-	config.NewConfig()
+	config.New()
 
 	// name
 	name := fmt.Sprintf("%s.%s", config.Namespace(), config.Name())
@@ -36,7 +36,7 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 		var bs []byte
 		var err error
 
-		httpServer := src.AppFactory(testCase.Client)
+		httpServer := src.Factory(testCase.Client)
 
 		mockStoreClient := testCase.Client.(*mock.MockRepoClient)
 
