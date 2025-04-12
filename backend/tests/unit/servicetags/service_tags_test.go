@@ -3,7 +3,7 @@ package servicetags
 import (
 	"testing"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos/mock"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces/mock"
 	"github.com/w-h-a/trace-blame/backend/tests/unit"
 )
 

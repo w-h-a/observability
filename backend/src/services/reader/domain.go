@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 // services
@@ -171,7 +171,7 @@ type SpansArgs struct {
 	Kind        string
 	MinDuration string
 	MaxDuration string
-	TagQueries  []repos.TagQuery
+	TagQueries  []traces.TagQuery
 	Order       string
 	Limit       int64
 	Offset      int64
@@ -216,7 +216,7 @@ type AggregatedSpansArgs struct {
 	Kind              string
 	MinDuration       string
 	MaxDuration       string
-	TagQueries        []repos.TagQuery
+	TagQueries        []traces.TagQuery
 }
 
 type AggregatedSpans struct {

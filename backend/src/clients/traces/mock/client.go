@@ -6,11 +6,11 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type MockRepoClient struct {
-	options         repos.ClientOptions
+	options         traces.ClientOptions
 	readImpl        func() error
 	xs              [][]interface{}
 	readCalledTimes int
@@ -18,7 +18,7 @@ type MockRepoClient struct {
 	mtx             sync.RWMutex
 }
 
-func (c *MockRepoClient) Options() repos.ClientOptions {
+func (c *MockRepoClient) Options() traces.ClientOptions {
 	return c.options
 }
 
@@ -76,8 +76,8 @@ func (c *MockRepoClient) ResetCalledWith() {
 	c.readCalledWith = []map[string]interface{}{}
 }
 
-func NewClient(opts ...repos.ClientOption) repos.Client {
-	options := repos.NewClientOptions(opts...)
+func NewClient(opts ...traces.ClientOption) traces.Client {
+	options := traces.NewClientOptions(opts...)
 
 	c := &MockRepoClient{
 		options:        options,

@@ -8,15 +8,15 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/w-h-a/pkg/telemetry/log"
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type client struct {
-	options repos.ClientOptions
+	options traces.ClientOptions
 	*sqlx.DB
 }
 
-func (c *client) Options() repos.ClientOptions {
+func (c *client) Options() traces.ClientOptions {
 	return c.options
 }
 
@@ -24,8 +24,8 @@ func (c *client) Read(ctx context.Context, dest interface{}, str string, additio
 	return c.Select(dest, str, additional...)
 }
 
-func NewClient(opts ...repos.ClientOption) repos.Client {
-	options := repos.NewClientOptions(opts...)
+func NewClient(opts ...traces.ClientOption) traces.Client {
+	options := traces.NewClientOptions(opts...)
 
 	source := options.Addrs[0]
 	if _, err := url.Parse(source); err != nil {

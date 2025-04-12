@@ -13,27 +13,27 @@ var (
 )
 
 type config struct {
-	namespace    string
-	name         string
-	version      string
-	httpAddress  string
-	store        string
-	storeAddress string
-	db           string
-	table        string
+	namespace          string
+	name               string
+	version            string
+	httpAddress        string
+	tracesStore        string
+	tracesStoreAddress string
+	tracesDB           string
+	tracesTable        string
 }
 
 func NewConfig() {
 	once.Do(func() {
 		instance = &config{
-			namespace:    "test",
-			name:         "test",
-			version:      "0.1.0-alpha.0",
-			httpAddress:  ":0",
-			store:        "",
-			storeAddress: "",
-			db:           "",
-			table:        "",
+			namespace:          "test",
+			name:               "test",
+			version:            "0.1.0-alpha.0",
+			httpAddress:        ":0",
+			tracesStore:        "",
+			tracesStoreAddress: "",
+			tracesDB:           "",
+			tracesTable:        "",
 		}
 
 		namespace := os.Getenv("NAMESPACE")
@@ -56,24 +56,24 @@ func NewConfig() {
 			instance.httpAddress = httpAddress
 		}
 
-		store := os.Getenv("STORE")
+		store := os.Getenv("TRACES_STORE")
 		if len(store) > 0 {
-			instance.store = store
+			instance.tracesStore = store
 		}
 
-		storeAddress := os.Getenv("STORE_ADDRESS")
+		storeAddress := os.Getenv("TRACES_STORE_ADDRESS")
 		if len(storeAddress) > 0 {
-			instance.storeAddress = storeAddress
+			instance.tracesStoreAddress = storeAddress
 		}
 
-		db := os.Getenv("DB")
+		db := os.Getenv("TRACES_DB")
 		if len(db) > 0 {
-			instance.db = db
+			instance.tracesDB = db
 		}
 
-		table := os.Getenv("TABLE")
+		table := os.Getenv("TRACES_TABLE")
 		if len(table) > 0 {
-			instance.table = table
+			instance.tracesTable = table
 		}
 	})
 }
@@ -110,34 +110,34 @@ func HttpAddress() string {
 	return instance.httpAddress
 }
 
-func Store() string {
+func TracesStore() string {
 	if instance == nil {
 		log.Fatal("no config instance")
 	}
 
-	return instance.store
+	return instance.tracesStore
 }
 
-func StoreAddress() string {
+func TracesStoreAddress() string {
 	if instance == nil {
 		log.Fatal("no config instance")
 	}
 
-	return instance.storeAddress
+	return instance.tracesStoreAddress
 }
 
-func DB() string {
+func TracesDB() string {
 	if instance == nil {
 		log.Fatal("no config instance")
 	}
 
-	return instance.db
+	return instance.tracesDB
 }
 
-func Table() string {
+func TracesTable() string {
 	if instance == nil {
 		log.Fatal("no config instance")
 	}
 
-	return instance.table
+	return instance.tracesTable
 }

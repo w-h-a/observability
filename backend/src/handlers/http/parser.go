@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/repos"
+	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 	"github.com/w-h-a/trace-blame/backend/src/handlers"
 	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
@@ -335,10 +335,10 @@ func (p *RequestParser) parseTimestamp(param string, r *http.Request) (*string, 
 	return &timeStr, nil
 }
 
-func (p *RequestParser) parseTagQueries(param string, r *http.Request) ([]repos.TagQuery, error) {
+func (p *RequestParser) parseTagQueries(param string, r *http.Request) ([]traces.TagQuery, error) {
 	tagsStr := r.URL.Query().Get(param)
 
-	tagQueries := []repos.TagQuery{}
+	tagQueries := []traces.TagQuery{}
 
 	if len(tagsStr) == 0 {
 		return tagQueries, nil
