@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/w-h-a/observability/backend/src/services/reader"
 	"github.com/w-h-a/pkg/utils/errorutils"
 	"github.com/w-h-a/pkg/utils/httputils"
-	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 type Spans struct {

@@ -20,7 +20,7 @@ e2e-test:
 
 .PHONY: go-build
 go-build:
-	CGO_ENABLED=0 go build -o ./bin/trace-blame-backend ./
+	CGO_ENABLED=0 go build -o ./bin/observability-backend ./
 
 .PHONY: go-install
 go-install:
@@ -28,4 +28,4 @@ go-install:
 
 .PHONY: build
 build:
-	docker buildx build --platform linux/amd64 -t github.com/w-h-a/trace-blame/backend:0.1.1-alpha .
+	docker buildx build --platform linux/amd64 -t github.com/w-h-a/observability/backend:0.1.1-alpha .

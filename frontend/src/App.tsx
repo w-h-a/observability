@@ -38,7 +38,7 @@ export const App = () => {
 								</Switch>
 							</ClientContext.Provider>
 						</Layout.Content>
-						<Layout.Footer>Trace-Blame {new Date().getFullYear()}</Layout.Footer>
+						<Layout.Footer>Observability {new Date().getFullYear()}</Layout.Footer>
 					</Layout>
 				</Layout>
 			</BrowserRouter>

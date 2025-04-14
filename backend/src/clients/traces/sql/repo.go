@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/w-h-a/observability/backend/src/clients/traces"
 	"github.com/w-h-a/pkg/telemetry/log"
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type sqlRepo struct {

@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/w-h-a/observability/backend/src/clients/traces"
+	sqlrepo "github.com/w-h-a/observability/backend/src/clients/traces/sql"
+	"github.com/w-h-a/observability/backend/src/config"
+	httphandlers "github.com/w-h-a/observability/backend/src/handlers/http"
+	"github.com/w-h-a/observability/backend/src/services/reader"
 	"github.com/w-h-a/pkg/serverv2"
 	httpserver "github.com/w-h-a/pkg/serverv2/http"
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
-	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/traces/sql"
-	"github.com/w-h-a/trace-blame/backend/src/config"
-	httphandlers "github.com/w-h-a/trace-blame/backend/src/handlers/http"
-	"github.com/w-h-a/trace-blame/backend/src/services/reader"
 )
 
 func Factory(repoClient traces.Client) serverv2.Server {

@@ -3,9 +3,9 @@ package serviceendpoints
 import (
 	"testing"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces/mock"
-	"github.com/w-h-a/trace-blame/backend/src/services/reader"
-	"github.com/w-h-a/trace-blame/backend/tests/unit"
+	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/src/services/reader"
+	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServiceEndpoints(t *testing.T) {

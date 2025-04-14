@@ -1,10 +1,6 @@
-# trace-blame
+# observability
 
-trace-blame is an opensource tracing tool that performs causal discovery given some experiments and span data.
-
-### features
-
-Coming soon...
+An opensource observability platform.
 
 ## Getting Started
 

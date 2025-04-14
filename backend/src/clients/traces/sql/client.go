@@ -7,8 +7,8 @@ import (
 	_ "github.com/ClickHouse/clickhouse-go"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/w-h-a/observability/backend/src/clients/traces"
 	"github.com/w-h-a/pkg/telemetry/log"
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
 )
 
 type client struct {
