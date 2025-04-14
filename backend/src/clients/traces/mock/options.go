@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/src/clients/traces"
 )
 
 type readImplKey struct{}

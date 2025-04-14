@@ -1,14 +1,14 @@
 services:
   front:
     container_name: front
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     ports:
       - '8080:8080'
     environment:
       - NAMESPACE=toy
       - NAME=front
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -19,12 +19,13 @@ services:
   
   # orders:
   #   container_name: orders
-  #   image: wesha/toy:0.8.0
+  #   hostname: orders
+  #   image: wesha/toy:0.9.0
   #   command: server
   #   environment:
   #     - NAMESPACE=toy
   #     - NAME=orders
-  #     - VERSION=0.8.0
+  #     - VERSION=0.9.0
   #     - HTTP_ADDRESS=:8080
   #     - TRACE_ADDRESS=otelcol:4318
   #     - METRICS_ADDRESS=otelcol:4318
@@ -35,12 +36,13 @@ services:
 
   # payments:
   #   container_name: payments
-  #   image: wesha/toy:0.8.0
+  #   hostname: payments
+  #   image: wesha/toy:0.9.0
   #   command: server
   #   environment:
   #     - NAMESPACE=toy
   #     - NAME=payments
-  #     - VERSION=0.8.0
+  #     - VERSION=0.9.0
   #     - HTTP_ADDRESS=:8080
   #     - TRACE_ADDRESS=otelcol:4318
   #     - METRICS_ADDRESS=otelcol:4318
@@ -51,12 +53,12 @@ services:
 
   planning:
     container_name: planning
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=planning
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -67,12 +69,12 @@ services:
 
   risk:
     container_name: risk
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=risk
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -83,12 +85,12 @@ services:
 
   analytics:
     container_name: analytics
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=analytics
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -99,12 +101,12 @@ services:
 
   transaction:
     container_name: transaction
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=transaction
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -115,12 +117,12 @@ services:
 
   reporting:
     container_name: reporting
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=reporting
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -131,12 +133,12 @@ services:
 
   portfolio:
     container_name: portfolio
-    image: wesha/toy:0.8.0
+    image: wesha/toy:0.9.0
     command: server
     environment:
       - NAMESPACE=toy
       - NAME=portfolio
-      - VERSION=0.8.0
+      - VERSION=0.9.0
       - HTTP_ADDRESS=:8080
       - TRACE_ADDRESS=otelcol:4318
       - METRICS_ADDRESS=otelcol:4318
@@ -162,8 +164,10 @@ services:
 
   otelcol:
     container_name: otelcol
-    image: wesha/otel-coll:0.5.0
+    image: wesha/otel-coll:0.6.0-rc.1
     restart: on-failure:10
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - toy-example
     depends_on:

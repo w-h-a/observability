@@ -1,6 +1,6 @@
 package unit
 
-import "github.com/w-h-a/trace-blame/backend/src/clients/traces"
+import "github.com/w-h-a/observability/backend/src/clients/traces"
 
 type TestCase struct {
 	When            string

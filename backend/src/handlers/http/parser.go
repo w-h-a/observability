@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
-	"github.com/w-h-a/trace-blame/backend/src/handlers"
-	"github.com/w-h-a/trace-blame/backend/src/services/reader"
+	"github.com/w-h-a/observability/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/src/handlers"
+	"github.com/w-h-a/observability/backend/src/services/reader"
 )
 
 type RequestParser struct{}

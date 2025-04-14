@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/w-h-a/observability/backend/src"
+	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/src/config"
 	"github.com/w-h-a/pkg/telemetry/log"
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/httputils"
 	"github.com/w-h-a/pkg/utils/memoryutils"
-	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces/mock"
-	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 
 func RunTestCases(t *testing.T, testCases []TestCase) {

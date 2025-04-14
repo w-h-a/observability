@@ -21,7 +21,7 @@ jobs:
       - name: Publish backend
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
-          name: wesha/trace-blame-backend
+          name: wesha/observability-backend
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tag_semver: true
@@ -29,7 +29,7 @@ jobs:
       - name: Publish frontend
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
-          name: wesha/trace-blame-frontend
+          name: wesha/observability-frontend
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tag_semver: true

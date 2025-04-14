@@ -5,13 +5,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/w-h-a/observability/backend/src"
+	"github.com/w-h-a/observability/backend/src/clients/traces"
+	sqlrepo "github.com/w-h-a/observability/backend/src/clients/traces/sql"
+	"github.com/w-h-a/observability/backend/src/config"
 	"github.com/w-h-a/pkg/telemetry/log"
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/memoryutils"
-	"github.com/w-h-a/trace-blame/backend/src"
-	"github.com/w-h-a/trace-blame/backend/src/clients/traces"
-	sqlrepo "github.com/w-h-a/trace-blame/backend/src/clients/traces/sql"
-	"github.com/w-h-a/trace-blame/backend/src/config"
 )
 
 func main() {
