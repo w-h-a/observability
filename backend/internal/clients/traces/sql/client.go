@@ -7,7 +7,7 @@ import (
 	_ "github.com/ClickHouse/clickhouse-go"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
 	"github.com/w-h-a/pkg/telemetry/log"
 )
 

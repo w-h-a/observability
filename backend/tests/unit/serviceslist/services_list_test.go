@@ -4,29 +4,31 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServicesList(t *testing.T) {
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				"redis", "postgres", "customer", "payments",
 			},
 		}),
 	)
 
-	failureClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return fmt.Errorf("failed to process sql query") }),
+	failureClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return fmt.Errorf("failed to process sql query") }),
 	)
 
 	testCases := []unit.TestCase{
 		{
 			When:            "when: we get a request to list services and the store client makes a successful call to the db",
 			Endpoint:        "/api/v1/services/list",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the slice of service names",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -40,7 +42,8 @@ func TestServicesList(t *testing.T) {
 		{
 			When:            "when: we get a request to list services and the store client fails to make the call to the db",
 			Endpoint:        "/api/v1/services/list",
-			Client:          failureClient,
+			TracesClient:    failureClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back an internal server error message",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

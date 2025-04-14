@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
@@ -13,9 +14,9 @@ func TestSpans(t *testing.T) {
 	tagQueryKey := "http.method"
 	tagQueryValue := "GET"
 
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.Span{
 					Timestamp:    "2024-12-30T00:23:31.474736508Z",
@@ -96,7 +97,8 @@ func TestSpans(t *testing.T) {
 			When:            "when: we get a request for spans with a tag query that is not allowed",
 			Endpoint:        "/api/v1/spans",
 			Query:           fmt.Sprintf(`?start=1735770900&end=1735770993&tags=[{"key":"%s","value":"%s","operator":"equal"}]`, tagQueryKey, tagQueryValue),
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we return a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
@@ -106,7 +108,8 @@ func TestSpans(t *testing.T) {
 			When:            "when: we get a request for spans with an _equals_ tag query and the repo client successfully calls the db",
 			Endpoint:        "/api/v1/spans",
 			Query:           fmt.Sprintf(`?start=1735770900&end=1735770993&tags=[{"key":"%s","value":"%s","operator":"equals"}]`, tagQueryKey, tagQueryValue),
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we return the spans",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -121,7 +124,8 @@ func TestSpans(t *testing.T) {
 			When:            "when: we get a request for spans with a _contains_ tag query and the repo client successfully calls the db",
 			Endpoint:        "/api/v1/spans",
 			Query:           fmt.Sprintf(`?start=1735770900&end=1735770993&tags=[{"key":"%s","value":"%s","operator":"contains"}]`, tagQueryKey, tagQueryValue),
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we return the spans",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -136,7 +140,8 @@ func TestSpans(t *testing.T) {
 			When:            "when: we get a request for spans with an _isnotnull_ tag query and the repo client successfully calls the db",
 			Endpoint:        "/api/v1/spans",
 			Query:           fmt.Sprintf(`?start=1735770900&end=1735770993&tags=[{"key":"%s","value":"%s","operator":"isnotnull"}]`, tagQueryKey, tagQueryValue),
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we return the spans",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
 )
 
-type MockRepoClient struct {
+type MockTracesClient struct {
 	options         traces.ClientOptions
 	readImpl        func() error
 	xs              [][]interface{}
@@ -18,11 +18,11 @@ type MockRepoClient struct {
 	mtx             sync.RWMutex
 }
 
-func (c *MockRepoClient) Options() traces.ClientOptions {
+func (c *MockTracesClient) Options() traces.ClientOptions {
 	return c.options
 }
 
-func (c *MockRepoClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
+func (c *MockTracesClient) Read(ctx context.Context, dest interface{}, str string, additional ...interface{}) error {
 	c.mtx.Lock()
 
 	args := map[string]interface{}{
@@ -67,11 +67,11 @@ func (c *MockRepoClient) Read(ctx context.Context, dest interface{}, str string,
 	return nil
 }
 
-func (c *MockRepoClient) ReadCalledWith() []map[string]interface{} {
+func (c *MockTracesClient) ReadCalledWith() []map[string]interface{} {
 	return c.readCalledWith
 }
 
-func (c *MockRepoClient) ResetCalledWith() {
+func (c *MockTracesClient) ResetCalledWith() {
 	c.readCalledTimes = 0
 	c.readCalledWith = []map[string]interface{}{}
 }
@@ -79,7 +79,7 @@ func (c *MockRepoClient) ResetCalledWith() {
 func NewClient(opts ...traces.ClientOption) traces.Client {
 	options := traces.NewClientOptions(opts...)
 
-	c := &MockRepoClient{
+	c := &MockTracesClient{
 		options:        options,
 		readCalledWith: []map[string]interface{}{},
 		mtx:            sync.RWMutex{},

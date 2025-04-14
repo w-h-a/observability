@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
 )
 
 // services
@@ -223,4 +223,20 @@ type AggregatedSpans struct {
 	Timestamp int64   `json:"timestamp,omitempty" db:"timestamp"`
 	Time      string  `json:"time,omitempty" db:"time"`
 	Value     float32 `json:"value,omitempty" db:"value"`
+}
+
+// metrics
+
+type MetricsArgs struct {
+	Dimension   string
+	Step        time.Duration
+	Start       *time.Time
+	End         *time.Time
+	ServiceName string
+}
+
+type Metric struct {
+	Timestamp int64   `json:"timestamp,omitempty"`
+	Time      string  `json:"time,omitempty"`
+	Value     float64 `json:"value,omitempty"`
 }

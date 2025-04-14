@@ -1,12 +1,16 @@
 package unit
 
-import "github.com/w-h-a/observability/backend/src/clients/traces"
+import (
+	"github.com/w-h-a/observability/backend/internal/clients/metrics"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
+)
 
 type TestCase struct {
 	When            string
 	Endpoint        string
 	Query           string
-	Client          traces.Client
+	TracesClient    traces.Client
+	MetricsClient   metrics.Client
 	Then            string
 	ReadCalledTimes int
 	ReadCalledWith  []map[string]interface{}

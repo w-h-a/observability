@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/pkg/utils/errorutils"
 	"github.com/w-h-a/pkg/utils/httputils"
 )

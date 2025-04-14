@@ -3,15 +3,16 @@ package serviceoverview
 import (
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServiceOverview(t *testing.T) {
-	successClient1 := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient1 := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.ServiceOverview{
 					Time:         "2024-12-26T16:00:00Z",
@@ -25,9 +26,9 @@ func TestServiceOverview(t *testing.T) {
 		}),
 	)
 
-	successClient2 := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient2 := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.ServiceOverview{
 					Time:         "2024-12-26T16:00:00Z",
@@ -51,7 +52,8 @@ func TestServiceOverview(t *testing.T) {
 			When:            "when: we get a request to retrieve a service overview and the client makes a successful call to the db but there are no error spans",
 			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=60",
-			Client:          successClient1,
+			TracesClient:    successClient1,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a slice with the overview for the service without errors",
 			ReadCalledTimes: 2,
 			ReadCalledWith: []map[string]interface{}{
@@ -70,7 +72,8 @@ func TestServiceOverview(t *testing.T) {
 			When:            "when: we get a request to retrieve a service overview and the client makes a successful call to the db and there are error spans",
 			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=60",
-			Client:          successClient2,
+			TracesClient:    successClient2,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a slice with the overview for the service with errors",
 			ReadCalledTimes: 2,
 			ReadCalledWith: []map[string]interface{}{
@@ -89,7 +92,7 @@ func TestServiceOverview(t *testing.T) {
 			When:            "when: we get a request to retrieve a service overview but no service name was queried",
 			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&&step=60",
-			Client:          successClient2,
+			TracesClient:    successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
@@ -99,7 +102,7 @@ func TestServiceOverview(t *testing.T) {
 			When:            "when: we get a request to retrieve a service overview but a step of less than 60 was queried",
 			Endpoint:        "/api/v1/service/overview",
 			Query:           "?start=1734898000&end=1734913905&service=route&step=10",
-			Client:          successClient2,
+			TracesClient:    successClient2,
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},

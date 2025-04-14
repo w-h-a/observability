@@ -3,14 +3,15 @@ package serviceoperations
 import (
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServiceOperations(t *testing.T) {
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				"FindDriverIDs", "GetDriver",
 			},
@@ -22,7 +23,8 @@ func TestServiceOperations(t *testing.T) {
 			When:            "when: we get a request to retrieve a service's operations and the client makes a successful call to the db",
 			Endpoint:        "/api/v1/service/operations",
 			Query:           "?service=driver",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a slice of the operations for the service",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -37,7 +39,7 @@ func TestServiceOperations(t *testing.T) {
 			When:            "when: we get a request to retrieve a service's operations without a service param",
 			Endpoint:        "/api/v1/service/operations",
 			Query:           "?services=driver",
-			Client:          successClient,
+			TracesClient:    successClient,
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},

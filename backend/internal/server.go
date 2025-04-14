@@ -1,28 +1,34 @@
-package src
+package internal
 
 import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/w-h-a/observability/backend/src/clients/traces"
-	sqlrepo "github.com/w-h-a/observability/backend/src/clients/traces/sql"
-	"github.com/w-h-a/observability/backend/src/config"
-	httphandlers "github.com/w-h-a/observability/backend/src/handlers/http"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	"github.com/w-h-a/observability/backend/internal/clients/metrics"
+	promrepo "github.com/w-h-a/observability/backend/internal/clients/metrics/prom"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
+	sqlrepo "github.com/w-h-a/observability/backend/internal/clients/traces/sql"
+	"github.com/w-h-a/observability/backend/internal/config"
+	httphandlers "github.com/w-h-a/observability/backend/internal/handlers/http"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/pkg/serverv2"
 	httpserver "github.com/w-h-a/pkg/serverv2/http"
 )
 
-func Factory(repoClient traces.Client) serverv2.Server {
+func Factory(tracesClient traces.Client, metricsClient metrics.Client) serverv2.Server {
 	// clients
 	sqlRepo := sqlrepo.NewRepo(
-		traces.RepoWithClient(repoClient),
+		traces.RepoWithClient(tracesClient),
 		traces.RepoWithDatabase(config.TracesDB()),
 		traces.RepoWithTable(config.TracesTable()),
 	)
 
+	promRepo := promrepo.NewRepo(
+		metrics.RepoWithClient(metricsClient),
+	)
+
 	// services
-	reader := reader.NewReader(sqlRepo)
+	reader := reader.NewReader(sqlRepo, promRepo)
 
 	// base server options
 	opts := []serverv2.ServerOption{
@@ -40,6 +46,7 @@ func Factory(repoClient traces.Client) serverv2.Server {
 	httpService := httphandlers.NewServiceHandler(reader, httpRequestParser)
 	httpTraces := httphandlers.NewTracesHandler(reader, httpRequestParser)
 	httpSpans := httphandlers.NewSpansHandler(reader, httpRequestParser)
+	httpMetrics := httphandlers.NewMetricsHandler(reader, httpRequestParser)
 
 	router.Methods(http.MethodGet).Path("/api/v1/services").HandlerFunc(httpServices.GetServices)
 	router.Methods(http.MethodGet).Path("/api/v1/services/list").HandlerFunc(httpServices.GetServicesList)
@@ -51,6 +58,7 @@ func Factory(repoClient traces.Client) serverv2.Server {
 	router.Methods(http.MethodGet).Path("/api/v1/traces").HandlerFunc(httpTraces.GetTraces)
 	router.Methods(http.MethodGet).Path("/api/v1/spans").HandlerFunc(httpSpans.GetSpans)
 	router.Methods(http.MethodGet).Path("/api/v1/spans/aggregated").HandlerFunc(httpSpans.GetAggregatedSpans)
+	router.Methods(http.MethodGet).Path("/api/v1/metrics").HandlerFunc(httpMetrics.GetMetrics)
 
 	httpOpts := []serverv2.ServerOption{
 		serverv2.ServerWithAddress(config.HttpAddress()),

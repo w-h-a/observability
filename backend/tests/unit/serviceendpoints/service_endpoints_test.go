@@ -3,15 +3,16 @@ package serviceendpoints
 import (
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServiceEndpoints(t *testing.T) {
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.Endpoint{
 					Name:         "/config",
@@ -36,7 +37,8 @@ func TestServiceEndpoints(t *testing.T) {
 			When:            "when: we get a request to retrieve a service's endpoints and the client makes a successful call to the db",
 			Endpoint:        "/api/v1/service/endpoints",
 			Query:           "?service=frontend&start=1735254100&end=1735254931",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a slice of the endpoints for the service",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -51,11 +53,12 @@ func TestServiceEndpoints(t *testing.T) {
 			When:            "when: we get a request to retrieve a service's endpoints without start or end params",
 			Endpoint:        "/api/v1/service/endpoints",
 			Query:           "?service=driver",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
-			Payload:         `{"id":"Service.GetEndpoints","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Service.GetEndpoints","code":400,"detail":"failed to parse request: time param missing in query","status":"Bad Request"}`,
 		},
 	}
 
