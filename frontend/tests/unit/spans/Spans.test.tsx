@@ -30,11 +30,11 @@ describe("Spans", () => {
 					});
 				}
 
-				if (url.includes("spans/aggregated")) {
-					return new Promise((resolve) => {
-						resolve({ data: [{ timestamp: 1737306333967, value: 1 }] as T });
-					});
-				}
+				// if (url.includes("spans/aggregated")) {
+				// 	return new Promise((resolve) => {
+				// 		resolve({ data: [{ timestamp: 1737306333967, value: 1 }] as T });
+				// 	});
+				// }
 
 				return new Promise((resolve) => {
 					resolve({
@@ -94,10 +94,10 @@ describe("Spans", () => {
 				});
 			},
 			Then: "then: we render the spans table",
-			ClientCalledTimes: 3,
+			ClientCalledTimes: 2,
 			ClientCalledWith: [
 				"http://localhost:4000/api/v1/services/list",
-				"http://localhost:4000/api/v1/spans/aggregated?start=1736391270&end=1736393970&dimension=calls&aggregation=count&step=60",
+				// "http://localhost:4000/api/v1/spans/aggregated?start=1736391270&end=1736393970&dimension=calls&aggregation=count&step=60",
 				"http://localhost:4000/api/v1/spans?start=1736392170&end=1736393070",
 			],
 		},

@@ -1,9 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { ServicesUpdater } from "./services/services";
 import { TimeUpdater } from "./time/time";
+import { ServicesUpdater } from "./services/services";
 import { ServiceUpdater } from "./service/service";
-import { SpansUpdater } from "./spans/spans";
 import { TracesUpdater } from "./traces/traces";
+import { SpansUpdater } from "./spans/spans";
+import { MetricsUpdater } from "./metrics/metrics";
 
 const reducer = combineReducers({
 	maxMinTime: TimeUpdater.MaxMinTimeReducer,
@@ -16,7 +17,7 @@ const reducer = combineReducers({
 	serviceMetrics: ServiceUpdater.ServiceMetricsReducer,
 	traces: TracesUpdater.TracesReducer,
 	spanMatrix: SpansUpdater.SpanMatrixReducer,
-	customMetrics: SpansUpdater.CustomMetricsReducer,
+	customMetrics: MetricsUpdater.CustomMetricsReducer,
 });
 
 export const store = configureStore({

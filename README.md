@@ -7,7 +7,3 @@ An opensource observability platform.
 ```
 docker compose up --build
 ```
-
-```
-./clickhouse client
-```

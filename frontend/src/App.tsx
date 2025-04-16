@@ -5,10 +5,11 @@ import { Layout } from "antd";
 import { SideNav } from "./views/Nav/SideNav";
 import { TopNav } from "./views/Nav/TopNav";
 import { ServicesTable } from "./views/Services/ServicesTable";
-import { ServiceMap } from "./views/Services/ServiceMap";
 import { Service } from "./views/Service/Service";
-import { TraceGraph } from "./views/Traces/TraceGraph";
+import { ServiceMap } from "./views/Services/ServiceMap";
 import { Spans } from "./views/Spans/Spans";
+import { TraceGraph } from "./views/Traces/TraceGraph";
+import { Explore } from "./views/Explore/Explore";
 import { store } from "./updaters/store";
 import { ClientContext } from "./clients/query/clientCtx";
 
@@ -23,10 +24,11 @@ export const App = () => {
 							<TopNav />
 							<ClientContext.Provider value={useContext(ClientContext)}>
 								<Switch>
-									<Route path="/spans" component={Spans} />
+									<Route path="/explore" component={Explore} />
 									<Route path="/traces/:id" component={TraceGraph} />
-									<Route path="/application/:service" component={Service} />
+									<Route path="/traces" component={Spans} />
 									<Route path="/service-map" component={ServiceMap} />
+									<Route path="/application/:service" component={Service} />
 									<Route path="/application" component={ServicesTable} />
 									<Route
 										path="/"

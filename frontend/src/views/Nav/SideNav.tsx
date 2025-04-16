@@ -42,9 +42,9 @@ export const SideNav = () => {
 						Traces
 					</NavLink>
 				</Menu.Item>
-				<Menu.Item key="/spans" icon={<ExperimentOutlined />}>
-					<NavLink to="/spans" style={{ fontSize: 12, textDecoration: "none" }}>
-						Spans
+				<Menu.Item key="/explore" icon={<ExperimentOutlined />}>
+					<NavLink to="/explore" style={{ fontSize: 12, textDecoration: "none" }}>
+						Explore
 					</NavLink>
 				</Menu.Item>
 			</Menu>
