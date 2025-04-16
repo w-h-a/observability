@@ -201,7 +201,7 @@ export class Query {
 		}
 	}
 
-	static async GetCustomMetrics<T = any>(
+	static async GetAggregation<T = any>(
 		client: IClient,
 		start: number,
 		end: number,
@@ -224,7 +224,35 @@ export class Query {
 
 			return rsp;
 		} catch (err: unknown) {
-			console.log(`query client failed to retrieve custom metrics: ${err}`);
+			console.log(`query client failed to retrieve aggregations: ${err}`);
+			throw err;
+		}
+	}
+
+	static async GetMetrics<T = any>(
+		client: IClient,
+		start: number,
+		end: number,
+		dimension: string,
+		aggregation: string,
+		filters?: FilteredQuery,
+	): Promise<{ data: T }> {
+		try {
+			const path = `/metrics`;
+
+			let query = `?start=${start}&end=${end}&dimension=${dimension}&aggregation=${aggregation}&step=60`;
+
+			if (filters) {
+				query = Query.applyFilters(filters, query);
+			}
+
+			const rsp = await client.get<T>(
+				`${Config.GetInstance().get(EnvVar.BASE_QUERY_URL)}${path}${query}`,
+			);
+
+			return rsp;
+		} catch (err: unknown) {
+			console.log(`query client failed to retrieve metrics: ${err}`);
 			throw err;
 		}
 	}

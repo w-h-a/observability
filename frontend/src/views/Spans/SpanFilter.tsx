@@ -1,19 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	AutoComplete,
-	Button,
-	Card,
-	Form,
-	Input,
-	Select,
-	Space,
-	Tag,
-} from "antd";
+import { AutoComplete, Button, Card, Form, Input, Select, Tag } from "antd";
 import { Store } from "antd/es/form/interface";
 import FormItem from "antd/es/form/FormItem";
-import { DurationModelForm } from "./DurationModalForm";
-import { GenericVisualizations, GraphType } from "./GenericVisualizations";
+import { DurationModelForm } from "../Common/DurationModalForm";
 import { AppDispatch, RootState } from "../../updaters/store";
 import { SpansUpdater } from "../../updaters/spans/spans";
 import { ServiceUpdater } from "../../updaters/service/service";
@@ -34,48 +24,6 @@ enum TagValue {
 	maxDuration = "maxDuration",
 }
 
-enum CustomVisualizationField {
-	dimension = "dimension",
-	aggregation = "aggregation",
-	interval = "interval",
-	graphType = "graph_type",
-}
-
-// TODO: status code?
-const dimensions = [
-	{
-		title: "Calls",
-		key: "calls",
-		value: "calls",
-	},
-	{
-		title: "Duration",
-		key: "duration",
-		value: "duration",
-	},
-];
-
-const aggregations = [
-	{
-		dimension: "calls",
-		defaultSelected: { title: "Count", key: "count", value: "count" },
-		optionsAvailable: [
-			{ title: "Count", key: "count", value: "count" },
-			{ title: "Rate (per sec)", key: "rate_per_sec", value: "rate_per_sec" },
-		],
-	},
-	{
-		dimension: "duration",
-		defaultSelected: { title: "p99", key: "p99", value: "p99" },
-		optionsAvailable: [
-			{ title: "p99", key: "p99", value: "p99" },
-			{ title: "p95", key: "p95", value: "p95" },
-			{ title: "p50", key: "p50", value: "p50" },
-			{ title: "avg", key: "avg", value: "avg" },
-		],
-	},
-];
-
 export const SpanFilter = () => {
 	// clients
 	const { queryClient } = useContext(ClientContext);
@@ -89,16 +37,12 @@ export const SpanFilter = () => {
 		duration: { min: "", max: "" },
 		tags: [],
 	});
-	const [dimension, setDimension] = useState("calls");
-	const [aggregation, setAggregation] = useState("count");
-	// const [step, setStep] = useState("60");
 
 	// store state
 	const maxMinTime = useSelector((state: RootState) => state.maxMinTime);
 	const serviceNames = useSelector((state: RootState) => state.serviceNames);
 	const operationNames = useSelector((state: RootState) => state.operationNames);
 	const tags = useSelector((state: RootState) => state.tags);
-	const customMetrics = useSelector((state: RootState) => state.customMetrics);
 
 	const dispatch: AppDispatch = useDispatch();
 
@@ -201,9 +145,9 @@ export const SpanFilter = () => {
 		initialForm.setFieldsValue({ duration: durationButtonText });
 	}, [initialForm, spanFilters.duration]);
 
+	// filter on tags
 	const [tagForm] = Form.useForm();
 
-	// filter on tags
 	const onTagFormSubmit = (values: any) => {
 		setSpanFilters({
 			...spanFilters,
@@ -263,56 +207,6 @@ export const SpanFilter = () => {
 			}),
 		});
 	};
-
-	// custom visualizations stuff
-	const [customVizForm] = Form.useForm();
-
-	const onCustomVizValuesChange = (changedValues: any) => {
-		const field = Object.keys(changedValues)[0];
-
-		switch (field) {
-			case CustomVisualizationField.dimension:
-				const tempAgg = aggregations.filter((a) => {
-					return a.dimension === changedValues[field];
-				})[0];
-
-				customVizForm.setFieldsValue({
-					aggregation: tempAgg.defaultSelected.value,
-				});
-
-				const values = customVizForm.getFieldsValue([
-					CustomVisualizationField.dimension,
-					CustomVisualizationField.aggregation,
-				]);
-
-				setDimension(values[CustomVisualizationField.dimension]);
-				setAggregation(values[CustomVisualizationField.aggregation]);
-
-				break;
-			case CustomVisualizationField.aggregation:
-				setAggregation(changedValues[field]);
-				break;
-			case CustomVisualizationField.interval:
-				break;
-			case CustomVisualizationField.graphType:
-				break;
-		}
-	};
-
-	useEffect(() => {
-		dispatch(
-			SpansUpdater.CustomMetrics(
-				queryClient,
-				{
-					minTime: maxMinTime.minTime - 15 * 60,
-					maxTime: maxMinTime.maxTime + 15 * 60,
-				},
-				dimension,
-				aggregation,
-				spanFilters,
-			),
-		);
-	}, [dispatch, queryClient, maxMinTime, dimension, aggregation, spanFilters]);
 
 	return (
 		<div>
@@ -515,62 +409,6 @@ export const SpanFilter = () => {
 						}}
 					/>
 				)}
-			</Card>
-			<Card>
-				<div>Custom Visualizations</div>
-				<Form
-					form={customVizForm}
-					onValuesChange={onCustomVizValuesChange}
-					initialValues={{
-						[CustomVisualizationField.dimension]: dimension,
-						[CustomVisualizationField.aggregation]: "Count",
-						[CustomVisualizationField.interval]: "1m",
-						[CustomVisualizationField.graphType]: "line",
-					}}
-				>
-					<Space>
-						<Form.Item name={CustomVisualizationField.dimension}>
-							<Select style={{ width: 120 }}>
-								{dimensions.map((d) => {
-									return (
-										<Select.Option key={d.key} value={d.value}>
-											{d.title}
-										</Select.Option>
-									);
-								})}
-							</Select>
-						</Form.Item>
-						<Form.Item name={CustomVisualizationField.aggregation}>
-							<Select style={{ width: 120 }}>
-								{aggregations
-									.filter((a) => {
-										return a.dimension === dimension;
-									})[0]
-									.optionsAvailable.map((a) => {
-										return (
-											<Select.Option key={a.key} value={a.value}>
-												{a.title}
-											</Select.Option>
-										);
-									})}
-							</Select>
-						</Form.Item>
-						<Form.Item name={CustomVisualizationField.interval}>
-							<Select style={{ width: 120 }} allowClear>
-								<Select.Option value="1m">1 min</Select.Option>
-								<Select.Option value="5m">5 min</Select.Option>
-								<Select.Option value="30m">30 min</Select.Option>
-							</Select>
-						</Form.Item>
-						<Form.Item name={CustomVisualizationField.graphType}>
-							<Select style={{ width: 120 }} allowClear>
-								<Select.Option value={GraphType.line}>Line</Select.Option>
-								<Select.Option value={GraphType.bar}>Bar</Select.Option>
-							</Select>
-						</Form.Item>
-					</Space>
-				</Form>
-				<GenericVisualizations graphType={GraphType.line} data={customMetrics} />
 			</Card>
 		</div>
 	);
