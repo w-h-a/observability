@@ -3,15 +3,16 @@ package spansaggregated
 import (
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestSpansAggregated(t *testing.T) {
-	callsClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	callsClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.AggregatedSpans{
 					Time:  "2025-01-02T00:11:00Z",
@@ -21,9 +22,9 @@ func TestSpansAggregated(t *testing.T) {
 		}),
 	)
 
-	durationClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	durationClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.AggregatedSpans{
 					Time:  "2025-01-02T00:11:00Z",
@@ -38,7 +39,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve aggregated span data but we do not receive a dimension upon which to aggregate",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60",
-			Client:          mock.NewClient(),
+			TracesClient:    tracesmock.NewClient(),
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
@@ -48,7 +50,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve aggregated span data but we do not receive a valid aggregation option for the dimension",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60&dimension=calls&aggregation=p95",
-			Client:          mock.NewClient(),
+			TracesClient:    tracesmock.NewClient(),
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
@@ -58,7 +61,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve the rate of calls, aggregated over spans",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60&dimension=calls&aggregation=rate_per_sec",
-			Client:          callsClient,
+			TracesClient:    callsClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the aggregated data",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -73,7 +77,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve the count of calls, aggregated over spans",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60&dimension=calls&aggregation=count",
-			Client:          callsClient,
+			TracesClient:    callsClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the aggregated data",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -88,7 +93,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve the avg of duration, aggregated over spans",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60&dimension=duration&aggregation=avg",
-			Client:          durationClient,
+			TracesClient:    durationClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the aggregated data",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{
@@ -103,7 +109,8 @@ func TestSpansAggregated(t *testing.T) {
 			When:            "when: we get a request to retrieve the p95 of duration, aggregated over spans",
 			Endpoint:        "/api/v1/spans/aggregated",
 			Query:           "?start=1735770900&end=1735770993&step=60&dimension=duration&aggregation=p95",
-			Client:          durationClient,
+			TracesClient:    durationClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the aggregated data",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

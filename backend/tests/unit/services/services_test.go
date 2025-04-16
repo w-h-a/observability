@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServices(t *testing.T) {
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.Service{
 					ServiceName:  "route",
@@ -40,8 +41,8 @@ func TestServices(t *testing.T) {
 		}),
 	)
 
-	failureClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return fmt.Errorf("failed to process sql query") }),
+	failureClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return fmt.Errorf("failed to process sql query") }),
 	)
 
 	testCases := []unit.TestCase{
@@ -49,27 +50,30 @@ func TestServices(t *testing.T) {
 			When:            "when: we get a request without start or end query params",
 			Endpoint:        "/api/v1/services",
 			Query:           "",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
-			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: time param missing in query","status":"Bad Request"}`,
 		},
 		{
 			When:            "when: we get a request without end query params",
 			Endpoint:        "/api/v1/services",
 			Query:           "?start=1734898000",
-			Client:          failureClient,
+			TracesClient:    failureClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error message",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
-			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: end param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Services.GetServices","code":400,"detail":"failed to parse request: time param missing in query","status":"Bad Request"}`,
 		},
 		{
 			When:            "when: we get a request to retrieve service data and the client makes a successful call to the db",
 			Endpoint:        "/api/v1/services",
 			Query:           "?start=1734898000&end=1734913905",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the slice of services",
 			ReadCalledTimes: 2,
 			ReadCalledWith: []map[string]interface{}{
@@ -88,7 +92,8 @@ func TestServices(t *testing.T) {
 			When:            "when: we get a request to retrieve service data and the client fails to make the call to the db",
 			Endpoint:        "/api/v1/services",
 			Query:           "?start=1734898000&end=1734913905",
-			Client:          failureClient,
+			TracesClient:    failureClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 500 error message",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

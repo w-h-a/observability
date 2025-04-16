@@ -13,27 +13,29 @@ var (
 )
 
 type config struct {
-	namespace          string
-	name               string
-	version            string
-	httpAddress        string
-	tracesStore        string
-	tracesStoreAddress string
-	tracesDB           string
-	tracesTable        string
+	namespace           string
+	name                string
+	version             string
+	httpAddress         string
+	tracesStore         string
+	tracesStoreAddress  string
+	tracesDB            string
+	tracesTable         string
+	metricsStoreAddress string
 }
 
 func New() {
 	once.Do(func() {
 		instance = &config{
-			namespace:          "test",
-			name:               "test",
-			version:            "0.1.0-alpha.0",
-			httpAddress:        ":0",
-			tracesStore:        "",
-			tracesStoreAddress: "",
-			tracesDB:           "",
-			tracesTable:        "",
+			namespace:           "test",
+			name:                "test",
+			version:             "0.1.0-alpha.0",
+			httpAddress:         ":0",
+			tracesStore:         "",
+			tracesStoreAddress:  "",
+			tracesDB:            "",
+			tracesTable:         "",
+			metricsStoreAddress: "",
 		}
 
 		namespace := os.Getenv("NAMESPACE")
@@ -56,24 +58,29 @@ func New() {
 			instance.httpAddress = httpAddress
 		}
 
-		store := os.Getenv("TRACES_STORE")
-		if len(store) > 0 {
-			instance.tracesStore = store
+		tracesStore := os.Getenv("TRACES_STORE")
+		if len(tracesStore) > 0 {
+			instance.tracesStore = tracesStore
 		}
 
-		storeAddress := os.Getenv("TRACES_STORE_ADDRESS")
-		if len(storeAddress) > 0 {
-			instance.tracesStoreAddress = storeAddress
+		tracesStoreAddress := os.Getenv("TRACES_STORE_ADDRESS")
+		if len(tracesStoreAddress) > 0 {
+			instance.tracesStoreAddress = tracesStoreAddress
 		}
 
-		db := os.Getenv("TRACES_DB")
-		if len(db) > 0 {
-			instance.tracesDB = db
+		tracesDB := os.Getenv("TRACES_DB")
+		if len(tracesDB) > 0 {
+			instance.tracesDB = tracesDB
 		}
 
-		table := os.Getenv("TRACES_TABLE")
-		if len(table) > 0 {
-			instance.tracesTable = table
+		tracesTable := os.Getenv("TRACES_TABLE")
+		if len(tracesTable) > 0 {
+			instance.tracesTable = tracesTable
+		}
+
+		metricsStoreAddress := os.Getenv("METRICS_STORE_ADDRESS")
+		if len(metricsStoreAddress) > 0 {
+			instance.metricsStoreAddress = metricsStoreAddress
 		}
 	})
 }
@@ -140,4 +147,12 @@ func TracesTable() string {
 	}
 
 	return instance.tracesTable
+}
+
+func MetricsStoreAddress() string {
+	if instance == nil {
+		log.Fatal("no config instance")
+	}
+
+	return instance.metricsStoreAddress
 }

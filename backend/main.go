@@ -5,10 +5,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/w-h-a/observability/backend/src"
-	"github.com/w-h-a/observability/backend/src/clients/traces"
-	sqlrepo "github.com/w-h-a/observability/backend/src/clients/traces/sql"
-	"github.com/w-h-a/observability/backend/src/config"
+	"github.com/w-h-a/observability/backend/internal"
+	"github.com/w-h-a/observability/backend/internal/clients/metrics"
+	promrepo "github.com/w-h-a/observability/backend/internal/clients/metrics/prom"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
+	sqlrepo "github.com/w-h-a/observability/backend/internal/clients/traces/sql"
+	"github.com/w-h-a/observability/backend/internal/config"
 	"github.com/w-h-a/pkg/telemetry/log"
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/memoryutils"
@@ -34,13 +36,17 @@ func main() {
 	// traces
 
 	// clients
-	repoClient := sqlrepo.NewClient(
+	tracesClient := sqlrepo.NewClient(
 		traces.ClientWithDriver(config.TracesStore()),
 		traces.ClientWithAddrs(config.TracesStoreAddress()),
 	)
 
+	metricsClient := promrepo.NewClient(
+		metrics.ClientWithAddrs(config.MetricsStoreAddress()),
+	)
+
 	// server
-	httpServer := src.Factory(repoClient)
+	httpServer := internal.Factory(tracesClient, metricsClient)
 
 	// wait group and error chan
 	wg := &sync.WaitGroup{}

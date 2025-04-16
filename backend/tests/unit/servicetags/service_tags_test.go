@@ -3,14 +3,15 @@ package servicetags
 import (
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestServiceTags(t *testing.T) {
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				"rpc.service", "rpc.method", "rpc.system", "net.sock.peer.addr", "net.sock.peer.port",
 			},
@@ -21,7 +22,8 @@ func TestServiceTags(t *testing.T) {
 		{
 			When:            "when: we get a request to retrieve a service's tags but no service is queried",
 			Endpoint:        "/api/v1/service/tags",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
@@ -31,7 +33,8 @@ func TestServiceTags(t *testing.T) {
 			When:            "when: we get a request to retrieve a service's tags, a service is queried, and the repo client successfully makes the call to the db",
 			Endpoint:        "/api/v1/service/tags",
 			Query:           "?service=driver",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a slice of unique tag key values for this service",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

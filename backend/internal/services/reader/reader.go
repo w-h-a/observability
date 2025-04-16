@@ -6,11 +6,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces"
+	"github.com/w-h-a/observability/backend/internal/clients/metrics"
+	"github.com/w-h-a/observability/backend/internal/clients/traces"
 )
 
 type Reader struct {
-	traceRepo traces.Repo
+	traceRepo   traces.Repo
+	metricsRepo metrics.Repo
 }
 
 func (r *Reader) Services(ctx context.Context, query *ServicesArgs) ([]*Service, error) {
@@ -328,9 +330,39 @@ func (r *Reader) AggregatedSpans(ctx context.Context, query *AggregatedSpansArgs
 	return result, nil
 }
 
-func NewReader(traceRepo traces.Repo) *Reader {
+func (r *Reader) Metrics(ctx context.Context, query *MetricsArgs) ([]Metric, error) {
+	metricsResults := []Metric{}
+
+	if err := r.metricsRepo.ReadMetrics(
+		ctx,
+		&metricsResults,
+		query.Dimension,
+		query.Step,
+		*query.Start,
+		*query.End,
+		metrics.QueryWithServiceName(query.ServiceName),
+	); err != nil {
+		return nil, err
+	}
+
+	result := []Metric{}
+
+	for _, metric := range metricsResults {
+		m := Metric{}
+
+		m.Timestamp = metric.Timestamp * 1000000
+		m.Value = metric.Value
+
+		result = append(result, m)
+	}
+
+	return result, nil
+}
+
+func NewReader(traceRepo traces.Repo, metricsRepo metrics.Repo) *Reader {
 	r := &Reader{
-		traceRepo: traceRepo,
+		traceRepo:   traceRepo,
+		metricsRepo: metricsRepo,
 	}
 
 	return r

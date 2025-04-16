@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/services/reader"
+	metricsmock "github.com/w-h-a/observability/backend/internal/clients/metrics/mock"
+	tracesmock "github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/services/reader"
 	"github.com/w-h-a/observability/backend/tests/unit"
 )
 
 func TestSpansByTrace(t *testing.T) {
 	traceId := "e5c74cf2d095ad3c85326c90d09312fb"
 
-	successClient := mock.NewClient(
-		mock.RepoClientWithReadImpl(func() error { return nil }),
-		mock.RepoClientWithData([][]interface{}{
+	successClient := tracesmock.NewClient(
+		tracesmock.RepoClientWithReadImpl(func() error { return nil }),
+		tracesmock.RepoClientWithData([][]interface{}{
 			{
 				&reader.Span{
 					Timestamp:    "2024-12-30T00:23:31.474736508Z",
@@ -95,17 +96,19 @@ func TestSpansByTrace(t *testing.T) {
 			When:            "when: we get a request to retrieve all traces but no start or end times",
 			Endpoint:        "/api/v1/traces",
 			Query:           "",
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back a 400 error response",
 			ReadCalledTimes: 0,
 			ReadCalledWith:  []map[string]interface{}{},
-			Payload:         `{"id":"Traces.GetTraces","code":400,"detail":"failed to parse request: start param missing in query","status":"Bad Request"}`,
+			Payload:         `{"id":"Traces.GetTraces","code":400,"detail":"failed to parse request: time param missing in query","status":"Bad Request"}`,
 		},
 		{
 			When:            "when: we get a request to retrieve all spans associated with a traceId, a traceId is queried, and the repo client successfully fetches the data",
 			Endpoint:        "/api/v1/traces",
 			Query:           fmt.Sprintf("?start=1735770900&end=1735770993&traceId=%s", traceId),
-			Client:          successClient,
+			TracesClient:    successClient,
+			MetricsClient:   metricsmock.NewClient(),
 			Then:            "then: we send back the span matrix",
 			ReadCalledTimes: 1,
 			ReadCalledWith: []map[string]interface{}{

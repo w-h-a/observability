@@ -9,4 +9,10 @@ var (
 	}
 
 	SupportedRequestedTagOperators = []string{"equals", "contains", "isnotnull"}
+
+	SupportedMetrics = []string{"cpu"}
+
+	RequiredMetricAttributes = map[string][]string{
+		"cpu": {"service"},
+	}
 )

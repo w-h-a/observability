@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/w-h-a/observability/backend/src"
-	"github.com/w-h-a/observability/backend/src/clients/traces/mock"
-	"github.com/w-h-a/observability/backend/src/config"
+	"github.com/w-h-a/observability/backend/internal"
+	"github.com/w-h-a/observability/backend/internal/clients/traces/mock"
+	"github.com/w-h-a/observability/backend/internal/config"
 	"github.com/w-h-a/pkg/telemetry/log"
 	memorylog "github.com/w-h-a/pkg/telemetry/log/memory"
 	"github.com/w-h-a/pkg/utils/httputils"
@@ -36,9 +36,9 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 		var bs []byte
 		var err error
 
-		httpServer := src.Factory(testCase.Client)
+		httpServer := internal.Factory(testCase.TracesClient, testCase.MetricsClient)
 
-		mockStoreClient := testCase.Client.(*mock.MockRepoClient)
+		mockTracesClient := testCase.TracesClient.(*mock.MockTracesClient)
 
 		t.Run(testCase.When, func(t *testing.T) {
 			err = httpServer.Run()
@@ -49,7 +49,7 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 
 			t.Log(testCase.Then)
 
-			calls := mockStoreClient.ReadCalledWith()
+			calls := mockTracesClient.ReadCalledWith()
 
 			require.Equal(t, testCase.ReadCalledTimes, len(calls))
 
@@ -63,7 +63,7 @@ func RunTestCases(t *testing.T, testCases []TestCase) {
 				err = httpServer.Stop()
 				require.NoError(t, err)
 
-				mockStoreClient.ResetCalledWith()
+				mockTracesClient.ResetCalledWith()
 			})
 		})
 	}
