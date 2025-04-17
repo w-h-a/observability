@@ -1,6 +1,6 @@
 # observability
 
-An opensource observability platform.
+An opensource observability platform. (But really just an excuse for me to learn a lot about observability and otel.)
 
 ## Getting Started
 
