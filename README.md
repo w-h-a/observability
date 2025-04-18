@@ -8,6 +8,10 @@ An opensource observability platform. (But really just an excuse for me to learn
 docker compose up --build
 ```
 
+## Architecture
+
+![Arch](docs/images/observability.drawio.png)
+
 ## Frontend Snaps
 
 ![Services](docs/images/services.png)
